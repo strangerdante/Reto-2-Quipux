@@ -1,0 +1,38 @@
+﻿{
+  "id": "camp-1789680810789",
+  "tenantId": "valle",
+  "version": 1,
+  "versionString": "v1",
+  "publishedAt": "2026-09-17T21:37:04.300Z",
+  "publishedBy": {
+    "name": "Angie Ríos",
+    "role": "Publicador",
+    "initials": "CR"
+  },
+  "summary": "Publicación v1 - Nueva Campaña 2",
+  "layout": "content",
+  "rules": {
+    "delay": 2000,
+    "frequency": "once_per_session",
+    "pathRule": "/tramites/*",
+    "startDate": "2026-09-17T21:33",
+    "endDate": "2026-10-17T21:33",
+    "escToggle": true,
+    "autoplayToggle": true,
+    "dataLayerToggle": true
+  },
+  "slides": [
+    {
+      "id": 1,
+      "order": 1,
+      "active": true,
+      "title": "hola mundo",
+      "description": "Descripción detallada de la notificación para los ciudadanos.",
+      "cta": "Consultar aquí",
+      "link": "https://www.quipux.com",
+      "alt": "Banner institucional",
+      "desktopImage": "banner-principal-desk.webp",
+      "mobileImage": "banner-principal-mob.webp"
+    }
+  ]
+}

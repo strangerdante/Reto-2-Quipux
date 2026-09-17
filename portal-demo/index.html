@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Ciudadano | Quipux Impuesto Vehicular & Trámites</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --quipux-ink: #211C33;
+      --quipux-blue: #2E13F5;
+      --quipux-sky: #61C7D0;
+      --quipux-green: #5DC99A;
+      --bg-page: #F8FAFC;
+      --card-bg: #FFFFFF;
+      --border-color: #E2E8F0;
+      --text-muted: #64748B;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--quipux-ink);
+      line-height: 1.5;
+      padding-bottom: 48px;
+    }
+
+    /* BARRA SUPERIOR DE PRUEBAS DEL JURADO / EVALUADOR */
+    .evaluator-toolbar {
+      background: #110E1C;
+      color: #E2E8F0;
+      padding: 10px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .toolbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+    }
+
+    .toolbar-badge {
+      background: rgba(97, 199, 208, 0.15);
+      color: var(--quipux-sky);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-tool {
+      background: rgba(255, 255, 255, 0.1);
+      color: #FFFFFF;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-tool:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: #FFFFFF;
+    }
+
+    .btn-tool-accent {
+      background: var(--quipux-blue);
+      border-color: var(--quipux-blue);
+    }
+    .btn-tool-accent:hover {
+      background: #2308cf;
+    }
+
+    .tenant-select {
+      background: #1E1A30;
+      color: #FFFFFF;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* HEADER DEL PORTAL CIUDADANO */
+    .portal-header {
+      background: #FFFFFF;
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .portal-logo-container {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .portal-logo-badge {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, var(--quipux-blue), var(--quipux-sky));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      font-weight: 900;
+      font-size: 20px;
+    }
+
+    .portal-title h1 {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--quipux-ink);
+    }
+
+    .portal-title p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* BARRA DE NAVEGACIÓN SPA */
+    .spa-nav {
+      background: #FFFFFF;
+      border-bottom: 1px solid var(--border-color);
+      padding: 0 32px;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+    }
+
+    .nav-link {
+      padding: 14px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-link:hover {
+      color: var(--quipux-blue);
+    }
+
+    .nav-link.active {
+      color: var(--quipux-blue);
+      border-bottom-color: var(--quipux-blue);
+    }
+
+    .route-badge {
+      background: #EEF2FF;
+      color: var(--quipux-blue);
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+
+    /* CONTENIDO PRINCIPAL */
+    .container {
+      max-width: 1200px;
+      margin: 32px auto;
+      padding: 0 24px;
+    }
+
+    .route-banner {
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      border-radius: 8px;
+      padding: 12px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+
+    .hero-box {
+      background: linear-gradient(135deg, var(--quipux-ink) 0%, #1A1438 100%);
+      color: #FFFFFF;
+      border-radius: 16px;
+      padding: 48px;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-box h2 {
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .hero-box p {
+      font-size: 16px;
+      color: #CBD5E1;
+      max-width: 600px;
+      margin-bottom: 24px;
+    }
+
+    .search-placa {
+      display: flex;
+      gap: 12px;
+      max-width: 480px;
+    }
+
+    .search-placa input {
+      flex: 1;
+      padding: 14px 18px;
+      border-radius: 8px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
+      color: #FFFFFF;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      outline: none;
+    }
+
+    .search-placa input::placeholder {
+      color: #94A3B8;
+      font-weight: 400;
+      letter-spacing: normal;
+      text-transform: none;
+    }
+
+    .search-placa button {
+      background: var(--quipux-sky);
+      color: var(--quipux-ink);
+      border: none;
+      padding: 14px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* GRID DE TRÁMITES */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .service-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+
+    .service-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.05);
+      border-color: var(--quipux-sky);
+    }
+
+    .service-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: #EEF2FF;
+      color: var(--quipux-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+
+    .service-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--quipux-ink);
+    }
+
+    .service-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* HUD FLOTANTE: INSPECTOR DE GTM Y DATALAYER EN ESQUINA INFERIOR DERECHA (AC-21) */
+    .hud-container {
+      position: fixed;
+      bottom: 20px;
+      right: 24px;
+      width: 440px;
+      max-width: calc(100vw - 32px);
+      background: #0E0C1A;
+      border: 1px solid rgba(46, 19, 245, 0.4);
+      border-radius: 12px;
+      color: #E2E8F0;
+      box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      z-index: 9999;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 12px;
+      overflow: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .hud-header {
+      padding: 10px 14px;
+      background: #17132B;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .hud-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 12px;
+      color: #FFFFFF;
+    }
+
+    .hud-pill {
+      background: rgba(93, 201, 154, 0.15);
+      color: var(--quipux-green);
+      border: 1px solid rgba(93, 201, 154, 0.3);
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .hud-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hud-count-badge {
+      font-size: 11px;
+      font-family: monospace;
+      color: var(--quipux-sky);
+      background: rgba(97, 199, 208, 0.12);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .hud-btn-icon {
+      background: transparent;
+      border: none;
+      color: #94A3B8;
+      cursor: pointer;
+      font-size: 13px;
+      padding: 2px 5px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.15s, background 0.15s;
+    }
+    .hud-btn-icon:hover {
+      color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .hud-body {
+      max-height: 220px;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: #0B0915;
+    }
+
+    .hud-body::-webkit-scrollbar {
+      width: 5px;
+    }
+    .hud-body::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    .log-entry {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-left: 3px solid var(--quipux-sky);
+      padding: 7px 10px;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      font-family: monospace;
+      font-size: 11px;
+      transition: background 0.15s;
+    }
+    .log-entry:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .log-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .log-event {
+      font-weight: 700;
+      color: var(--quipux-sky);
+    }
+
+    .log-time {
+      color: #64748B;
+      font-size: 10px;
+    }
+
+    .log-data {
+      color: #CBD5E1;
+      font-size: 10.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: pointer;
+    }
+
+    /* ESTADO MINIMIZADO */
+    .hud-container.minimized .hud-body {
+      display: none;
+    }
+    .hud-container.minimized {
+      width: auto;
+      border-radius: 20px;
+    }
+    .hud-container.minimized .hud-header {
+      border-bottom: none;
+      padding: 8px 14px;
+    }
+
+    .toast-alert {
+      position: fixed;
+      top: 60px;
+      right: 24px;
+      background: #1E293B;
+      color: #FFFFFF;
+      padding: 14px 20px;
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+      border-left: 4px solid var(--quipux-green);
+      font-size: 13px;
+      display: none;
+      z-index: 10001;
+      animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BARRA DE CONTROL DEL EVALUADOR (AC-12, AC-16, AC-21) -->
+  <div class="evaluator-toolbar">
+    <div class="toolbar-brand">
+      <span>🏛️ Portal Ciudadano Quipux</span>
+      <span class="toolbar-badge">ENTORNO DEMO AC-12</span>
+    </div>
+
+    <div class="toolbar-actions">
+      <label for="tenantPicker" style="font-size: 12px; color: #94A3B8;">Tenant:</label>
+      <select id="tenantPicker" class="tenant-select" onchange="changeTenant(this.value)">
+        <option value="valle" selected>Valle del Cauca (Gobernación)</option>
+        <option value="medellin">Medellín (Alcaldía)</option>
+        <option value="cali">Cali (Alcaldía)</option>
+        <option value="sabaneta">Sabaneta</option>
+        <option value="manizales">Manizales</option>
+      </select>
+
+      <button class="btn-tool" onclick="testDoubleInjection()" title="Prueba AC-16: Inyecta un segundo script idéntico">
+        🔄 Probar Doble Inyección (AC-16)
+      </button>
+
+      <button class="btn-tool" onclick="clearStorageAndReload()" title="Limpia registros de frecuencia para ver el popup de nuevo">
+        🧹 Reset Frecuencia
+      </button>
+
+      <a href="http://localhost:4200" target="_blank" class="btn-tool btn-tool-accent">
+        ⚙️ Ir a Quipux Studio
+      </a>
+    </div>
+  </div>
+
+  <!-- TOAST DE NOTIFICACIÓN DE PRUEBAS -->
+  <div id="demoToast" class="toast-alert"></div>
+
+  <!-- HEADER DEL PORTAL CIUDADANO -->
+  <header class="portal-header">
+    <div class="portal-logo-container">
+      <div class="portal-logo-badge" id="tenantBadge">V</div>
+      <div class="portal-title">
+        <h1 id="tenantTitle">Gobernación del Valle del Cauca</h1>
+        <p id="tenantSubtitle">Portal Oficial de Liquidación de Impuesto Vehicular y Trámites de Tránsito</p>
+      </div>
+    </div>
+    <div style="text-align: right; font-size: 12px; color: var(--text-muted);">
+      <div>Línea de Atención: <strong>01 8000 955 000</strong></div>
+      <div>Horario: Lunes a Viernes 7:30 a.m. - 5:00 p.m.</div>
+    </div>
+  </header>
+
+  <!-- BARRA DE NAVEGACIÓN SPA (RUTAS CLIENT-SIDE PARA EVALUAR AC-10 Y AC-17) -->
+  <nav class="spa-nav">
+    <a class="nav-link active" onclick="navigate('/')" id="nav-root">
+      🏠 Inicio <span class="route-badge">/</span>
+    </a>
+    <a class="nav-link" onclick="navigate('/tramites/impuesto-vehicular')" id="nav-tramites">
+      📄 Impuesto Vehicular <span class="route-badge">/tramites/*</span>
+    </a>
+    <a class="nav-link" onclick="navigate('/liquidaciones/descuentos')" id="nav-liquidaciones">
+      💰 Liquidación y Descuentos <span class="route-badge">/liquidaciones/*</span>
+    </a>
+    <a class="nav-link" onclick="navigate('/pagos/pse')" id="nav-pagos">
+      💳 Pagos PSE <span class="route-badge">/pagos/*</span>
+    </a>
+    <a class="nav-link" onclick="navigate('/contacto')" id="nav-contacto">
+      📞 Contacto <span class="route-badge">/contacto</span>
+    </a>
+  </nav>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="container">
+    <div class="route-banner">
+      <div>
+        <strong>Ruta SPA Activa:</strong> <code id="activeRouteDisplay" style="background:#DBEAFE; padding: 2px 6px; border-radius: 4px;">/</code>
+        <span style="margin-left: 12px; color: #4B5563;">(El Web Component evalúa coincidencia de rutas según la campaña configurada)</span>
+      </div>
+      <button class="btn-tool" style="background:#FFFFFF; color:#1E293B; border-color:#CBD5E1;" onclick="inspectActiveManifest()">
+        📋 Ver active.json
+      </button>
+    </div>
+
+    <!-- SECCIÓN HERO -->
+    <section class="hero-box">
+      <h2 id="heroHeading">Consulte y Pague su Impuesto sobre Vehículos Automotores</h2>
+      <p id="heroDesc">Aproveche los descuentos por pronto pago para la vigencia 2026. Realice su trámite 100% en línea de manera segura y sin intermediarios.</p>
+      <div class="search-placa">
+        <input type="text" placeholder="Ej. ABC123" maxlength="6" id="inputPlaca" value="QPX2026">
+        <button onclick="consultarPlaca()">Consultar Placa</button>
+      </div>
+    </section>
+
+    <!-- GRID DE SERVICIOS -->
+    <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 20px;">Trámites Destacados</h3>
+    <div class="services-grid">
+      <div class="service-card" onclick="navigate('/tramites/impuesto-vehicular')">
+        <div class="service-icon">🚗</div>
+        <h3>Liquidación de Impuesto</h3>
+        <p>Calcule el valor de su impuesto según avalúo fiscal del Ministerio de Transporte.</p>
+      </div>
+      <div class="service-card" onclick="navigate('/liquidaciones/descuentos')">
+        <div class="service-icon">🏷️</div>
+        <h3>Descuentos por Pronto Pago</h3>
+        <p>15% de descuento antes del 30 de abril de 2026. Consulte términos y condiciones.</p>
+      </div>
+      <div class="service-card" onclick="navigate('/pagos/pse')">
+        <div class="service-icon">💳</div>
+        <h3>Pasarela PSE y Tarjetas</h3>
+        <p>Pague en línea con débito a cuenta de ahorros/corriente o tarjetas de crédito.</p>
+      </div>
+      <div class="service-card" onclick="navigate('/contacto')">
+        <div class="service-icon">📍</div>
+        <h3>Puntos de Atención Físicos</h3>
+        <p>Consulte las sedes operativas, horarios de atención y agendamiento de citas.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- HUD FLOTANTE: CONSOLA DE DATALAYER EN ESQUINA INFERIOR DERECHA (AC-21) -->
+  <aside class="hud-container" id="hudContainer">
+    <div class="hud-header" onclick="toggleHud()">
+      <div class="hud-title">
+        <span>📊 GTM dataLayer</span>
+        <span class="hud-pill">🛡️ CERO PII (AC-21)</span>
+      </div>
+      <div class="hud-actions">
+        <span class="hud-count-badge"><span id="eventCount">0</span> eventos</span>
+        <button class="hud-btn-icon" onclick="clearDataLayerLogs(event)" title="Limpiar eventos">🧹</button>
+        <button class="hud-btn-icon" id="toggleHudIcon" title="Minimizar/Expandir">▼</button>
+      </div>
+    </div>
+    <div class="hud-body" id="hudBody">
+      <div class="log-entry" style="border-left-color: #64748B;">
+        <div class="log-header">
+          <span class="log-event">INICIALIZACIÓN</span>
+          <span class="log-time" id="initTime"></span>
+        </div>
+        <div class="log-data">Inspector activo en esquina inferior derecha. Esperando eventos del Web Component...</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- SCRIPT DE MONITOREO DE DATALAYER Y LOGS -->
+  <script>
+    // Inicializar dataLayer global antes del script del Web Component
+    window.dataLayer = window.dataLayer || [];
+    let eventCounter = 0;
+    document.getElementById('initTime').textContent = new Date().toLocaleTimeString();
+
+    // Proxy para interceptar pushes a window.dataLayer y mostrarlos en el HUD
+    const originalPush = window.dataLayer.push;
+    window.dataLayer.push = function(...args) {
+      const result = originalPush.apply(this, args);
+      args.forEach(item => {
+        if (item && item.event) {
+          logDataLayerEvent(item);
+        }
+      });
+      return result;
+    };
+
+    function logDataLayerEvent(payload) {
+      eventCounter++;
+      document.getElementById('eventCount').textContent = eventCounter;
+
+      const hudBody = document.getElementById('hudBody');
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+
+      // Verificar que CERO PII esté presente en el payload (AC-21)
+      const serialized = JSON.stringify(payload);
+      const hasPII = /(@|cedula|placa|nombre|telefono|correo|documento|address)/i.test(serialized);
+
+      // Asignar color según el tipo de evento
+      let borderColor = 'var(--quipux-sky)';
+      if (payload.event === 'quipux_modal_impression') borderColor = 'var(--quipux-blue)';
+      else if (payload.event === 'quipux_modal_cta_click') borderColor = 'var(--quipux-green)';
+      else if (payload.event === 'quipux_modal_close') borderColor = '#F59E0B';
+      else if (payload.event === 'quipux_modal_slide_view') borderColor = '#8B5CF6';
+
+      if (hasPII) {
+        borderColor = '#EF4444';
+      }
+
+      entry.style.borderLeftColor = borderColor;
+      entry.innerHTML = `
+        <div class="log-header">
+          <span class="log-event">${payload.event}</span>
+          <span class="log-time">${new Date().toLocaleTimeString()}</span>
+        </div>
+        <div class="log-data" title='${serialized.replace(/'/g, "&apos;")}' onclick="toggleExpandLog(this)">${serialized}</div>
+      `;
+
+      hudBody.insertBefore(entry, hudBody.firstChild);
+    }
+
+    function toggleExpandLog(el) {
+      if (el.style.whiteSpace === 'normal') {
+        el.style.whiteSpace = 'nowrap';
+      } else {
+        el.style.whiteSpace = 'normal';
+        el.style.wordBreak = 'break-all';
+      }
+    }
+
+    function toggleHud() {
+      const container = document.getElementById('hudContainer');
+      const icon = document.getElementById('toggleHudIcon');
+      container.classList.toggle('minimized');
+      icon.textContent = container.classList.contains('minimized') ? '▲' : '▼';
+    }
+
+    function clearDataLayerLogs(event) {
+      if (event) event.stopPropagation();
+      const hudBody = document.getElementById('hudBody');
+      hudBody.innerHTML = `
+        <div class="log-entry" style="border-left-color: #64748B;">
+          <div class="log-header">
+            <span class="log-event">REGISTRO LIMPIO</span>
+            <span class="log-time">${new Date().toLocaleTimeString()}</span>
+          </div>
+          <div class="log-data">Historial reiniciado. Esperando nuevos eventos...</div>
+        </div>
+      `;
+      eventCounter = 0;
+      document.getElementById('eventCount').textContent = '0';
+      showToast('🧹 Consola de dataLayer limpiada');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('demoToast');
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 4000);
+    }
+
+    // Configurar tenant según URL param
+    const params = new URLSearchParams(window.location.search);
+    const currentTenant = params.get('tenant') || 'valle';
+    document.getElementById('tenantPicker').value = currentTenant;
+
+    if (currentTenant === 'medellin') {
+      document.getElementById('tenantBadge').textContent = 'M';
+      document.getElementById('tenantBadge').style.background = 'linear-gradient(135deg, #059669, #34D399)';
+      document.getElementById('tenantTitle').textContent = 'Alcaldía de Medellín';
+      document.getElementById('tenantSubtitle').textContent = 'Secretaría de Movilidad y Hacienda Municipal';
+    } else if (currentTenant === 'cali') {
+      document.getElementById('tenantBadge').textContent = 'C';
+      document.getElementById('tenantTitle').textContent = 'Alcaldía de Santiago de Cali';
+      document.getElementById('tenantSubtitle').textContent = 'Secretaría de Movilidad Distrital';
+    }
+
+    // Navegación SPA reactiva
+    function navigate(route) {
+      const fullPath = route === '/' ? `/portal-demo/?tenant=${encodeURIComponent(currentTenant)}` : `/portal-demo${route}?tenant=${encodeURIComponent(currentTenant)}`;
+      history.pushState({}, '', fullPath);
+      document.getElementById('activeRouteDisplay').textContent = route;
+
+      // Actualizar estilo de enlaces activos
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+      if (route === '/') document.getElementById('nav-root')?.classList.add('active');
+      else if (route.startsWith('/tramites')) document.getElementById('nav-tramites')?.classList.add('active');
+      else if (route.startsWith('/liquidaciones')) document.getElementById('nav-liquidaciones')?.classList.add('active');
+      else if (route.startsWith('/pagos')) document.getElementById('nav-pagos')?.classList.add('active');
+      else if (route.startsWith('/contacto')) document.getElementById('nav-contacto')?.classList.add('active');
+
+      showToast(`Navegación SPA a: ${route}`);
+    }
+
+    // Selector de Tenant
+    function changeTenant(tenant) {
+      window.location.href = `/portal-demo/?tenant=${encodeURIComponent(tenant)}`;
+    }
+
+    // Prueba de Doble Inyección (Idempotencia AC-16)
+    function testDoubleInjection() {
+      console.log('🧪 Probando AC-16: Inyectando segundo script idéntico en el DOM...');
+      const script2 = document.createElement('script');
+      script2.async = true;
+      script2.src = '/resources/runtime/quipux-popup-runtime.js?v=3';
+      script2.setAttribute('data-tenant', currentTenant);
+      script2.setAttribute('data-campaign', 'camp-1');
+      document.head.appendChild(script2);
+
+      setTimeout(() => {
+        const modals = document.querySelectorAll('quipux-popup-studio');
+        showToast(`✅ AC-16 Idempotencia verificada: Solo ${modals.length} modal activo en DOM.`);
+      }, 300);
+    }
+
+    // Resetear almacenamiento local y de sesión
+    function clearStorageAndReload() {
+      sessionStorage.clear();
+      const keysToRemove = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('qpux_popup_')) {
+          keysToRemove.push(key);
+        }
+      }
+      keysToRemove.forEach(k => localStorage.removeItem(k));
+      localStorage.removeItem('qpux_popup_camp-1_viewed');
+      localStorage.removeItem('qpux_popup_camp-2_viewed');
+
+      showToast('🧹 Frecuencia reseteada. Recargando portal...');
+      setTimeout(() => {
+        window.location.href = `/portal-demo/?tenant=${encodeURIComponent(currentTenant)}`;
+      }, 500);
+    }
+
+    // Ver manifiesto activo
+    function inspectActiveManifest() {
+      const url = `/resources/tenants/${currentTenant}/manifests/camp-1/active.json`;
+      window.open(url, '_blank');
+    }
+
+    function consultarPlaca() {
+      const placa = document.getElementById('inputPlaca').value;
+      showToast(`🔍 Consultando impuesto para vehículo con placa ${placa}...`);
+    }
+  </script>
+
+  <!-- ================================================================= -->
+  <!-- INYECCIÓN OFICIAL GTM (Data Plane Runtime Autónomo)               -->
+  <!-- Esta etiqueta se inyecta 1 sola vez vía Google Tag Manager        -->
+  <!-- ================================================================= -->
+  <script async
+    src="/resources/runtime/quipux-popup-runtime.js?v=5"
+    id="quipux-runtime-script"
+    data-tenant="valle"
+    data-campaign="camp-1">
+  </script>
+
+  <script>
+    const scriptEl = document.getElementById('quipux-runtime-script');
+    if (scriptEl && currentTenant) {
+      scriptEl.setAttribute('data-tenant', currentTenant);
+    }
+  </script>
+</body>
+</html>

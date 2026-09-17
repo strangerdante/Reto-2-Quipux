@@ -1,0 +1,156 @@
+[
+  {
+    "id": "aud-1789685663917",
+    "timestamp": "2026-09-17T22:54:23.917Z",
+    "formattedTime": "17/9/2026, 5:54:23 p. m.",
+    "action": "PUBLICACIÓN",
+    "campaignId": "camp-1",
+    "campaignName": "Cobro Coactivo 2026",
+    "version": "v9",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1789685280942",
+    "timestamp": "2026-09-17T22:48:00.942Z",
+    "formattedTime": "17/9/2026, 5:48:00 p. m.",
+    "action": "PUBLICACIÓN",
+    "campaignId": "camp-1",
+    "campaignName": "Cobro Coactivo 2026",
+    "version": "v8",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1789684813878",
+    "timestamp": "2026-09-17T22:40:13.878Z",
+    "formattedTime": "17/9/2026, 5:40:13 p. m.",
+    "action": "PUBLICACIÓN",
+    "campaignId": "camp-1",
+    "campaignName": "Cobro Coactivo 2026",
+    "version": "v7",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1789682506819",
+    "timestamp": "2026-09-17T22:01:46.819Z",
+    "formattedTime": "17/9/2026, 5:01:46 p. m.",
+    "action": "PUBLICACIÓN",
+    "campaignId": "camp-1",
+    "campaignName": "Cobro Coactivo 2026",
+    "version": "v6",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1789682338204",
+    "timestamp": "2026-09-17T21:58:58.204Z",
+    "formattedTime": "17/9/2026, 4:58:58 p. m.",
+    "action": "PUBLICACIÓN",
+    "campaignId": "camp-1",
+    "campaignName": "Cobro Coactivo 2026",
+    "version": "v5",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1789681507663",
+    "timestamp": "2026-09-17T21:45:07.663Z",
+    "formattedTime": "17/9/2026, 4:45:07 p. m.",
+    "action": "PUBLICACIÓN",
+    "campaignId": "camp-1",
+    "campaignName": "Cobro Coactivo 2026",
+    "version": "v4",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1789681443390",
+    "timestamp": "2026-09-17T21:44:03.390Z",
+    "formattedTime": "17/9/2026, 4:44:03 p. m.",
+    "action": "PUBLICACIÓN",
+    "campaignId": "camp-1789680810789",
+    "campaignName": "Nueva Campaña 2",
+    "version": "v5",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1789681409299",
+    "timestamp": "2026-09-17T21:43:29.299Z",
+    "formattedTime": "17/9/2026, 4:43:29 p. m.",
+    "action": "PUBLICACIÓN",
+    "campaignId": "camp-1789680810789",
+    "campaignName": "Nueva Campaña 2",
+    "version": "v4",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1789681401070",
+    "timestamp": "2026-09-17T21:43:21.070Z",
+    "formattedTime": "17/9/2026, 4:43:21 p. m.",
+    "action": "PUBLICACIÓN",
+    "campaignId": "camp-1789680810789",
+    "campaignName": "Nueva Campaña 2",
+    "version": "v3",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1789681309461",
+    "timestamp": "2026-09-17T21:41:49.461Z",
+    "formattedTime": "17/9/2026, 4:41:49 p. m.",
+    "action": "PUBLICACIÓN",
+    "campaignId": "camp-1789680810789",
+    "campaignName": "Nueva Campaña 2",
+    "version": "v2",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1789681024310",
+    "timestamp": "2026-09-17T21:37:04.310Z",
+    "formattedTime": "17/9/2026, 4:37:04 p. m.",
+    "action": "PUBLICACIÓN",
+    "campaignId": "camp-1789680810789",
+    "campaignName": "Nueva Campaña 2",
+    "version": "v1",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1789680276067",
+    "timestamp": "2026-09-17T21:24:36.067Z",
+    "formattedTime": "17/9/2026, 4:24:36 p. m.",
+    "action": "REVERSIÓN",
+    "campaignId": "camp-1",
+    "campaignName": "Reversión a contenido de v1",
+    "version": "v3 (restaurada de v1)",
+    "user": "Mariana Duque",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1789680268652",
+    "timestamp": "2026-09-17T21:24:28.652Z",
+    "formattedTime": "17/9/2026, 4:24:28 p. m.",
+    "action": "PUBLICACIÓN",
+    "campaignId": "camp-1",
+    "campaignName": "Cobro Coactivo 2026",
+    "version": "v2",
+    "user": "Angie Ríos",
+    "role": "Frontend Lead"
+  },
+  {
+    "id": "aud-seed-1",
+    "timestamp": "2026-09-17T21:23:56.619Z",
+    "formattedTime": "17/9/2026, 4:23:56 p. m.",
+    "action": "PUBLICACIÓN",
+    "campaignId": "camp-1",
+    "campaignName": "Cobro Coactivo 2026",
+    "version": "v1",
+    "user": "Angie Ríos",
+    "role": "Frontend Lead"
+  }
+]

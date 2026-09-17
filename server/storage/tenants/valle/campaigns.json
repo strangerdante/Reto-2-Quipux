@@ -1,0 +1,91 @@
+[
+  {
+    "id": "camp-1789680810789",
+    "name": "Nueva Campaña 2",
+    "type": "Modal con slider",
+    "tenant": "valle",
+    "status": "Borrador",
+    "version": "v1",
+    "updated": "17 de sept de 2026",
+    "layout": "side",
+    "rules": {
+      "delay": 2000,
+      "frequency": "once_per_session",
+      "pathRule": "/tramites/*",
+      "startDate": "2026-09-17T21:33",
+      "endDate": "2026-10-17T21:33",
+      "escToggle": true,
+      "autoplayToggle": true,
+      "dataLayerToggle": true
+    },
+    "slides": [
+      {
+        "id": 1,
+        "order": 1,
+        "active": true,
+        "name": "Slide Principal",
+        "title": "Título del Comunicado Oficial",
+        "description": "Descripción detallada de la notificación para los ciudadanos.",
+        "cta": "Consultar aquí",
+        "link": "https://www.quipux.com",
+        "alt": "Banner institucional",
+        "desktopName": "banner-principal-desk.webp",
+        "mobileName": "banner-principal-mob.webp",
+        "desktopPreview": null,
+        "mobilePreview": null
+      }
+    ]
+  },
+  {
+    "id": "camp-1",
+    "name": "Cobro Coactivo 2026",
+    "type": "Modal con slider",
+    "tenant": "valle",
+    "status": "Publicado",
+    "version": "v5",
+    "updated": "17 de sept de 2026",
+    "layout": "side",
+    "rules": {
+      "delay": 1,
+      "frequency": "once_per_session",
+      "pathRule": "*",
+      "startDate": "2026-09-01T00:00:00.000Z",
+      "endDate": "2026-10-31T23:59:59.000Z",
+      "escToggle": true,
+      "autoplayToggle": true,
+      "dataLayerToggle": true
+    },
+    "slides": [
+      {
+        "id": 2,
+        "order": 2,
+        "active": true,
+        "name": "Slide 2",
+        "title": "Hola Mundo",
+        "description": "Ingresa la descripción y llamado a la acción para esta diapositiva.",
+        "cta": "Ver más",
+        "link": "https://www.quipux.com",
+        "alt": "Imagen informativa slide 2",
+        "desktopName": "slide-2-desktop.webp",
+        "mobileName": "slide-2-mobile.webp",
+        "desktopPreview": null,
+        "mobilePreview": null
+      },
+      {
+        "id": 3,
+        "order": 3,
+        "active": true,
+        "name": "Slide 3",
+        "title": "Hola Mundo 2",
+        "description": "Ingresa la descripción y llamado a la acción para esta diapositiva.",
+        "cta": "Ver más",
+        "link": "https://www.quipux.com",
+        "alt": "Imagen informativa slide 3",
+        "desktopName": "slide-3-desktop.webp",
+        "mobileName": "slide-3-mobile.webp",
+        "desktopPreview": null,
+        "mobilePreview": null
+      }
+    ]
+  }
+]

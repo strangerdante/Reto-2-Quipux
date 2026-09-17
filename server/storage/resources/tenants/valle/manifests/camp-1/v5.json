@@ -1,0 +1,62 @@
+{
+  "id": "camp-1",
+  "tenantId": "valle",
+  "version": 5,
+  "versionString": "v5",
+  "publishedAt": "2026-09-17T21:58:58.201Z",
+  "publishedBy": {
+    "name": "Angie Ríos",
+    "role": "Publicador",
+    "initials": "AR"
+  },
+  "summary": "Publicación v5 - Cobro Coactivo 2026",
+  "layout": "side",
+  "rules": {
+    "delay": 1.5,
+    "frequency": "once_per_session",
+    "pathRule": "*",
+    "startDate": "2026-09-01T00:00:00.000Z",
+    "endDate": "2026-10-31T23:59:59.000Z",
+    "escToggle": true,
+    "autoplayToggle": true,
+    "dataLayerToggle": true
+  },
+  "slides": [
+    {
+      "id": 1,
+      "order": 1,
+      "active": true,
+      "title": "Aprovecha el 50% de Descuento",
+      "description": "Paga tu impuesto vehicular de vigencias anteriores sin intereses de mora.",
+      "cta": "Liquidar ahora",
+      "link": "https://impuestos.valledelcauca.gov.co/liquidar",
+      "alt": "Promoción descuento tributario Valle",
+      "desktopImage": "http://localhost:3000/resources/tenants/valle/assets/desktop/cobro-coactivo-desk.png",
+      "mobileImage": "http://localhost:3000/resources/tenants/valle/assets/mobile/cobro-coactivo-mob.png"
+    },
+    {
+      "id": 2,
+      "order": 2,
+      "active": true,
+      "title": "Facilidades de Pago y Financiación",
+      "description": "Difiere tu deuda tributaria hasta en 12 cuotas mensuales sin complicaciones.",
+      "cta": "Solicitar acuerdo",
+      "link": "https://impuestos.valledelcauca.gov.co/acuerdos",
+      "alt": "Financiación de obligaciones",
+      "desktopImage": "http://localhost:3000/resources/tenants/valle/assets/desktop/acuerdos-pago-desk.png",
+      "mobileImage": "http://localhost:3000/resources/tenants/valle/assets/mobile/acuerdos-pago-mob.png"
+    },
+    {
+      "id": 3,
+      "order": 3,
+      "active": true,
+      "title": "Pago Rápido y Seguro por PSE",
+      "description": "Paga desde la comodidad de tu hogar con cualquier entidad bancaria.",
+      "cta": "Ir a PSE",
+      "link": "https://impuestos.valledelcauca.gov.co/pse",
+      "alt": "Pasarela de pagos PSE",
+      "desktopImage": "http://localhost:3000/resources/tenants/valle/assets/desktop/pago-en-linea-desk.png",
+      "mobileImage": "http://localhost:3000/resources/tenants/valle/assets/mobile/pago-en-linea-mob.png"
+    }
+  ]
+}

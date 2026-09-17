@@ -1,0 +1,63 @@
+[
+  {
+    "id": "camp-med-1",
+    "name": "Novedades Movilidad Medellín 2026",
+    "type": "Modal con slider",
+    "tenant": "medellin",
+    "status": "Publicado",
+    "version": "v1",
+    "updated": "17 sep 2026",
+    "layout": "side",
+    "rules": {
+      "delay": 2,
+      "frequency": "once_per_device",
+      "pathRule": "*",
+      "startDate": "2026-09-01T00:00:00.000Z",
+      "endDate": "2026-12-31T23:59:59.000Z",
+      "escToggle": true,
+      "autoplayToggle": false,
+      "dataLayerToggle": true
+    },
+    "slides": [
+      {
+        "id": 1,
+        "name": "Slide 1 - Pico y Placa",
+        "title": "Nueva Rotación de Pico y Placa",
+        "description": "Conoce los dígitos de restricción para el primer semestre de 2026 en el Valle de Aburrá.",
+        "cta": "Ver rotación",
+        "link": "https://www.medellin.gov.co/movilidad/pico-placa",
+        "alt": "Restricción vehicular Medellín",
+        "desktopName": "pico-placa-desk.png",
+        "mobileName": "pico-placa-mob.png",
+        "desktopPreview": "http://localhost:3000/resources/tenants/medellin/assets/desktop/pico-placa-desk.png",
+        "mobilePreview": "http://localhost:3000/resources/tenants/medellin/assets/mobile/pico-placa-mob.png"
+      },
+      {
+        "id": 2,
+        "name": "Slide 2 - Comparendos",
+        "title": "Consulte sus Infracciones en Línea",
+        "description": "Verifique el estado de su vehículo y acceda a descuentos por pronto pago.",
+        "cta": "Consultar placa",
+        "link": "https://www.medellin.gov.co/movilidad/fotodeteccion",
+        "alt": "Consulta de comparendos",
+        "desktopName": "fotodeteccion-desk.png",
+        "mobileName": "fotodeteccion-mob.png",
+        "desktopPreview": "http://localhost:3000/resources/tenants/medellin/assets/desktop/fotodeteccion-desk.png",
+        "mobilePreview": "http://localhost:3000/resources/tenants/medellin/assets/mobile/fotodeteccion-mob.png"
+      },
+      {
+        "id": 3,
+        "name": "Slide 3 - Cursos Viales",
+        "title": "Agende su Curso Pedagógico Virtual",
+        "description": "Obtenga hasta el 50% de descuento en multas de tránsito realizando el curso vial.",
+        "cta": "Agendar cita",
+        "link": "https://www.medellin.gov.co/movilidad/cursos",
+        "alt": "Cursos pedagógicos",
+        "desktopName": "curso-vial-desk.png",
+        "mobileName": "curso-vial-mob.png",
+        "desktopPreview": "http://localhost:3000/resources/tenants/medellin/assets/desktop/curso-vial-desk.png",
+        "mobilePreview": "http://localhost:3000/resources/tenants/medellin/assets/mobile/curso-vial-mob.png"
+      }
+    ]
+  }
+]

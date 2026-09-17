@@ -1,0 +1,16 @@
+{
+  "name": "reto-quipux-popup-studio",
+  "version": "1.0.0",
+  "description": "Solución integral para el Reto #2 de Frontend — Quipux Popup Studio",
+  "scripts": {
+    "dev": "concurrently -n \"SERVER,STUDIO\" -c \"blue,magenta\" \"npm run server\" \"npm run studio\"",
+    "server": "node server/index.js",
+    "studio": "cd prototipo && npm start",
+    "build:runtime": "node runtime/build.js",
+    "build": "npm run build:runtime && cd prototipo && npm run build",
+    "test": "cd prototipo && npm test -- --watch=false"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

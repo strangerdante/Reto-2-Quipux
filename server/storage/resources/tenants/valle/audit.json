@@ -1,0 +1,112 @@
+[
+  {
+    "id": "audit-1789678862095",
+    "timestamp": "2026-09-17T21:01:02.095Z",
+    "user": "Angie Rios",
+    "role": "Frontend Developer",
+    "action": "PUBLICACION",
+    "campaignId": "camp-1789678002232",
+    "campaignName": "Nueva Campaña Quipux 2",
+    "version": "v4",
+    "details": "Campaña \"Nueva Campaña Quipux 2\" publicada como versión activa v4."
+  },
+  {
+    "id": "audit-1789678644670",
+    "timestamp": "2026-09-17T20:57:24.670Z",
+    "user": "Angie Rios",
+    "role": "Frontend Developer",
+    "action": "PUBLICACION",
+    "campaignId": "camp-1789678002232",
+    "campaignName": "Nueva Campaña Quipux 2",
+    "version": "v3",
+    "details": "Campaña \"Nueva Campaña Quipux 2\" publicada como versión activa v3."
+  },
+  {
+    "id": "audit-1789678527153",
+    "timestamp": "2026-09-17T20:55:27.153Z",
+    "user": "Angie Rios",
+    "role": "Frontend Developer",
+    "action": "PUBLICACION",
+    "campaignId": "camp-1789678002232",
+    "campaignName": "Nueva Campaña Quipux 2",
+    "version": "v2",
+    "details": "Campaña \"Nueva Campaña Quipux 2\" publicada como versión activa v2."
+  },
+  {
+    "id": "audit-1789678480539",
+    "timestamp": "2026-09-17T20:54:40.539Z",
+    "user": "Angie Rios",
+    "role": "Frontend Developer",
+    "action": "PUBLICACION",
+    "campaignId": "camp-1789678002232",
+    "campaignName": "Nueva Campaña Quipux 2",
+    "version": "v1",
+    "details": "Campaña \"Nueva Campaña Quipux 2\" publicada como versión activa v1."
+  },
+  {
+    "id": "audit-1789678058317",
+    "timestamp": "2026-09-17T20:47:38.317Z",
+    "user": "Angie Rios",
+    "role": "Frontend Developer",
+    "action": "EDICION",
+    "campaignId": "camp-1789678002232",
+    "campaignName": "Nueva Campaña Quipux 2",
+    "version": "v1",
+    "details": "Campaña \"Nueva Campaña Quipux 2\" actualizada en borrador."
+  },
+  {
+    "id": "audit-1789678003410",
+    "timestamp": "2026-09-17T20:46:43.410Z",
+    "user": "Angie Rios",
+    "role": "Frontend Developer",
+    "action": "CREACION",
+    "campaignId": "camp-1789678003406",
+    "campaignName": "Nueva Campaña Quipux 3",
+    "version": "v1",
+    "details": "Nueva campaña \"Nueva Campaña Quipux 3\" creada como borrador."
+  },
+  {
+    "id": "audit-1789678002236",
+    "timestamp": "2026-09-17T20:46:42.236Z",
+    "user": "Angie Rios",
+    "role": "Frontend Developer",
+    "action": "CREACION",
+    "campaignId": "camp-1789678002232",
+    "campaignName": "Nueva Campaña Quipux 2",
+    "version": "v1",
+    "details": "Nueva campaña \"Nueva Campaña Quipux 2\" creada como borrador."
+  },
+  {
+    "id": "audit-1789675754498",
+    "timestamp": "2026-09-17T20:09:14.498Z",
+    "user": "Angie Rios",
+    "role": "Frontend Developer",
+    "action": "REVERSION",
+    "campaignId": "modal-cobro-2026",
+    "campaignName": "Cobro Coactivo Impuesto Vehicular 2026",
+    "version": "v3",
+    "details": "Reversión ejecutada desde la versión previa v1. Ahora activa como v3."
+  },
+  {
+    "id": "audit-1789675754488",
+    "timestamp": "2026-09-17T20:09:14.488Z",
+    "user": "Angie Rios",
+    "role": "Frontend Developer",
+    "action": "PUBLICACION",
+    "campaignId": "modal-cobro-2026",
+    "campaignName": "Cobro Coactivo Impuesto Vehicular 2026",
+    "version": "v2",
+    "details": "Campaña \"Cobro Coactivo Impuesto Vehicular 2026\" publicada como versión activa v2."
+  },
+  {
+    "id": "audit-1789674612590",
+    "timestamp": "2026-09-17T19:50:12.590Z",
+    "user": "Angie Rios",
+    "role": "Frontend Developer",
+    "action": "PUBLICACION",
+    "campaignId": "modal-cobro-2026",
+    "campaignName": "Cobro Coactivo Impuesto Vehicular 2026",
+    "version": "v1",
+    "details": "Campaña \"Cobro Coactivo Impuesto Vehicular 2026\" publicada como versión activa v1."
+  }
+]

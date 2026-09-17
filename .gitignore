@@ -1,0 +1,72 @@
+# ============================================================
+# Exclusión de directrices de agentes y contexto de IA
+# ============================================================
+.agents/
+GEMINI.md
+.aura/
+
+# ============================================================
+# Dependencias
+# ============================================================
+node_modules/
+/node_modules
+*/node_modules/
+
+# ============================================================
+# Compilados y artefactos de build
+# ============================================================
+/dist
+/tmp
+/out-tsc
+/bazel-out
+prototipo/dist/
+server/storage/resources/runtime/quipux-popup-runtime.js
+
+# ============================================================
+# Caché de Angular
+# ============================================================
+.angular/
+/.angular/cache
+prototipo/.angular/
+
+# ============================================================
+# Logs
+# ============================================================
+npm-debug.log*
+yarn-error.log*
+*.log
+
+# ============================================================
+# IDEs y editores
+# ============================================================
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/mcp.json
+.history/*
+
+# ============================================================
+# Sistema operativo
+# ============================================================
+.DS_Store
+Thumbs.db
+
+# ============================================================
+# Otros
+# ============================================================
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
+__screenshots__/

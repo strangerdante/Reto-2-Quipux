@@ -1,0 +1,35 @@
+// Quipux Design System 2026 Design Tokens
+
+$ink: #211c33;
+$sky: #61c7d0;
+$paper: #ffffff;
+$blue: #2e13f5;
+$purple: #5b19d1;
+$green: #5dc99a;
+$orange: #f2a341;
+$title: #211c33;
+$sub: #8d8994;
+$body: #3a3a3a;
+$line: rgba(33, 28, 51, 0.12);
+$line-soft: rgba(33, 28, 51, 0.06);
+$warm: #f6f4ef;
+$cool: #eef7f8;
+$danger: #b33a2a;
+
+:root {
+  --ink: #{$ink};
+  --sky: #{$sky};
+  --paper: #{$paper};
+  --blue: #{$blue};
+  --purple: #{$purple};
+  --green: #{$green};
+  --orange: #{$orange};
+  --title: #{$title};
+  --sub: #{$sub};
+  --body: #{$body};
+  --line: #{$line};
+  --line-soft: #{$line-soft};
+  --warm: #{$warm};
+  --cool: #{$cool};
+  --danger: #{$danger};
+}

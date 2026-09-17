@@ -1,0 +1,250 @@
+[
+  {
+    "id": "camp-1789678002232-v4",
+    "version": "v4",
+    "author": "Angie Rios",
+    "timestamp": "17 de sept de 2026, 04:01 p. m.",
+    "summary": "Publicación de versión v4 con 2 slides",
+    "isCurrent": true,
+    "snapshot": {
+      "id": "camp-1789678002232",
+      "name": "Nueva Campaña Quipux 2",
+      "type": "Modal con slider",
+      "tenant": "valle",
+      "status": "Publicado",
+      "version": "v4",
+      "updated": "17 de sept de 2026",
+      "layout": "content",
+      "slides": [
+        {
+          "id": 1,
+          "name": "Slide inicial",
+          "title": "Hola Mundo",
+          "description": "Detalle de la comunicación oficial para el contribuyente.",
+          "cta": "Más información",
+          "link": "https://www.valledelcauca.gov.co",
+          "alt": "Imagen ilustrativa del comunicado",
+          "desktopName": "",
+          "mobileName": "",
+          "desktopPreview": null,
+          "mobilePreview": null,
+          "order": 1,
+          "active": true
+        },
+        {
+          "id": 2,
+          "name": "Slide 2",
+          "title": "Hola Mundo 2",
+          "description": "Ingresa la descripción y llamado a la acción para esta diapositiva.",
+          "cta": "Ver más",
+          "link": "https://www.valledelcauca.gov.co",
+          "alt": "Imagen informativa slide 2",
+          "desktopName": "slide-2-desktop.webp",
+          "mobileName": "slide-2-mobile.webp",
+          "desktopPreview": null,
+          "mobilePreview": null,
+          "order": 2,
+          "active": true
+        }
+      ],
+      "rules": {
+        "delay": 1,
+        "frequency": "once_per_session",
+        "pathRule": "/*",
+        "escToggle": true,
+        "autoplayToggle": false,
+        "dataLayerToggle": true,
+        "startDate": "2026-09-17",
+        "endDate": "2026-10-18"
+      },
+      "author": "Angie Rios",
+      "role": "Frontend Developer"
+    }
+  },
+  {
+    "id": "camp-1789678002232-v3",
+    "version": "v3",
+    "author": "Angie Rios",
+    "timestamp": "17 de sept de 2026, 03:57 p. m.",
+    "summary": "Publicación de versión v3 con 2 slides",
+    "isCurrent": false,
+    "snapshot": {
+      "id": "camp-1789678002232",
+      "name": "Nueva Campaña Quipux 2",
+      "type": "Modal con slider",
+      "tenant": "valle",
+      "status": "Publicado",
+      "version": "v3",
+      "updated": "17 de sept de 2026",
+      "layout": "content",
+      "slides": [
+        {
+          "id": 1,
+          "name": "Slide inicial",
+          "title": "Hola Mundo",
+          "description": "Detalle de la comunicación oficial para el contribuyente.",
+          "cta": "Más información",
+          "link": "https://www.valledelcauca.gov.co",
+          "alt": "Imagen ilustrativa del comunicado",
+          "desktopName": "",
+          "mobileName": "",
+          "desktopPreview": null,
+          "mobilePreview": null,
+          "order": 1,
+          "active": true
+        },
+        {
+          "id": 2,
+          "name": "Slide 2",
+          "title": "Hola Mundo 2",
+          "description": "Ingresa la descripción y llamado a la acción para esta diapositiva.",
+          "cta": "Ver más",
+          "link": "https://www.valledelcauca.gov.co",
+          "alt": "Imagen informativa slide 2",
+          "desktopName": "slide-2-desktop.webp",
+          "mobileName": "slide-2-mobile.webp",
+          "desktopPreview": null,
+          "mobilePreview": null,
+          "order": 2,
+          "active": true
+        }
+      ],
+      "rules": {
+        "delay": 1,
+        "frequency": "once_per_session",
+        "pathRule": "/*",
+        "escToggle": true,
+        "autoplayToggle": false,
+        "dataLayerToggle": true,
+        "startDate": "2026-09-17",
+        "endDate": "2026-10-18"
+      },
+      "author": "Angie Rios",
+      "role": "Frontend Developer"
+    }
+  },
+  {
+    "id": "camp-1789678002232-v2",
+    "version": "v2",
+    "author": "Angie Rios",
+    "timestamp": "17 de sept de 2026, 03:55 p. m.",
+    "summary": "Publicación de versión v2 con 2 slides",
+    "isCurrent": false,
+    "snapshot": {
+      "id": "camp-1789678002232",
+      "name": "Nueva Campaña Quipux 2",
+      "type": "Modal con slider",
+      "tenant": "valle",
+      "status": "Publicado",
+      "version": "v2",
+      "updated": "17 de sept de 2026",
+      "layout": "content",
+      "slides": [
+        {
+          "id": 1,
+          "name": "Slide inicial",
+          "title": "Hola Mundo",
+          "description": "Detalle de la comunicación oficial para el contribuyente.",
+          "cta": "Más información",
+          "link": "https://www.valledelcauca.gov.co",
+          "alt": "Imagen ilustrativa del comunicado",
+          "desktopName": "",
+          "mobileName": "",
+          "desktopPreview": null,
+          "mobilePreview": null,
+          "order": 1,
+          "active": true
+        },
+        {
+          "id": 2,
+          "name": "Slide 2",
+          "title": "Hola Mundo 2",
+          "description": "Ingresa la descripción y llamado a la acción para esta diapositiva.",
+          "cta": "Ver más",
+          "link": "https://www.valledelcauca.gov.co",
+          "alt": "Imagen informativa slide 2",
+          "desktopName": "slide-2-desktop.webp",
+          "mobileName": "slide-2-mobile.webp",
+          "desktopPreview": null,
+          "mobilePreview": null,
+          "order": 2,
+          "active": true
+        }
+      ],
+      "rules": {
+        "delay": 2,
+        "frequency": "once_per_session",
+        "pathRule": "/*",
+        "escToggle": true,
+        "autoplayToggle": false,
+        "dataLayerToggle": true,
+        "startDate": "2026-09-17",
+        "endDate": "2026-10-17"
+      },
+      "author": "Angie Rios",
+      "role": "Frontend Developer"
+    }
+  },
+  {
+    "id": "camp-1789678002232-v1",
+    "version": "v1",
+    "author": "Angie Rios",
+    "timestamp": "17 de sept de 2026, 03:54 p. m.",
+    "summary": "Publicación de versión v1 con 2 slides",
+    "isCurrent": false,
+    "snapshot": {
+      "id": "camp-1789678002232",
+      "name": "Nueva Campaña Quipux 2",
+      "type": "Modal con slider",
+      "tenant": "valle",
+      "status": "Publicado",
+      "version": "v1",
+      "updated": "17 de sept de 2026",
+      "layout": "content",
+      "slides": [
+        {
+          "id": 1,
+          "name": "Slide inicial",
+          "title": "Hola Mundo",
+          "description": "Detalle de la comunicación oficial para el contribuyente.",
+          "cta": "Más información",
+          "link": "https://www.valledelcauca.gov.co",
+          "alt": "Imagen ilustrativa del comunicado",
+          "desktopName": "",
+          "mobileName": "",
+          "desktopPreview": null,
+          "mobilePreview": null,
+          "order": 1,
+          "active": true
+        },
+        {
+          "id": 2,
+          "name": "Slide 2",
+          "title": "Hola Mundo 2",
+          "description": "Ingresa la descripción y llamado a la acción para esta diapositiva.",
+          "cta": "Ver más",
+          "link": "https://www.valledelcauca.gov.co",
+          "alt": "Imagen informativa slide 2",
+          "desktopName": "slide-2-desktop.webp",
+          "mobileName": "slide-2-mobile.webp",
+          "desktopPreview": null,
+          "mobilePreview": null,
+          "order": 2,
+          "active": true
+        }
+      ],
+      "rules": {
+        "delay": 2,
+        "frequency": "once_per_session",
+        "pathRule": "/*",
+        "escToggle": true,
+        "autoplayToggle": false,
+        "dataLayerToggle": true,
+        "startDate": "2026-09-17",
+        "endDate": "2026-10-17"
+      },
+      "author": "Angie Rios",
+      "role": "Frontend Developer"
+    }
+  }
+]
