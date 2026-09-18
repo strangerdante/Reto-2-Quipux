@@ -46,7 +46,9 @@ import { LegacyImporterComponent } from './components/legacy-importer/legacy-imp
               placeholder="Nombre de la campaña..."
             />
           </div>
-          <span class="draft-badge">Borrador</span>
+          <span class="status-badge" [class]="getStatusClass(campaignService.activeCampaign().status)">
+            {{ campaignService.activeCampaign().status }}
+          </span>
         </div>
 
         <div class="editor-actions">
@@ -171,15 +173,42 @@ import { LegacyImporterComponent } from './components/legacy-importer/legacy-imp
       }
     }
 
-    .draft-badge {
-      color: var(--blue);
+    .status-badge {
       text-transform: uppercase;
-      background: rgba(46, 19, 245, 0.08);
       padding: 4px 8px;
       font-size: 8px;
       font-weight: 800;
       border-radius: 4px;
       letter-spacing: 0.08em;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s ease;
+
+      &.borrador {
+        color: var(--blue);
+        background: rgba(46, 19, 245, 0.08);
+      }
+      &.en-revision {
+        color: #b45309;
+        background: rgba(245, 158, 11, 0.16);
+      }
+      &.aprobado {
+        color: #0369a1;
+        background: rgba(14, 165, 233, 0.16);
+      }
+      &.publicado {
+        color: #047857;
+        background: rgba(16, 185, 129, 0.16);
+      }
+      &.programado {
+        color: #7a4810;
+        background: rgba(242, 163, 65, 0.2);
+      }
+      &.inactivo {
+        color: #716c76;
+        background: #efedf1;
+      }
     }
 
     .editor-actions {
@@ -218,8 +247,6 @@ import { LegacyImporterComponent } from './components/legacy-importer/legacy-imp
     @media (width <= 900px) {
       .editor-view {
         height: auto;
-        min-height: calc(100vh - 72px);
-        overflow: visible;
       }
       .editor-body {
         grid-template-columns: 1fr;
@@ -229,10 +256,8 @@ import { LegacyImporterComponent } from './components/legacy-importer/legacy-imp
         border-right: 0;
         border-bottom: 1px solid var(--line);
       }
-    }
-
-    @media (width <= 620px) {
       .editor-header {
+        flex-direction: column;
         align-items: flex-start;
         height: auto;
         min-height: 94px;
@@ -242,7 +267,7 @@ import { LegacyImporterComponent } from './components/legacy-importer/legacy-imp
         width: 45vw;
         font-size: 15px;
       }
-      .editor-name .draft-badge,
+      .editor-name .status-badge,
       .editor-actions > small,
       .editor-actions .secondary {
         display: none;
@@ -268,6 +293,11 @@ export class EditorComponent implements OnInit {
   onNameChange(event: Event): void {
     const val = (event.target as HTMLInputElement).value;
     this.campaignService.updateCampaignName(val);
+  }
+
+  getStatusClass(status: string): string {
+    const s = (status || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '-');
+    return s || 'borrador';
   }
 
   goBack(): void {
