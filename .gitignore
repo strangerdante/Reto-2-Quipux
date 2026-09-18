@@ -70,3 +70,6 @@ Thumbs.db
 testem.log
 /typings
 __screenshots__/
+output/
+skills-lock.json
+*.visual-check.*

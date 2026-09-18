@@ -1,4 +1,5 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
+import { APP_CONFIG } from '@core/config/app-config';
 import { CampaignService } from '@core/services/campaign.service';
 import { PublishService } from '@core/services/publish.service';
 import { ResourceService } from '@core/services/resource.service';
@@ -18,10 +19,46 @@ import { TenantService } from '@core/services/tenant.service';
     <!-- Manifest card -->
     <div class="manifest-card">
       <span>MANIFIESTO ACTIVO EN CDN (AC-12)</span>
-      <code>http://localhost:3000/resources/tenants/{{ tenantService.activeTenantId() }}/manifests/{{ campaignService.activeCampaign().id }}/active.json</code>
-      <div>
+      <code>{{ manifestUrl() }}</code>
+      <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
         <small>Estado: En sincronía con portal</small>
         <button class="mini-button" (click)="openManifestMock()">Ver payload real ↗</button>
+        <button class="mini-button" style="background: var(--blue); color: #fff; border-color: var(--blue);" (click)="openPortalDemo()">Probar en Portal Demo (AC-12) ↗</button>
+      </div>
+    </div>
+
+    <!-- Flujo de Aprobación por Roles (AP-01) -->
+    <div class="manifest-card" style="margin-bottom: 16px;">
+      <span>GOBERNANZA Y ESTADO DE APROBACIÓN (AP-01)</span>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 6px; flex-wrap: wrap; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <strong style="font-size: 13px; color: var(--ink);">Estado:</strong>
+          <span class="q-badge" [class]="campaignService.activeCampaign().status.toLowerCase().replace(' ', '-')">
+            {{ campaignService.activeCampaign().status }}
+          </span>
+          <small style="color: #64748B;">Rol: <strong>{{ tenantService.activeRole() }}</strong></small>
+        </div>
+
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          @if (tenantService.activeRole() === 'Editor' && campaignService.activeCampaign().status !== 'En revisión' && campaignService.activeCampaign().status !== 'Aprobado') {
+            <button class="mini-button" style="background: var(--blue); color: #fff; border-color: var(--blue);" (click)="campaignService.submitForReview()">
+              Solicitar Aprobación (Editor)
+            </button>
+          }
+
+          @if (tenantService.activeRole() === 'Revisor') {
+            @if (campaignService.activeCampaign().status !== 'Aprobado') {
+              <button class="mini-button" style="background: #059669; color: #fff; border-color: #059669;" (click)="campaignService.approveCampaign()">
+                Aprobar para Publicar (Revisor)
+              </button>
+            }
+            @if (campaignService.activeCampaign().status === 'En revisión' || campaignService.activeCampaign().status === 'Aprobado') {
+              <button class="mini-button" (click)="campaignService.rejectToDraft()">
+                Devolver a Borrador
+              </button>
+            }
+          }
+        </div>
       </div>
     </div>
 
@@ -278,11 +315,17 @@ export class PublishTabComponent {
   readonly tenantService = inject(TenantService);
   readonly publishService = inject(PublishService);
   readonly resourceService = inject(ResourceService);
+  private readonly config = inject(APP_CONFIG);
+
+  readonly manifestUrl = computed(() => `${this.config.cdnBaseUrl}/resources/tenants/${this.tenantService.activeTenantId()}/manifests/${this.campaignService.activeCampaign().id}/active.json`);
 
   openManifestMock(): void {
+    window.open(this.manifestUrl(), '_blank');
+  }
+
+  openPortalDemo(): void {
     const tenant = this.tenantService.activeTenantId();
     const campaignId = this.campaignService.activeCampaign().id;
-    const realUrl = `http://localhost:3000/resources/tenants/${tenant}/manifests/${campaignId}/active.json`;
-    window.open(realUrl, '_blank');
+    window.open(`${this.config.portalDemoUrl}/?tenant=${encodeURIComponent(tenant)}&campaign=${encodeURIComponent(campaignId)}`, '_blank');
   }
 }

@@ -1,10 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { CampaignService } from '@core/services/campaign.service';
 import { TenantService } from '@core/services/tenant.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-rules-tab',
-  imports: [],
+  imports: [LucideAngularModule],
   template: `
     <div class="panel-heading">
       <h2>Reglas de aparición</h2>
@@ -20,7 +21,7 @@ import { TenantService } from '@core/services/tenant.service';
           type="number"
           min="0"
           max="30"
-          [value]="campaignService.activeCampaign().rules.delay"
+          [value]="getNormalizedDelay()"
           (input)="onDelayChange($event)"
         />
         <b>segundos</b>
@@ -28,26 +29,101 @@ import { TenantService } from '@core/services/tenant.service';
       <small>Espera tras la carga inicial de la página antes de activar el modal.</small>
     </div>
 
-    <div class="two-fields">
-      <label class="field">
-        <span>Fecha y hora de inicio (AC-09)</span>
-        <input
-          type="datetime-local"
-          [value]="campaignService.activeCampaign().rules.startDate || ''"
-          (input)="onDateChange('startDate', $event)"
-        />
-        <small>Momento exacto en que la campaña se activa en el portal.</small>
-      </label>
+    <!-- Sección de programación temporal en formato 24 horas (AC-09) -->
+    <div class="schedule-section">
+      <div class="schedule-card">
+        <div class="schedule-header">
+          <span class="schedule-title">Fecha y hora de inicio (AC-09)</span>
+          <span class="badge-24h" title="Formato 24 horas sin sufijos a.m./p.m.">
+            <lucide-icon name="clock" [size]="10"></lucide-icon> 24h
+          </span>
+        </div>
+        <div class="schedule-controls">
+          <div class="date-col">
+            <span class="input-sublabel">Fecha</span>
+            <input
+              type="date"
+              class="date-input"
+              [value]="getDatePart('startDate')"
+              (change)="onDatePartChange('startDate', $event)"
+              aria-label="Fecha de inicio"
+            />
+          </div>
+          <div class="time-col">
+            <span class="input-sublabel">Hora (24h)</span>
+            <div class="time-box">
+              <input
+                type="text"
+                class="time-input"
+                maxlength="5"
+                placeholder="00:00"
+                list="quipux-time-presets"
+                [value]="getTimePart('startDate')"
+                (input)="onTimePartChange('startDate', $event)"
+                (blur)="onTimeBlur('startDate', $event)"
+                (keydown)="onTimeKeyDown('startDate', $event)"
+                aria-label="Hora de inicio en formato 24 horas"
+                title="Formato 24 horas (00:00 a 23:59). Flechas Arriba/Abajo para cambiar la hora."
+              />
+              <span class="time-unit">hrs</span>
+            </div>
+          </div>
+        </div>
+        <small class="field-hint">Momento exacto en que la campaña se activa en el portal.</small>
+      </div>
 
-      <label class="field">
-        <span>Fecha y hora de vencimiento (AC-09)</span>
-        <input
-          type="datetime-local"
-          [value]="campaignService.activeCampaign().rules.endDate || ''"
-          (input)="onDateChange('endDate', $event)"
-        />
-        <small>Momento en que el modal deja de aparecer automáticamente.</small>
-      </label>
+      <div class="schedule-card">
+        <div class="schedule-header">
+          <span class="schedule-title">Fecha y hora de vencimiento (AC-09)</span>
+          <span class="badge-24h" title="Formato 24 horas sin sufijos a.m./p.m.">
+            <lucide-icon name="clock" [size]="10"></lucide-icon> 24h
+          </span>
+        </div>
+        <div class="schedule-controls">
+          <div class="date-col">
+            <span class="input-sublabel">Fecha</span>
+            <input
+              type="date"
+              class="date-input"
+              [value]="getDatePart('endDate')"
+              (change)="onDatePartChange('endDate', $event)"
+              aria-label="Fecha de vencimiento"
+            />
+          </div>
+          <div class="time-col">
+            <span class="input-sublabel">Hora (24h)</span>
+            <div class="time-box">
+              <input
+                type="text"
+                class="time-input"
+                maxlength="5"
+                placeholder="23:59"
+                list="quipux-time-presets"
+                [value]="getTimePart('endDate')"
+                (input)="onTimePartChange('endDate', $event)"
+                (blur)="onTimeBlur('endDate', $event)"
+                (keydown)="onTimeKeyDown('endDate', $event)"
+                aria-label="Hora de vencimiento en formato 24 horas"
+                title="Formato 24 horas (00:00 a 23:59). Flechas Arriba/Abajo para cambiar la hora."
+              />
+              <span class="time-unit">hrs</span>
+            </div>
+          </div>
+        </div>
+        <small class="field-hint">Momento en que el modal deja de aparecer automáticamente.</small>
+      </div>
+
+      <!-- Presets de horas frecuentes para selección rápida -->
+      <datalist id="quipux-time-presets">
+        <option value="00:00">00:00 (Medianoche)</option>
+        <option value="06:00">06:00 (Apertura matutina)</option>
+        <option value="08:00">08:00 (Inicio jornada laboral)</option>
+        <option value="12:00">12:00 (Mediodía)</option>
+        <option value="14:00">14:00 (Inicio turno tarde)</option>
+        <option value="18:00">18:00 (Fin jornada laboral)</option>
+        <option value="20:00">20:00 (Noche)</option>
+        <option value="23:59">23:59 (Fin del día)</option>
+      </datalist>
     </div>
 
     <label class="field">
@@ -286,17 +362,131 @@ import { TenantService } from '@core/services/tenant.service';
       }
     }
 
-    .two-fields {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+    .schedule-section {
+      display: flex;
+      flex-direction: column;
       gap: 12px;
       margin-bottom: 14px;
     }
 
-    @media (width <= 620px) {
-      .two-fields {
-        grid-template-columns: 1fr;
+    .schedule-card {
+      background: #faf9fd;
+      border: 1.5px solid #e3e0ea;
+      border-radius: 8px;
+      padding: 10px 12px;
+      transition: border-color 0.15s ease, background 0.15s ease;
+
+      &:focus-within {
+        border-color: var(--blue);
+        background: #fff;
       }
+    }
+
+    .schedule-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .schedule-title {
+      color: var(--ink);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+
+    .badge-24h {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
+    .schedule-controls {
+      display: grid;
+      grid-template-columns: 1fr 108px;
+      gap: 8px;
+      align-items: end;
+    }
+
+    .input-sublabel {
+      display: block;
+      color: #716b7a;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 3px;
+    }
+
+    .date-input {
+      width: 100%;
+      color: var(--body);
+      background: #fff;
+      border: 1.5px solid #dddae5;
+      border-radius: 6px;
+      outline: 0;
+      padding: 7px 9px;
+      font-size: 11.5px;
+      font-family: inherit;
+      transition: border-color 0.15s ease;
+
+      &:focus {
+        border-color: var(--blue);
+      }
+    }
+
+    .time-box {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border: 1.5px solid #dddae5;
+      border-radius: 6px;
+      overflow: hidden;
+      transition: border-color 0.15s ease;
+
+      &:focus-within {
+        border-color: var(--blue);
+      }
+
+      .time-input {
+        width: 100%;
+        border: 0;
+        outline: 0;
+        padding: 7px 4px 7px 8px;
+        font-size: 11.5px;
+        font-weight: 700;
+        color: var(--ink);
+        background: transparent;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        letter-spacing: 0.05em;
+        text-align: center;
+      }
+
+      .time-unit {
+        color: #8b8593;
+        font-size: 9px;
+        font-weight: 700;
+        background: #f4f3f6;
+        padding: 7px 6px;
+        border-left: 1px solid #e3e0ea;
+        user-select: none;
+      }
+    }
+
+    .field-hint {
+      color: var(--sub);
+      margin-top: 5px;
+      font-size: 9.5px;
+      display: block;
     }
   `]
 })
@@ -304,14 +494,109 @@ export class RulesTabComponent {
   readonly campaignService = inject(CampaignService);
   readonly tenantService = inject(TenantService);
 
+  getNormalizedDelay(): number {
+    const d = this.campaignService.activeCampaign().rules?.delay;
+    if (d && d > 60) return Math.round(d / 1000);
+    return d ?? 0;
+  }
+
   onDelayChange(event: Event): void {
     const val = Number((event.target as HTMLInputElement).value) || 0;
     this.campaignService.updateRules({ delay: val });
   }
 
-  onDateChange(field: 'startDate' | 'endDate', event: Event): void {
-    const val = (event.target as HTMLInputElement).value;
-    this.campaignService.updateRules({ [field]: val });
+  getDatePart(field: 'startDate' | 'endDate'): string {
+    const val = this.campaignService.activeCampaign().rules?.[field];
+    if (!val) return '';
+    if (val.includes('T')) return val.split('T')[0];
+    if (val.length === 10) return val;
+    return '';
+  }
+
+  getTimePart(field: 'startDate' | 'endDate'): string {
+    const val = this.campaignService.activeCampaign().rules?.[field];
+    if (!val) return field === 'endDate' ? '23:59' : '00:00';
+    if (val.includes('T')) {
+      const time = val.split('T')[1];
+      if (time) return time.substring(0, 5);
+    }
+    return field === 'endDate' ? '23:59' : '00:00';
+  }
+
+  onDatePartChange(field: 'startDate' | 'endDate', event: Event): void {
+    const dateVal = (event.target as HTMLInputElement).value;
+    if (!dateVal) {
+      this.campaignService.updateRules({ [field]: '' });
+      return;
+    }
+    const currentTime = this.getTimePart(field) || (field === 'endDate' ? '23:59' : '00:00');
+    this.campaignService.updateRules({ [field]: `${dateVal}T${currentTime}` });
+  }
+
+  onTimePartChange(field: 'startDate' | 'endDate', event: Event): void {
+    const inputEl = event.target as HTMLInputElement;
+    const rawVal = inputEl.value.trim();
+    const match = rawVal.match(/^(\d{1,2}):(\d{2})/);
+    if (match) {
+      const hh = match[1].padStart(2, '0');
+      const mm = match[2];
+      const hNum = parseInt(hh, 10);
+      const mNum = parseInt(mm, 10);
+      if (hNum >= 0 && hNum <= 23 && mNum >= 0 && mNum <= 59) {
+        const validTime = `${hh}:${mm}`;
+        const currentDate = this.getDatePart(field) || new Date().toISOString().split('T')[0];
+        this.campaignService.updateRules({ [field]: `${currentDate}T${validTime}` });
+      }
+    }
+  }
+
+  onTimeBlur(field: 'startDate' | 'endDate', event: Event): void {
+    const inputEl = event.target as HTMLInputElement;
+    const formatted = this.normalize24hTime(inputEl.value.trim(), field);
+    inputEl.value = formatted;
+    const currentDate = this.getDatePart(field) || new Date().toISOString().split('T')[0];
+    this.campaignService.updateRules({ [field]: `${currentDate}T${formatted}` });
+  }
+
+  onTimeKeyDown(field: 'startDate' | 'endDate', event: KeyboardEvent): void {
+    if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+      event.preventDefault();
+      const inputEl = event.target as HTMLInputElement;
+      const current = this.getTimePart(field);
+      let [h, m] = current.split(':').map(Number);
+      if (isNaN(h)) h = 0;
+      if (isNaN(m)) m = 0;
+      const delta = event.key === 'ArrowUp' ? 1 : -1;
+      h = (h + delta + 24) % 24;
+      const newTime = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+      inputEl.value = newTime;
+      const currentDate = this.getDatePart(field) || new Date().toISOString().split('T')[0];
+      this.campaignService.updateRules({ [field]: `${currentDate}T${newTime}` });
+    }
+  }
+
+  private normalize24hTime(val: string, field: 'startDate' | 'endDate'): string {
+    if (!val) return field === 'endDate' ? '23:59' : '00:00';
+    const cleaned = val.replace(/[^\d:]/g, '');
+    if (cleaned.includes(':')) {
+      const parts = cleaned.split(':');
+      let h = parseInt(parts[0], 10) || 0;
+      let m = parseInt(parts[1], 10) || 0;
+      h = Math.max(0, Math.min(23, h));
+      m = Math.max(0, Math.min(59, m));
+      return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+    } else if (cleaned.length === 4) {
+      let h = parseInt(cleaned.substring(0, 2), 10) || 0;
+      let m = parseInt(cleaned.substring(2, 4), 10) || 0;
+      h = Math.max(0, Math.min(23, h));
+      m = Math.max(0, Math.min(59, m));
+      return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+    } else if (cleaned.length > 0 && cleaned.length <= 2) {
+      let h = parseInt(cleaned, 10) || 0;
+      h = Math.max(0, Math.min(23, h));
+      return `${String(h).padStart(2, '0')}:00`;
+    }
+    return field === 'endDate' ? '23:59' : '00:00';
   }
 
   onFrequencyChange(event: Event): void {

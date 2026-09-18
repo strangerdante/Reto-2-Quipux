@@ -12,11 +12,13 @@ import {
 
 import { provideHttpClient } from '@angular/common/http';
 import { routes } from './app.routes';
+import { APP_CONFIG, resolveAppConfig } from './core/config/app-config';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideHttpClient(),
+    { provide: APP_CONFIG, useValue: resolveAppConfig() },
     provideRouter(routes, withComponentInputBinding()),
     importProvidersFrom(
       LucideAngularModule.pick({

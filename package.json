@@ -8,7 +8,9 @@
     "studio": "cd prototipo && npm start",
     "build:runtime": "node runtime/build.js",
     "build": "npm run build:runtime && cd prototipo && npm run build",
-    "test": "cd prototipo && npm test -- --watch=false"
+    "test:runtime": "node --test runtime/tests/runtime.test.mjs",
+    "test:studio": "cd prototipo && npm test -- --watch=false",
+    "test": "npm run test:runtime && npm run test:studio"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"

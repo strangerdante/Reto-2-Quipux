@@ -4,6 +4,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { CampaignService } from './campaign.service';
 import { TenantService } from './tenant.service';
 import { ToastService } from './toast.service';
+import { APP_CONFIG, resolveAppConfig } from '../config/app-config';
 
 describe('CampaignService', () => {
   let service: CampaignService;
@@ -13,6 +14,7 @@ describe('CampaignService', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
+        { provide: APP_CONFIG, useFactory: resolveAppConfig },
         CampaignService,
         TenantService,
         ToastService

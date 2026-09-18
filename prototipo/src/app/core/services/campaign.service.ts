@@ -1,16 +1,16 @@
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Campaign, CampaignType, PopupLayout, PopupRules, Slide } from '../models/campaign.model';
+import { APP_CONFIG } from '../config/app-config';
 import { TenantService } from './tenant.service';
 import { ToastService } from './toast.service';
-
-const API_BASE = 'http://localhost:3000/api';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CampaignService {
   private readonly http = inject(HttpClient);
+  private readonly config = inject(APP_CONFIG);
   private readonly tenantService = inject(TenantService);
   private readonly toastService = inject(ToastService);
 
@@ -34,8 +34,8 @@ export class CampaignService {
         alt: 'Banner institucional Valle',
         desktopName: 'cobro-coactivo-desk.png',
         mobileName: 'cobro-coactivo-mob.png',
-        desktopPreview: 'http://localhost:3000/resources/tenants/valle/assets/desktop/cobro-coactivo-desk.png',
-        mobilePreview: 'http://localhost:3000/resources/tenants/valle/assets/mobile/cobro-coactivo-mob.png',
+        desktopPreview: `${this.config.cdnBaseUrl}/resources/tenants/valle/assets/desktop/cobro-coactivo-desk.png`,
+        mobilePreview: `${this.config.cdnBaseUrl}/resources/tenants/valle/assets/mobile/cobro-coactivo-mob.png`,
         order: 1,
         active: true
       }
@@ -119,7 +119,7 @@ export class CampaignService {
     const tenant = tenantId || this.tenantService.activeTenantId();
     this.isLoading.set(true);
 
-    this.http.get<Campaign[]>(`${API_BASE}/campaigns?tenant=${tenant}`).subscribe({
+    this.http.get<Campaign[]>(`${this.config.apiBaseUrl}/campaigns?tenant=${tenant}`).subscribe({
       next: (list) => {
         this.campaigns.set(list);
         this.isLoading.set(false);
@@ -153,7 +153,7 @@ export class CampaignService {
     } else {
       // Intentar cargar por HTTP si no está en memoria
       const tenant = this.tenantService.activeTenantId();
-      this.http.get<Campaign>(`${API_BASE}/campaigns/${id}?tenant=${tenant}`).subscribe({
+      this.http.get<Campaign>(`${this.config.apiBaseUrl}/campaigns/${id}?tenant=${tenant}`).subscribe({
         next: (camp) => {
           this.activeCampaign.set(camp);
           this.selectedSlideId.set(camp.slides[0]?.id ?? 1);
@@ -328,7 +328,7 @@ export class CampaignService {
 
     this.saveStatus.set('Guardando...');
 
-    this.http.post<{ success: boolean; campaign: Campaign }>(`${API_BASE}/campaigns?tenant=${tenant}`, current).subscribe({
+    this.http.post<{ success: boolean; campaign: Campaign }>(`${this.config.apiBaseUrl}/campaigns?tenant=${tenant}`, current).subscribe({
       next: (res) => {
         const saved = res.campaign || current;
         this.campaigns.update(list => {
@@ -351,19 +351,20 @@ export class CampaignService {
     });
   }
 
-  // Creación de nueva campaña
-  createNewCampaign(type: CampaignType = 'Modal con slider'): Campaign {
+  // Creación de nueva campaña gobernada (AP-05)
+  createNewCampaign(type: CampaignType = 'Modal con slider', layout: PopupLayout = 'side'): Campaign {
     const tenant = this.tenantService.activeTenantId();
     const newId = 'camp-' + Date.now();
+    const isBanner = layout === 'top';
     const newCamp: Campaign = {
       id: newId,
-      name: 'Nueva Campaña ' + (this.campaigns().length + 1),
+      name: isBanner ? ('Banner Horizontal ' + (this.campaigns().length + 1)) : ('Nueva Campaña ' + (this.campaigns().length + 1)),
       type,
       tenant,
       status: 'Borrador',
       version: 'v1',
       updated: 'Justo ahora',
-      layout: 'side',
+      layout,
       rules: {
         delay: 2000,
         frequency: 'once_per_session',
@@ -379,11 +380,12 @@ export class CampaignService {
           id: 1,
           order: 1,
           active: true,
-          name: 'Slide Principal',
-          title: 'Título del Comunicado Oficial',
-          description: 'Descripción detallada de la notificación para los ciudadanos.',
-          cta: 'Consultar aquí',
+          name: isBanner ? 'Slide Banner 1' : 'Slide Principal',
+          title: isBanner ? 'Aviso Vial Importante' : 'Título del Comunicado Oficial',
+          description: isBanner ? 'Alerta ciudadana sobre cierres viales programados.' : 'Descripción detallada de la notificación para los ciudadanos.',
+          cta: isBanner ? 'Ver desvíos' : 'Consultar aquí',
           link: 'https://www.quipux.com',
+          target: '_blank',
           alt: 'Banner institucional',
           desktopName: 'banner-principal-desk.webp',
           mobileName: 'banner-principal-mob.webp',
@@ -398,6 +400,28 @@ export class CampaignService {
     this.previewIndex.set(0);
     this.saveDraft();
     return newCamp;
+  }
+
+  // AP-01: Flujo de Aprobación Formal (Editor -> Revisor -> Publicador)
+  submitForReview(): void {
+    const campaign = this.activeCampaign();
+    this.activeCampaign.update(c => ({ ...c, status: 'En revisión', updated: 'Justo ahora' }));
+    this.saveDraft();
+    this.toastService.show(`📋 Campaña "${campaign.name}" enviada a revisión formal (AP-01)`);
+  }
+
+  approveCampaign(): void {
+    const campaign = this.activeCampaign();
+    this.activeCampaign.update(c => ({ ...c, status: 'Aprobado', updated: 'Justo ahora' }));
+    this.saveDraft();
+    this.toastService.show(`✅ Campaña "${campaign.name}" aprobada por Revisor para publicación (AP-01)`);
+  }
+
+  rejectToDraft(): void {
+    const campaign = this.activeCampaign();
+    this.activeCampaign.update(c => ({ ...c, status: 'Borrador', updated: 'Justo ahora' }));
+    this.saveDraft();
+    this.toastService.show(`↩️ Campaña "${campaign.name}" devuelta a estado Borrador`);
   }
 
   private markDirty(): void {

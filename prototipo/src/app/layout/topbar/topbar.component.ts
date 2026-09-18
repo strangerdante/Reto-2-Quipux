@@ -8,7 +8,13 @@ import { LucideAngularModule } from 'lucide-angular';
   template: `
     <header class="global-topbar">
       <div class="portal-context">
-        <span class="context-dot" aria-hidden="true"></span>
+        @if (tenantService.activeTenant().logoUrl) {
+          <div class="tenant-logo-badge">
+            <img [src]="tenantService.activeTenant().logoUrl" [alt]="tenantService.activeTenant().name" />
+          </div>
+        } @else {
+          <span class="context-dot" aria-hidden="true"></span>
+        }
         <div>
           <small>Portal activo</small>
           <strong>{{ tenantService.activeTenant().name }} ({{ tenantService.activeTenant().portalUrl }})</strong>
@@ -58,6 +64,28 @@ import { LucideAngularModule } from 'lucide-angular';
       align-items: center;
       gap: 10px;
       display: flex;
+
+      .tenant-logo-badge {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: none;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          display: block;
+          filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.2));
+        }
+      }
 
       .context-dot {
         background: var(--green);

@@ -3,6 +3,7 @@ import { CampaignService } from '@core/services/campaign.service';
 import { PublishService } from '@core/services/publish.service';
 import { ResourceService } from '@core/services/resource.service';
 import { TenantService } from '@core/services/tenant.service';
+import { APP_CONFIG } from '@core/config/app-config';
 import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
@@ -42,7 +43,7 @@ import { LucideAngularModule } from 'lucide-angular';
 
           <div class="publish-path">
             <span>DESTINO INMUTABLE DEL MANIFEST ACTIVO</span>
-            <code>http://localhost:3000/resources/tenants/{{ tenantService.activeTenantId() }}/manifests/{{ campaignService.activeCampaign().id }}/active.json</code>
+            <code>{{ manifestUrl() }}</code>
           </div>
 
           <!-- Selector de Pestaña: Preflight vs Comparador Diff (AP-03) -->
@@ -105,6 +106,15 @@ import { LucideAngularModule } from 'lucide-angular';
                 <strong>Restricción de rol (AP-01):</strong> El usuario actual tiene rol
                 <strong>{{ tenantService.activeRole() }}</strong>. Solo usuarios con rol
                 <strong>Publicador</strong> pueden emitir versiones a producción.
+              </p>
+            </div>
+          }
+
+          @if (campaignService.activeCampaign().status === 'Borrador' || campaignService.activeCampaign().status === 'En revisión') {
+            <div class="role-warning" style="background: #fffbeb; border-color: #fde68a; color: #92400e;">
+              <lucide-icon name="alert-triangle" [size]="14"></lucide-icon>
+              <p>
+                <strong>Gobernanza de aprobación (AP-01):</strong> La campaña está en estado <strong>{{ campaignService.activeCampaign().status }}</strong>. La publicación por rol Publicador la promoverá a <strong>Publicado</strong>.
               </p>
             </div>
           }
@@ -477,8 +487,11 @@ export class PublishDialogComponent {
   readonly tenantService = inject(TenantService);
   readonly publishService = inject(PublishService);
   readonly resourceService = inject(ResourceService);
+  private readonly config = inject(APP_CONFIG);
 
   readonly activeTab = signal<'preflight' | 'diff'>('preflight');
+
+  readonly manifestUrl = computed(() => `${this.config.cdnBaseUrl}/resources/tenants/${this.tenantService.activeTenantId()}/manifests/${this.campaignService.activeCampaign().id}/active.json`);
 
   readonly nextVersionTag = computed(() => {
     const list = this.publishService.versions();

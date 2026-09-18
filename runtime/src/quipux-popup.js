@@ -13,10 +13,43 @@ export class QuipuxPopupStudioElement extends HTMLElement {
     this.focusTrap = null;
     this.openTime = null;
     this.isClosing = false;
+    this.scheduledRenderTimeout = null;
+    this.hiddenBackgroundElements = [];
+  }
+
+  sanitizeCtaUrl(rawUrl) {
+    const url = String(rawUrl || '').trim();
+    if (!url || url === '#' || (url.startsWith('/') && !url.startsWith('//')) || url.startsWith('https://')) {
+      return url || '#';
+    }
+    return '#';
+  }
+
+  isolateBackground() {
+    this.hiddenBackgroundElements = [];
+    if (typeof document === 'undefined') return;
+    const bodyChildren = document.body ? Array.from(document.body.children) : [];
+    for (const child of bodyChildren) {
+      if (child !== this && child.nodeType === 1 && !child.hasAttribute('aria-hidden')) {
+        child.setAttribute('aria-hidden', 'true');
+        this.hiddenBackgroundElements.push(child);
+      }
+    }
+  }
+
+  restoreBackground() {
+    if (Array.isArray(this.hiddenBackgroundElements)) {
+      for (const el of this.hiddenBackgroundElements) {
+        if (el && typeof el.removeAttribute === 'function') {
+          el.removeAttribute('aria-hidden');
+        }
+      }
+      this.hiddenBackgroundElements = [];
+    }
   }
 
   static get observedAttributes() {
-    return ['tenant', 'campaign', 'manifest-url'];
+    return ['tenant', 'campaign', 'manifest-url', 'cdn-base-url'];
   }
 
   connectedCallback() {
@@ -28,9 +61,14 @@ export class QuipuxPopupStudioElement extends HTMLElement {
   }
 
   cleanup() {
+    this.restoreBackground();
     if (this.autoplayInterval) {
       clearInterval(this.autoplayInterval);
       this.autoplayInterval = null;
+    }
+    if (this.scheduledRenderTimeout) {
+      clearTimeout(this.scheduledRenderTimeout);
+      this.scheduledRenderTimeout = null;
     }
     if (this.focusTrap) {
       this.focusTrap.deactivate();
@@ -41,9 +79,10 @@ export class QuipuxPopupStudioElement extends HTMLElement {
   async init() {
     const tenant = this.getAttribute('tenant') || 'valle';
     const campaignId = this.getAttribute('campaign') || 'camp-1';
-    const loader = new ManifestLoader();
+    const loader = new ManifestLoader(this.getAttribute('cdn-base-url'));
+    const manifestUrl = this.getAttribute('manifest-url');
 
-    this.manifest = await loader.fetchActiveManifest(tenant, campaignId);
+    this.manifest = await loader.fetchActiveManifest(tenant, campaignId, manifestUrl);
     if (!this.manifest || !this.manifest.slides || this.manifest.slides.length === 0) {
       return;
     }
@@ -61,7 +100,8 @@ export class QuipuxPopupStudioElement extends HTMLElement {
     const rawDelay = Number(this.manifest.rules?.delay || 0);
     const delayMs = rawDelay > 30 ? rawDelay : Math.max(0, rawDelay * 1000);
 
-    setTimeout(() => {
+    this.scheduledRenderTimeout = setTimeout(() => {
+      this.scheduledRenderTimeout = null;
       this.render();
       RuleEvaluator.recordView(this.manifest.rules, this.manifest.id);
     }, delayMs);
@@ -395,6 +435,9 @@ export class QuipuxPopupStudioElement extends HTMLElement {
       </div>
     `;
 
+    // Aislar accesiblemente elementos de fondo (AC-18)
+    this.isolateBackground();
+
     // Configurar listeners de interacción
     const backdrop = this.shadowRoot.querySelector('.backdrop');
     const closeBtn = this.shadowRoot.querySelector('#btn-close');
@@ -428,7 +471,7 @@ export class QuipuxPopupStudioElement extends HTMLElement {
     }, { passive: true });
 
     card.addEventListener('touchend', (e) => {
-      if (e.changedTouches.length === 1) {
+      if (this.manifest.slides.length > 1 && e.changedTouches.length === 1) {
         const deltaX = e.changedTouches[0].clientX - touchStartX;
         const deltaY = e.changedTouches[0].clientY - touchStartY;
         if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 40) {
@@ -441,8 +484,15 @@ export class QuipuxPopupStudioElement extends HTMLElement {
       }
     }, { passive: true });
 
-    // Navegación accesible con flechas de teclado (izquierda/derecha)
+    // Navegación accesible con flechas de teclado y respeto a escToggle (AC-18)
     backdrop.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' || e.key === 'Esc') {
+        if (this.manifest?.rules?.escToggle !== false) {
+          e.preventDefault();
+          this.closeModal('esc_key');
+        }
+        return;
+      }
       if (this.manifest.slides.length <= 1) return;
       if (e.key === 'ArrowRight') {
         this.nextSlide();
@@ -451,8 +501,12 @@ export class QuipuxPopupStudioElement extends HTMLElement {
       }
     });
 
-    // Activar trampa de foco accesible (AC-18)
-    this.focusTrap = new FocusTrap(backdrop, () => this.closeModal('esc_key'));
+    // Activar trampa de foco accesible respetando escToggle (AC-18)
+    this.focusTrap = new FocusTrap(backdrop, () => {
+      if (this.manifest?.rules?.escToggle !== false) {
+        this.closeModal('esc_key');
+      }
+    });
     this.focusTrap.activate();
 
     // Inicializar los dots una sola vez en el DOM
@@ -545,7 +599,15 @@ export class QuipuxPopupStudioElement extends HTMLElement {
     if (titleEl) titleEl.textContent = slide.title;
     if (descEl) descEl.textContent = slide.description;
     if (ctaTextEl) ctaTextEl.textContent = slide.cta || 'Ver más';
-    if (ctaEl) ctaEl.href = slide.link || '#';
+    if (ctaEl) {
+      ctaEl.href = this.sanitizeCtaUrl(slide.link);
+      ctaEl.target = slide.target === '_self' ? '_self' : '_blank';
+      if (ctaEl.target === '_blank') {
+        ctaEl.setAttribute('rel', 'noopener noreferrer');
+      } else {
+        ctaEl.removeAttribute('rel');
+      }
+    }
 
     const hasImg = !!(slide.desktopImage || slide.mobileImage);
     if (hasImg) {
@@ -657,6 +719,10 @@ export class QuipuxPopupStudioElement extends HTMLElement {
   }
 
   checkRoute(newPath) {
+    if (this.scheduledRenderTimeout) {
+      clearTimeout(this.scheduledRenderTimeout);
+      this.scheduledRenderTimeout = null;
+    }
     if (!this.manifest) return;
     const canShow = RuleEvaluator.shouldShow(this.manifest.rules, this.manifest.id, newPath);
     const isRendered = !!this.shadowRoot.querySelector('.backdrop');
@@ -665,7 +731,8 @@ export class QuipuxPopupStudioElement extends HTMLElement {
     } else if (!isRendered && canShow) {
       const rawDelay = Number(this.manifest.rules?.delay || 0);
       const delayMs = rawDelay > 30 ? rawDelay : Math.max(0, rawDelay * 1000);
-      setTimeout(() => {
+      this.scheduledRenderTimeout = setTimeout(() => {
+        this.scheduledRenderTimeout = null;
         if (!this.shadowRoot.querySelector('.backdrop')) {
           this.render();
           RuleEvaluator.recordView(this.manifest.rules, this.manifest.id);

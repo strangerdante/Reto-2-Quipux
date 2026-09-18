@@ -1,4 +1,5 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
+import { APP_CONFIG } from '../config/app-config';
 import { AVAILABLE_TENANTS, Tenant, UserRole, UserSession } from '../models/tenant.model';
 import { ToastService } from './toast.service';
 
@@ -6,6 +7,7 @@ import { ToastService } from './toast.service';
   providedIn: 'root'
 })
 export class TenantService {
+  private readonly config = inject(APP_CONFIG);
   readonly tenants = signal<Tenant[]>(AVAILABLE_TENANTS);
   readonly activeTenantId = signal<string>('valle');
 
@@ -29,7 +31,7 @@ export class TenantService {
   });
 
   readonly cdnBasePath = computed(() => {
-    return this.activeTenant().cdnPrefix;
+    return `${this.config.cdnBaseUrl}/resources/tenants/${this.activeTenantId()}`;
   });
 
   constructor(private toastService: ToastService) {}

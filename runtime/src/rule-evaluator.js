@@ -23,15 +23,17 @@ export class RuleEvaluator {
     const storageKey = `qpux_popup_${campaignId}_viewed`;
 
     if (freq === 'once_per_session' || freq === 'Una vez por sesión') {
-      if (sessionStorage.getItem(storageKey)) {
+      if (typeof sessionStorage !== 'undefined' && sessionStorage.getItem(storageKey)) {
         return false;
       }
     } else if (freq === 'once_per_device' || freq === 'Una vez por día') {
-      const lastView = localStorage.getItem(storageKey);
-      if (lastView) {
-        const diffHours = (now - parseInt(lastView, 10)) / (1000 * 60 * 60);
-        if (diffHours < 24) {
-          return false;
+      if (typeof localStorage !== 'undefined') {
+        const lastView = localStorage.getItem(storageKey);
+        if (lastView) {
+          const diffHours = (now - parseInt(lastView, 10)) / (1000 * 60 * 60);
+          if (diffHours < 24) {
+            return false;
+          }
         }
       }
     }
@@ -56,9 +58,13 @@ export class RuleEvaluator {
     const freq = rules?.frequency || 'once_per_session';
     const storageKey = `qpux_popup_${campaignId}_viewed`;
     if (freq === 'once_per_session' || freq === 'Una vez por sesión') {
-      sessionStorage.setItem(storageKey, 'true');
+      if (typeof sessionStorage !== 'undefined') {
+        sessionStorage.setItem(storageKey, 'true');
+      }
     } else if (freq === 'once_per_device' || freq === 'Una vez por día') {
-      localStorage.setItem(storageKey, String(Date.now()));
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(storageKey, String(Date.now()));
+      }
     }
   }
 }

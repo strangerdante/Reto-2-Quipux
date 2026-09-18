@@ -84,15 +84,15 @@ import { LucideAngularModule } from 'lucide-angular';
             <em>Recomendado</em>
           </button>
 
-          <button class="template-card upcoming" disabled>
+          <button class="template-card" (click)="onCreateBanner()">
             <div class="template-visual banner-icon">
               <lucide-icon name="megaphone" [size]="22"></lucide-icon>
             </div>
             <span>
-              <strong>Banner horizontal</strong>
-              <small>Fila superior para avisos institucionales y alertas viales.</small>
+              <strong>Banner horizontal (AP-05)</strong>
+              <small>Fila superior gobernada para avisos institucionales y alertas viales.</small>
             </span>
-            <em>Próximo</em>
+            <em style="background: var(--blue); color: #fff;">Disponible</em>
           </button>
 
           <button class="template-card upcoming" disabled>
@@ -745,6 +745,11 @@ export class DashboardComponent {
 
   onCreateNew(): void {
     const newCamp = this.campaignService.createNewCampaign();
+    this.router.navigate(['/editor', newCamp.id]);
+  }
+
+  onCreateBanner(): void {
+    const newCamp = this.campaignService.createNewCampaign('Modal informativo', 'top');
     this.router.navigate(['/editor', newCamp.id]);
   }
 }

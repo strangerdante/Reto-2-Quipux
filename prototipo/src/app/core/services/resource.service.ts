@@ -3,9 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { ResourceAsset, ResourceFolder } from '../models/resource.model';
 import { CampaignService } from './campaign.service';
 import { TenantService } from './tenant.service';
+import { APP_CONFIG } from '../config/app-config';
 import { ToastService } from './toast.service';
-
-const API_BASE = 'http://localhost:3000/api';
 
 export interface UploadResponse {
   valid: boolean;
@@ -25,6 +24,7 @@ export interface UploadResponse {
 })
 export class ResourceService {
   private readonly http = inject(HttpClient);
+  private readonly config = inject(APP_CONFIG);
   private readonly tenantService = inject(TenantService);
   private readonly campaignService = inject(CampaignService);
   private readonly toastService = inject(ToastService);
@@ -36,7 +36,7 @@ export class ResourceService {
 
   readonly rootPath = computed(() => {
     const tenantId = this.tenantService.activeTenantId();
-    return `http://localhost:3000/resources/tenants/${tenantId}`;
+    return `${this.config.cdnBaseUrl}/resources/tenants/${tenantId}`;
   });
 
   readonly totalStorageFormatted = computed(() => {
@@ -66,7 +66,7 @@ export class ResourceService {
 
   loadResources(tenantId?: string): void {
     const tenant = tenantId || this.tenantService.activeTenantId();
-    this.http.get<{ folders: ResourceFolder[]; assets: ResourceAsset[] }>(`${API_BASE}/resources?tenant=${tenant}`).subscribe({
+    this.http.get<{ folders: ResourceFolder[]; assets: ResourceAsset[] }>(`${this.config.apiBaseUrl}/resources?tenant=${tenant}`).subscribe({
       next: (res) => {
         this.folders.set(res.folders || []);
         this.assets.set(res.assets || []);
@@ -108,7 +108,7 @@ export class ResourceService {
     formData.append('tenant', tenant);
     formData.append('targetType', target);
 
-    this.http.post<UploadResponse>(`${API_BASE}/upload`, formData).subscribe({
+    this.http.post<UploadResponse>(`${this.config.apiBaseUrl}/upload`, formData).subscribe({
       next: (res) => {
         this.isUploading.set(false);
         if (target === 'desktop') {

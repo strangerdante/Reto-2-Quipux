@@ -16,12 +16,17 @@ import { QuipuxPopupStudioElement } from './quipux-popup.js';
   }
 
   // 3. Montaje del componente en el DOM
-  function mount(currentRoute) {
+  function getRuntimeScript() {
+    if (document.currentScript instanceof HTMLScriptElement) return document.currentScript;
+    return [...document.scripts].find(script => script.src.includes('quipux-popup-runtime') && script.dataset.tenant) || null;
+  }
+
+  function mount() {
     const existing = document.querySelector('quipux-popup-studio');
     if (existing) return;
 
     const popup = document.createElement('quipux-popup-studio');
-    const curScript = document.currentScript || document.querySelector('script[data-tenant]');
+    const curScript = getRuntimeScript();
 
     const urlParams = new URLSearchParams(window.location.search);
     const tenant = urlParams.get('tenant') ||
@@ -35,6 +40,10 @@ import { QuipuxPopupStudioElement } from './quipux-popup.js';
 
     popup.setAttribute('tenant', tenant);
     popup.setAttribute('campaign', campaign);
+    const manifestUrl = curScript?.getAttribute('data-manifest-url') || window.__QUIPUX_RUNTIME_CONFIG__?.manifestUrl;
+    const cdnBaseUrl = curScript?.getAttribute('data-cdn-url') || window.__QUIPUX_RUNTIME_CONFIG__?.cdnBaseUrl;
+    if (manifestUrl) popup.setAttribute('manifest-url', manifestUrl);
+    if (cdnBaseUrl) popup.setAttribute('cdn-base-url', cdnBaseUrl);
 
     document.body.appendChild(popup);
   }
@@ -63,17 +72,17 @@ import { QuipuxPopupStudioElement } from './quipux-popup.js';
     if (existing && typeof existing.checkRoute === 'function') {
       existing.checkRoute(newPath);
     } else {
-      mount(newPath);
+      mount();
     }
   }
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-      mount(window.location.pathname);
+      mount();
       setupSpaListeners();
     });
   } else {
-    mount(window.location.pathname);
+    mount();
     setupSpaListeners();
   }
 })();

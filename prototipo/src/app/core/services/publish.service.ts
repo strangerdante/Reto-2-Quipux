@@ -1,11 +1,10 @@
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { PreflightCheck, VersionRecord } from '../models/version.model';
+import { APP_CONFIG } from '../config/app-config';
 import { CampaignService } from './campaign.service';
 import { TenantService } from './tenant.service';
 import { ToastService } from './toast.service';
-
-const API_BASE = 'http://localhost:3000/api';
 
 export interface VersionDiffItem {
   field: string;
@@ -19,6 +18,7 @@ export interface VersionDiffItem {
 })
 export class PublishService {
   private readonly http = inject(HttpClient);
+  private readonly config = inject(APP_CONFIG);
   private readonly campaignService = inject(CampaignService);
   private readonly tenantService = inject(TenantService);
   private readonly toastService = inject(ToastService);
@@ -82,7 +82,7 @@ export class PublishService {
     ];
   });
 
-  // AP-03: Comparador visual de diferencias entre el borrador actual y la versión activa
+  // AP-03: Comparador visual enriquecido de diferencias entre el borrador actual y la versión activa
   readonly versionDiff = computed<VersionDiffItem[]>(() => {
     const currentList = this.versions();
     const activeVersion = currentList.find(v => v.isCurrent);
@@ -93,7 +93,7 @@ export class PublishService {
     if (!activeVersion || !activeVersion.snapshot) {
       diffs.push({
         field: 'Campaña',
-        before: 'Sin versión previa activa',
+        before: 'Sin versión previa activa en CDN',
         after: draft.name,
         type: 'added'
       });
@@ -105,14 +105,14 @@ export class PublishService {
     // Comparar nombre
     if (prev.summary !== draft.name) {
       diffs.push({
-        field: 'Nombre / Título',
+        field: 'Nombre de campaña',
         before: prev.summary || 'Anterior',
         after: draft.name,
         type: 'changed'
       });
     }
 
-    // Comparar slides
+    // Comparar cantidad de slides
     const prevSlidesCount = prev.slides?.length || 0;
     const draftSlidesCount = draft.slides?.length || 0;
     if (prevSlidesCount !== draftSlidesCount) {
@@ -124,7 +124,7 @@ export class PublishService {
       });
     }
 
-    // Comparar ruta
+    // Comparar regla de ruta SPA
     if (prev.rules?.pathRule !== draft.rules?.pathRule) {
       diffs.push({
         field: 'Regla de ruta SPA',
@@ -142,6 +142,73 @@ export class PublishService {
         after: `${draft.rules?.delay || 0}s`,
         type: 'changed'
       });
+    }
+
+    // Comparación detallada slide por slide (AP-03)
+    const prevSlides = prev.slides || [];
+    const draftSlides = draft.slides || [];
+    const maxSlides = Math.max(prevSlides.length, draftSlides.length);
+
+    for (let i = 0; i < maxSlides; i++) {
+      const pSlide = prevSlides[i];
+      const dSlide = draftSlides[i];
+
+      if (!pSlide && dSlide) {
+        diffs.push({
+          field: `Slide #${i + 1}`,
+          before: '(No existía)',
+          after: `Nuevo slide: "${dSlide.title || dSlide.name}"`,
+          type: 'added'
+        });
+      } else if (pSlide && !dSlide) {
+        diffs.push({
+          field: `Slide #${i + 1}`,
+          before: `Slide: "${pSlide.title}"`,
+          after: '(Eliminado del borrador)',
+          type: 'removed'
+        });
+      } else if (pSlide && dSlide) {
+        if (pSlide.title !== dSlide.title) {
+          diffs.push({
+            field: `Slide #${i + 1} - Título`,
+            before: pSlide.title || '(vacío)',
+            after: dSlide.title || '(vacío)',
+            type: 'changed'
+          });
+        }
+        if (pSlide.description !== dSlide.description) {
+          diffs.push({
+            field: `Slide #${i + 1} - Texto`,
+            before: pSlide.description ? (pSlide.description.slice(0, 40) + '...') : '(vacío)',
+            after: dSlide.description ? (dSlide.description.slice(0, 40) + '...') : '(vacío)',
+            type: 'changed'
+          });
+        }
+        if (pSlide.cta !== dSlide.cta) {
+          diffs.push({
+            field: `Slide #${i + 1} - CTA`,
+            before: pSlide.cta || '(vacío)',
+            after: dSlide.cta || '(vacío)',
+            type: 'changed'
+          });
+        }
+        if (pSlide.link !== dSlide.link) {
+          diffs.push({
+            field: `Slide #${i + 1} - Enlace`,
+            before: pSlide.link || '#',
+            after: dSlide.link || '#',
+            type: 'changed'
+          });
+        }
+        if ((pSlide.target || '_blank') !== (dSlide.target || '_blank')) {
+          diffs.push({
+            field: `Slide #${i + 1} - Destino`,
+            before: pSlide.target || '_blank',
+            after: dSlide.target || '_blank',
+            type: 'changed'
+          });
+        }
+      }
     }
 
     if (diffs.length === 0) {
@@ -171,7 +238,7 @@ export class PublishService {
     const tenant = tenantId || this.tenantService.activeTenantId();
     const cId = campaignId || this.campaignService.activeCampaign().id || 'default';
 
-    this.http.get<VersionRecord[]>(`${API_BASE}/publish/versions?tenant=${tenant}&campaignId=${cId}`).subscribe({
+    this.http.get<VersionRecord[]>(`${this.config.apiBaseUrl}/publish/versions?tenant=${tenant}&campaignId=${cId}`).subscribe({
       next: (list) => {
         this.versions.set(list);
       },
@@ -214,7 +281,7 @@ export class PublishService {
     const author = this.tenantService.currentUser();
     const tenant = this.tenantService.activeTenantId();
 
-    this.http.post<{ success: boolean; version: string; manifest: any }>(`${API_BASE}/publish?tenant=${tenant}`, {
+    this.http.post<{ success: boolean; version: string; manifest: any }>(`${this.config.apiBaseUrl}/publish?tenant=${tenant}`, {
       campaign,
       author
     }).subscribe({
@@ -247,7 +314,7 @@ export class PublishService {
     const campaignId = this.campaignService.activeCampaign().id;
     const author = this.tenantService.currentUser();
 
-    this.http.post<{ success: boolean; newVersion: string; restoredFrom: string; manifest: any }>(`${API_BASE}/publish/rollback`, {
+    this.http.post<{ success: boolean; newVersion: string; restoredFrom: string; manifest: any }>(`${this.config.apiBaseUrl}/publish/rollback`, {
       tenantId: tenant,
       campaignId,
       targetVersion: versionTag,

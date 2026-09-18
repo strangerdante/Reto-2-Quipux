@@ -1,8 +1,7 @@
 import { Injectable, effect, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { APP_CONFIG } from '../config/app-config';
 import { TenantService } from './tenant.service';
-
-const API_BASE = 'http://localhost:3000/api';
 
 export interface AuditEntry {
   id: string;
@@ -21,6 +20,7 @@ export interface AuditEntry {
 })
 export class AuditService {
   private readonly http = inject(HttpClient);
+  private readonly config = inject(APP_CONFIG);
   private readonly tenantService = inject(TenantService);
 
   readonly auditEntries = signal<AuditEntry[]>([]);
@@ -38,7 +38,7 @@ export class AuditService {
     const tenant = tenantId || this.tenantService.activeTenantId();
     this.isLoading.set(true);
 
-    this.http.get<AuditEntry[]>(`${API_BASE}/publish/audit?tenant=${tenant}`).subscribe({
+    this.http.get<AuditEntry[]>(`${this.config.apiBaseUrl}/publish/audit?tenant=${tenant}`).subscribe({
       next: (entries) => {
         this.auditEntries.set(entries || []);
         this.isLoading.set(false);

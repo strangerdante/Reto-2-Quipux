@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { TenantService } from '@core/services/tenant.service';
 import { ToastService } from '@core/services/toast.service';
+import { APP_CONFIG } from '@core/config/app-config';
 import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
@@ -676,6 +677,7 @@ import { LucideAngularModule } from 'lucide-angular';
 })
 export class IntegrationComponent {
   readonly tenantService = inject(TenantService);
+  readonly config = inject(APP_CONFIG);
   private readonly toastService = inject(ToastService);
 
   readonly serverStatus = signal<'online' | 'offline'>('online');
@@ -685,9 +687,10 @@ export class IntegrationComponent {
     return `<!-- Quipux Popup Studio Loader (Idempotente AC-16) -->
 <script
   async
-  src="http://localhost:3000/resources/runtime/quipux-popup-runtime.js"
+  src="${this.config.cdnBaseUrl}/resources/runtime/quipux-popup-runtime.js"
   data-tenant="${tenantId}"
-  data-campaign="active">
+  data-campaign="active"
+  data-cdn-url="${this.config.cdnBaseUrl}">
 </script>`;
   });
 
@@ -697,12 +700,12 @@ export class IntegrationComponent {
   }
 
   openPortalDemo(): void {
-    window.open('http://localhost:3000/portal-demo', '_blank');
+    window.open(this.config.portalDemoUrl, '_blank');
   }
 
   downloadGtmWorkspace(): void {
     const tenant = this.tenantService.activeTenantId();
-    window.open(`http://localhost:3000/api/gtm/workspace-export?tenant=${tenant}`, '_blank');
+    window.open(`${this.config.apiBaseUrl}/gtm/workspace-export?tenant=${tenant}`, '_blank');
     this.toastService.show(`Contenedor GTM JSON generado para ${tenant}`);
   }
 }

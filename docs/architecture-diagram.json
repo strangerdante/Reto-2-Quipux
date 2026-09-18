@@ -1,0 +1,261 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Arquitectura Quipux Popup Studio",
+    "output": "docs/architecture-diagram.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "control-plane",
+        "label": "Plano de Control (Studio a Backend)",
+        "focus": [
+          "studio",
+          "api_server",
+          "db_campaigns",
+          "db_storage"
+        ],
+        "note": "Operación de diseño, validación multimedia, preflight y publicación."
+      },
+      {
+        "id": "data-plane",
+        "label": "Plano de Datos (Runtime y CDN)",
+        "focus": [
+          "portal_demo",
+          "runtime_wc",
+          "cdn_service",
+          "db_storage"
+        ],
+        "note": "Inyección no intrusiva vía GTM y consumo de manifiestos y assets."
+      },
+      {
+        "id": "trust-boundaries",
+        "label": "Límites de Confianza y Aislamiento",
+        "focus": [
+          "portal_demo",
+          "studio",
+          "api_server",
+          "db_campaigns",
+          "db_storage"
+        ],
+        "note": "Aislamiento de la zona pública cliente frente a servicios y datos protegidos."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "studio",
+      "type": "frontend",
+      "label": "Popup Studio",
+      "sublabel": "Angular 21 (SPA)",
+      "tag": "Plano de Control",
+      "pos": [
+        50,
+        70
+      ],
+      "size": [
+        150,
+        60
+      ]
+    },
+    {
+      "id": "portal_demo",
+      "type": "external",
+      "label": "Portal Cliente",
+      "sublabel": "Sitio Web + GTM",
+      "tag": "Zona Pública",
+      "pos": [
+        50,
+        220
+      ],
+      "size": [
+        150,
+        60
+      ]
+    },
+    {
+      "id": "runtime_wc",
+      "type": "frontend",
+      "label": "Popup Runtime",
+      "sublabel": "JS Vanilla / Shadow DOM",
+      "tag": "Sin PII / Idempotente",
+      "pos": [
+        280,
+        220
+      ],
+      "size": [
+        150,
+        60
+      ]
+    },
+    {
+      "id": "api_server",
+      "type": "backend",
+      "label": "Servidor API Express",
+      "sublabel": "REST API :3000",
+      "tag": "CORS & Preflight",
+      "pos": [
+        510,
+        70
+      ],
+      "size": [
+        150,
+        60
+      ]
+    },
+    {
+      "id": "cdn_service",
+      "type": "cloud",
+      "label": "Servidor CDN Estático",
+      "sublabel": "Cache-Control / Resources",
+      "tag": "Distribución Assets",
+      "pos": [
+        510,
+        220
+      ],
+      "size": [
+        150,
+        60
+      ]
+    },
+    {
+      "id": "db_campaigns",
+      "type": "database",
+      "label": "FileStore Campañas",
+      "sublabel": "campaigns.json (Atómico)",
+      "tag": "Lock Exclusivo",
+      "pos": [
+        750,
+        70
+      ],
+      "size": [
+        150,
+        60
+      ]
+    },
+    {
+      "id": "db_storage",
+      "type": "database",
+      "label": "Storage Multitenant",
+      "sublabel": "Manifests & Media",
+      "tag": "Aislamiento por Tenant",
+      "pos": [
+        750,
+        220
+      ],
+      "size": [
+        150,
+        60
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Límite: Navegador Cliente (Untrusted Public Zone)",
+      "wraps": [
+        "portal_demo",
+        "runtime_wc"
+      ],
+      "pad": 16
+    },
+    {
+      "kind": "region",
+      "label": "Límite: Operador Interno (Trusted Control Plane)",
+      "wraps": [
+        "studio"
+      ],
+      "pad": 16
+    },
+    {
+      "kind": "security-group",
+      "label": "Límite: Backend & CDN (Protected App Services)",
+      "wraps": [
+        "api_server",
+        "cdn_service"
+      ],
+      "pad": 16
+    },
+    {
+      "kind": "security-group",
+      "label": "Límite: Persistencia Aislada (Isolated Tenant Data Layer)",
+      "wraps": [
+        "db_campaigns",
+        "db_storage"
+      ],
+      "pad": 16
+    }
+  ],
+  "connections": [
+    {
+      "id": "studio-to-api",
+      "from": "studio",
+      "to": "api_server",
+      "label": "REST HTTPS",
+      "variant": "emphasis"
+    },
+    {
+      "id": "api-to-db",
+      "from": "api_server",
+      "to": "db_campaigns",
+      "label": "Escritura Atómica",
+      "variant": "default"
+    },
+    {
+      "id": "api-to-storage",
+      "from": "api_server",
+      "to": "db_storage",
+      "label": "Publicar Manifest",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "portal-to-runtime",
+      "from": "portal_demo",
+      "to": "runtime_wc",
+      "label": "Inyección GTM",
+      "variant": "emphasis"
+    },
+    {
+      "id": "runtime-to-cdn",
+      "from": "runtime_wc",
+      "to": "cdn_service",
+      "label": "GET active.json",
+      "variant": "security"
+    },
+    {
+      "id": "cdn-to-storage",
+      "from": "cdn_service",
+      "to": "db_storage",
+      "label": "Lectura Estáticos",
+      "variant": "default"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "rose",
+      "title": "Límites de Confianza",
+      "items": [
+        "Zona Pública: Portal cliente y runtime Shadow DOM aislados sin PII.",
+        "Zonas Seguras: Studio interno, API privada y almacenamiento multitenant."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Backend y CDN",
+      "items": [
+        "Express REST API gestiona campañas, assets y validaciones preflight.",
+        "CDN /resources distribuye active.json sin caché y binarios con TTL."
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Persistencia Multitenant",
+      "items": [
+        "FileStore atómico con bloqueos exclusivos por tenantId en disco.",
+        "Manifiestos inmutables versionados (v{N}.json) para auditoría y rollback."
+      ]
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { CampaignService } from '@core/services/campaign.service';
 import { ToastService } from '@core/services/toast.service';
+import { APP_CONFIG } from '@core/config/app-config';
 import { LucideAngularModule } from 'lucide-angular';
 import { Slide } from '@core/models/campaign.model';
 
@@ -224,6 +225,7 @@ import { Slide } from '@core/models/campaign.model';
 export class LegacyImporterComponent {
   private readonly campaignService = inject(CampaignService);
   private readonly toastService = inject(ToastService);
+  private readonly config = inject(APP_CONFIG);
 
   readonly isOpen = signal<boolean>(false);
   readonly pastedHtml = signal<string>('');
@@ -237,13 +239,13 @@ export class LegacyImporterComponent {
     const example = `<div class="quipux-modal-legacy" ng-controller="PopupCtrl">
   <div class="slide-item">
     <h2>Descuento Especial Vigencias Anteriores</h2>
-    <img src="http://localhost:3000/resources/tenants/valle/assets/desktop/cobro-coactivo-desk.png" alt="Descuento Valle" />
+    <img src="${this.config.cdnBaseUrl}/resources/tenants/valle/assets/desktop/cobro-coactivo-desk.png" alt="Descuento Valle" />
     <p>Ponte al día con tu impuesto de vehículo sin intereses de mora este mes.</p>
     <a href="https://impuestos.valledelcauca.gov.co" class="btn-cta">Pagar en línea</a>
   </div>
   <div class="slide-item">
     <h2>Facilidades y Cuotas de Pago</h2>
-    <img src="http://localhost:3000/resources/tenants/valle/assets/desktop/acuerdos-pago-desk.png" alt="Acuerdos de pago" />
+    <img src="${this.config.cdnBaseUrl}/resources/tenants/valle/assets/desktop/acuerdos-pago-desk.png" alt="Acuerdos de pago" />
     <p>Solicita un acuerdo de pago diferido hasta en 12 meses sin codeudor.</p>
     <a href="https://impuestos.valledelcauca.gov.co/acuerdos" class="btn-cta">Solicitar acuerdo</a>
   </div>

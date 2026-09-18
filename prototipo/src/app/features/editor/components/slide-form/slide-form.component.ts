@@ -62,6 +62,18 @@ import { LucideAngularModule } from 'lucide-angular';
             placeholder="https://portal.gov.co/..."
           />
         </label>
+
+        <label class="field" style="max-width: 140px;">
+          <span>Destino (AC-04)</span>
+          <select
+            [value]="s.target || '_blank'"
+            (change)="onFieldChange('target', $event)"
+            style="width: 100%; color: var(--body); background: #fff; border: 1.5px solid #dddae5; border-radius: 7px; outline: 0; padding: 8.5px 10px; font-size: 11px;"
+          >
+            <option value="_blank">Nueva pestaña (_blank)</option>
+            <option value="_self">Misma pestaña (_self)</option>
+          </select>
+        </label>
       </div>
 
       <label class="field">

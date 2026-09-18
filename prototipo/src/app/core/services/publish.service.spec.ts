@@ -5,6 +5,7 @@ import { PublishService } from './publish.service';
 import { CampaignService } from './campaign.service';
 import { TenantService } from './tenant.service';
 import { ToastService } from './toast.service';
+import { APP_CONFIG, resolveAppConfig } from '../config/app-config';
 
 describe('PublishService', () => {
   let service: PublishService;
@@ -15,6 +16,7 @@ describe('PublishService', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
+        { provide: APP_CONFIG, useFactory: resolveAppConfig },
         PublishService,
         CampaignService,
         TenantService,
