@@ -4,12 +4,17 @@ const path = require('path');
 const SRC_DIR = path.join(__dirname, 'src');
 const OUTPUT_DIR = path.join(__dirname, '..', 'server', 'storage', 'resources', 'runtime');
 const OUTPUT_FILE = path.join(OUTPUT_DIR, 'quipux-popup-runtime.js');
+const DIST_DIR = path.join(__dirname, 'dist');
+const DIST_FILE = path.join(DIST_DIR, 'quipux-popup.js');
 
 function bundle() {
   console.log('📦 Compilando Web Component autónomo (Data Plane)...');
 
   if (!fs.existsSync(OUTPUT_DIR)) {
     fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+  }
+  if (!fs.existsSync(DIST_DIR)) {
+    fs.mkdirSync(DIST_DIR, { recursive: true });
   }
 
   // Leer archivos fuente
@@ -47,6 +52,7 @@ function bundle() {
 `;
 
   fs.writeFileSync(OUTPUT_FILE, bundled, 'utf-8');
+  fs.writeFileSync(DIST_FILE, bundled, 'utf-8');
   const stats = fs.statSync(OUTPUT_FILE);
   const sizeKb = (stats.size / 1024).toFixed(2);
   console.log(`✅ Web Component compilado exitosamente: ${OUTPUT_FILE} (${sizeKb} KB)`);

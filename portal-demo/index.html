@@ -1064,7 +1064,7 @@
         🧹 Reset Frecuencia
       </button>
 
-      <a href="http://localhost:4200" target="_blank" class="btn-tool btn-tool-accent">
+      <a id="linkQuipuxStudio" href="http://localhost:4200" target="_blank" class="btn-tool btn-tool-accent">
         ⚙️ Quipux Studio
       </a>
     </div>
@@ -1802,6 +1802,11 @@
     // Renderizar la ruta inicial según el pathname actual
     const currentPath = window.location.pathname.replace(/^\/portal-demo/, '') || '/';
     renderRoute(currentPath);
+
+    const studioBtn = document.getElementById('linkQuipuxStudio');
+    if (studioBtn) {
+      studioBtn.href = window.__QUIPUX_STUDIO_URL__ || `${window.location.protocol}//${window.location.hostname || 'localhost'}:4200`;
+    }
   </script>
 
   <!-- ================================================================= -->

@@ -1,5 +1,119 @@
 [
   {
+    "id": "camp-1789753296318",
+    "name": "Banner Horizontal 6",
+    "type": "Modal informativo",
+    "tenant": "valle",
+    "status": "Borrador",
+    "version": "v1",
+    "updated": "18 de sept de 2026",
+    "layout": "top",
+    "rules": {
+      "delay": 2000,
+      "frequency": "once_per_session",
+      "pathRule": "/tramites/*",
+      "startDate": "2026-09-18T17:41",
+      "endDate": "2026-10-18T17:41",
+      "escToggle": true,
+      "autoplayToggle": true,
+      "dataLayerToggle": true
+    },
+    "slides": [
+      {
+        "id": 1,
+        "order": 1,
+        "active": true,
+        "name": "Slide Banner 1",
+        "title": "Aviso Vial Importante",
+        "description": "Alerta ciudadana sobre cierres viales programados.",
+        "cta": "Ver desvíos",
+        "link": "https://www.quipux.com",
+        "target": "_blank",
+        "alt": "Banner institucional",
+        "desktopName": "banner-principal-desk.webp",
+        "mobileName": "banner-principal-mob.webp",
+        "desktopPreview": null,
+        "mobilePreview": null
+      }
+    ]
+  },
+  {
+    "id": "camp-1789753293718",
+    "name": "Banner Horizontal 5",
+    "type": "Modal informativo",
+    "tenant": "valle",
+    "status": "Borrador",
+    "version": "v1",
+    "updated": "18 de sept de 2026",
+    "layout": "top",
+    "rules": {
+      "delay": 2000,
+      "frequency": "once_per_session",
+      "pathRule": "/tramites/*",
+      "startDate": "2026-09-18T17:41",
+      "endDate": "2026-10-18T17:41",
+      "escToggle": true,
+      "autoplayToggle": true,
+      "dataLayerToggle": true
+    },
+    "slides": [
+      {
+        "id": 1,
+        "order": 1,
+        "active": true,
+        "name": "Slide Banner 1",
+        "title": "Aviso Vial Importante",
+        "description": "Alerta ciudadana sobre cierres viales programados.",
+        "cta": "Ver desvíos",
+        "link": "https://www.quipux.com",
+        "target": "_blank",
+        "alt": "Banner institucional",
+        "desktopName": "banner-principal-desk.webp",
+        "mobileName": "banner-principal-mob.webp",
+        "desktopPreview": null,
+        "mobilePreview": null
+      }
+    ]
+  },
+  {
+    "id": "camp-1789753291724",
+    "name": "Banner Horizontal 4",
+    "type": "Modal informativo",
+    "tenant": "valle",
+    "status": "Borrador",
+    "version": "v1",
+    "updated": "18 de sept de 2026",
+    "layout": "top",
+    "rules": {
+      "delay": 2000,
+      "frequency": "once_per_session",
+      "pathRule": "/tramites/*",
+      "startDate": "2026-09-18T17:41",
+      "endDate": "2026-10-18T17:41",
+      "escToggle": true,
+      "autoplayToggle": true,
+      "dataLayerToggle": true
+    },
+    "slides": [
+      {
+        "id": 1,
+        "order": 1,
+        "active": true,
+        "name": "Slide Banner 1",
+        "title": "Aviso Vial Importante",
+        "description": "Alerta ciudadana sobre cierres viales programados.",
+        "cta": "Ver desvíos",
+        "link": "https://www.quipux.com",
+        "target": "_blank",
+        "alt": "Banner institucional",
+        "desktopName": "banner-principal-desk.webp",
+        "mobileName": "banner-principal-mob.webp",
+        "desktopPreview": null,
+        "mobilePreview": null
+      }
+    ]
+  },
+  {
     "id": "camp-1789693814508",
     "name": "Nueva Campaña 3",
     "type": "Modal con slider",
