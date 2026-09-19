@@ -78,7 +78,7 @@ async function start() {
 
   app.use((error, req, res, next) => {
     console.error('[API]', error);
-    res.status(error.status || 500).json({ error: 'No fue posible completar la operación solicitada.' });
+    res.status(error.status || 500).json({ error: error.message || 'No fue posible completar la operación solicitada.' });
   });
 
   app.listen(config.port, () => {

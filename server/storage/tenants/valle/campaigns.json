@@ -1,5 +1,81 @@
 [
   {
+    "id": "camp-1789790255995",
+    "name": "Nueva Campaña 7",
+    "type": "Modal con slider",
+    "tenant": "valle",
+    "status": "Borrador",
+    "version": "v1",
+    "updated": "18 de sept de 2026",
+    "layout": "side",
+    "rules": {
+      "delay": 2000,
+      "frequency": "once_per_session",
+      "pathRule": "/tramites/*",
+      "startDate": "2026-09-19T03:57",
+      "endDate": "2026-10-19T03:57",
+      "escToggle": true,
+      "autoplayToggle": true,
+      "dataLayerToggle": true
+    },
+    "slides": [
+      {
+        "id": 1,
+        "order": 1,
+        "active": true,
+        "name": "Slide Principal",
+        "title": "Título del Comunicado Oficial",
+        "description": "Descripción detallada de la notificación para los ciudadanos.",
+        "cta": "Consultar aquí",
+        "link": "https://www.quipux.com",
+        "target": "_blank",
+        "alt": "Banner institucional",
+        "desktopName": "banner-principal-desk.webp",
+        "mobileName": "banner-principal-mob.webp",
+        "desktopPreview": null,
+        "mobilePreview": null
+      }
+    ]
+  },
+  {
+    "id": "camp-1789787556918",
+    "name": "Nueva Campaña 7",
+    "type": "Modal con slider",
+    "tenant": "valle",
+    "status": "Borrador",
+    "version": "v1",
+    "updated": "18 de sept de 2026",
+    "layout": "side",
+    "rules": {
+      "delay": 2000,
+      "frequency": "once_per_session",
+      "pathRule": "/tramites/*",
+      "startDate": "2026-09-19T03:12",
+      "endDate": "2026-10-19T03:12",
+      "escToggle": true,
+      "autoplayToggle": true,
+      "dataLayerToggle": true
+    },
+    "slides": [
+      {
+        "id": 1,
+        "order": 1,
+        "active": true,
+        "name": "Slide Principal",
+        "title": "Título del Comunicado Oficial",
+        "description": "Descripción detallada de la notificación para los ciudadanos.",
+        "cta": "Consultar aquí",
+        "link": "https://www.quipux.com",
+        "target": "_blank",
+        "alt": "Banner institucional",
+        "desktopName": "banner-principal-desk.webp",
+        "mobileName": "banner-principal-mob.webp",
+        "desktopPreview": null,
+        "mobilePreview": null
+      }
+    ]
+  },
+  {
     "id": "camp-1789753296318",
     "name": "Banner Horizontal 6",
     "type": "Modal informativo",
@@ -157,7 +233,7 @@
     "tenant": "valle",
     "status": "Borrador",
     "version": "v1",
-    "updated": "17 de sept de 2026",
+    "updated": "18 de sept de 2026",
     "layout": "side",
     "rules": {
       "delay": 2,
@@ -175,7 +251,7 @@
         "order": 1,
         "active": true,
         "name": "Slide Principal",
-        "title": "Título del Comunicado Oficial",
+        "title": "Hola Mundo",
         "description": "Descripción detallada de la notificación para los ciudadanos.",
         "cta": "Consultar aquí",
         "link": "https://www.quipux.com",

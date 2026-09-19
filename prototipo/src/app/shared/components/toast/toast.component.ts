@@ -7,9 +7,11 @@ import { LucideAngularModule } from 'lucide-angular';
   imports: [LucideAngularModule],
   template: `
     @if (toastService.message(); as msg) {
-      <div class="toast" role="status" aria-live="polite">
-        <span><lucide-icon name="check" [size]="14"></lucide-icon></span>
-        <p>{{ msg }}</p>
+      <div class="toast" [class.error]="isError(msg)" [class.warning]="isWarning(msg)" role="status" aria-live="polite">
+        <span [class.error-icon]="isError(msg)" [class.warning-icon]="isWarning(msg)">
+          <lucide-icon [name]="isError(msg) ? 'x' : (isWarning(msg) ? 'alert-triangle' : 'check')" [size]="14"></lucide-icon>
+        </span>
+        <p>{{ cleanText(msg) }}</p>
       </div>
     }
   `,
@@ -47,6 +49,16 @@ import { LucideAngularModule } from 'lucide-angular';
         font-size: 12px;
         font-weight: 900;
         flex-shrink: 0;
+
+        &.error-icon {
+          background: #ef4444;
+          color: #fff;
+        }
+
+        &.warning-icon {
+          background: #f59e0b;
+          color: #fff;
+        }
       }
     }
 
@@ -64,4 +76,16 @@ import { LucideAngularModule } from 'lucide-angular';
 })
 export class ToastComponent {
   readonly toastService = inject(ToastService);
+
+  isError(msg: string): boolean {
+    return msg.includes('❌') || msg.toLowerCase().includes('error');
+  }
+
+  isWarning(msg: string): boolean {
+    return msg.includes('⚠️') || msg.toLowerCase().includes('aviso');
+  }
+
+  cleanText(msg: string): string {
+    return msg.replace(/^[❌⚠️✅🚀📋↩️🔄]\s*/, '');
+  }
 }

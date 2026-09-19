@@ -31,7 +31,9 @@ class FileStore {
 
   async readJson(filePath, fallback) {
     try {
-      return JSON.parse(await fs.readFile(filePath, 'utf-8'));
+      const raw = await fs.readFile(filePath, 'utf-8');
+      const clean = raw.charCodeAt(0) === 0xFEFF ? raw.slice(1) : raw;
+      return JSON.parse(clean);
     } catch (error) {
       if (error.code === 'ENOENT') return fallback;
       throw error;

@@ -1,5 +1,38 @@
 [
   {
+    "id": "aud-1789790640791",
+    "timestamp": "2026-09-19T04:04:00.791Z",
+    "formattedTime": "18/9/2026, 11:04:00 p. m.",
+    "action": "PUBLICACIÓN",
+    "campaignId": "camp-1789680810789",
+    "campaignName": "Nueva Campaña 2",
+    "version": "v6",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1789790279518",
+    "timestamp": "2026-09-19T03:57:59.518Z",
+    "formattedTime": "18/9/2026, 10:57:59 p. m.",
+    "action": "PUBLICACIÓN",
+    "campaignId": "camp-1789790255995",
+    "campaignName": "Nueva Campaña 7",
+    "version": "v2",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1789790271298",
+    "timestamp": "2026-09-19T03:57:51.298Z",
+    "formattedTime": "18/9/2026, 10:57:51 p. m.",
+    "action": "PUBLICACIÓN",
+    "campaignId": "camp-1789790255995",
+    "campaignName": "Nueva Campaña 7",
+    "version": "v1",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
     "id": "aud-1789685663917",
     "timestamp": "2026-09-17T22:54:23.917Z",
     "formattedTime": "17/9/2026, 5:54:23 p. m.",
