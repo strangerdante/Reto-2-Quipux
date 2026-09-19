@@ -112,7 +112,19 @@ a:focus-visible {
     background: rgba(46, 19, 245, 0.1);
   }
 
-  &.inactivo {
+  &.en-revisión,
+  &.en-revision {
+    color: #b45309;
+    background: rgba(245, 158, 11, 0.15);
+  }
+
+  &.aprobado {
+    color: #0369a1;
+    background: rgba(14, 165, 233, 0.15);
+  }
+
+  &.inactivo,
+  &.expirado {
     color: #716c76;
     background: #efedf1;
   }

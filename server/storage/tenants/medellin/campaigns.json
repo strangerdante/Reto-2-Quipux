@@ -44,14 +44,14 @@
     "tenant": "medellin",
     "status": "Publicado",
     "version": "v1",
-    "updated": "17 sep 2026",
+    "updated": "18 de sept de 2026",
     "layout": "side",
     "rules": {
-      "delay": 2,
+      "delay": 1,
       "frequency": "once_per_device",
       "pathRule": "*",
       "startDate": "2026-09-01T00:00:00.000Z",
-      "endDate": "2026-12-31T23:59:59.000Z",
+      "endDate": "2026-10-14T23:59",
       "escToggle": true,
       "autoplayToggle": false,
       "dataLayerToggle": true

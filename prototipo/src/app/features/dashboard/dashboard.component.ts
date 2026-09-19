@@ -164,14 +164,9 @@ import { LucideAngularModule } from 'lucide-angular';
               <span>{{ comp.type }}</span>
 
               <span>
-                <span class="status" [class]="getStatusClass(comp.status)">
-                  <i></i>{{ comp.status }}
+                <span class="status" [class]="getDisplayStatus(comp).cssClass">
+                  <i></i>{{ getDisplayStatus(comp).label }}
                 </span>
-                @if (comp.status === 'Publicado') {
-                  <small class="schedule-pill" [class.in-schedule]="isWithinSchedule(comp)" [class.out-schedule]="!isWithinSchedule(comp)">
-                    {{ getScheduleLabel(comp) }}
-                  </small>
-                }
               </span>
 
               <span><code>{{ comp.version }}</code></span>
@@ -592,22 +587,6 @@ import { LucideAngularModule } from 'lucide-angular';
       border-radius: 6px;
     }
 
-    .schedule-pill {
-      display: inline-block;
-      margin-top: 3px;
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-
-      &.in-schedule {
-        color: #059669;
-      }
-
-      &.out-schedule {
-        color: #d97706;
-      }
-    }
-
     .row-action {
       color: var(--blue);
       background: transparent;
@@ -737,34 +716,34 @@ export class DashboardComponent {
     return this.campaignService.campaigns().filter(c => c.type === 'Modal con slider').length;
   }
 
-  isWithinSchedule(c: Campaign): boolean {
-    const now = Date.now();
-    if (c.rules?.startDate) {
-      const start = new Date(c.rules.startDate).getTime();
-      if (!isNaN(start) && now < start) return false;
-    }
-    if (c.rules?.endDate) {
-      const end = new Date(c.rules.endDate).getTime();
-      if (!isNaN(end) && now > end) return false;
-    }
-    return true;
-  }
-
-  getScheduleLabel(c: Campaign): string {
-    const now = Date.now();
-    if (c.rules?.startDate) {
-      const start = new Date(c.rules.startDate).getTime();
-      if (!isNaN(start) && now < start) return '📅 Programado';
-    }
-    if (c.rules?.endDate) {
-      const end = new Date(c.rules.endDate).getTime();
-      if (!isNaN(end) && now > end) return '⌛ Expirado';
-    }
-    return '🟢 Vigente hoy';
-  }
-
   publishedCount(): number {
-    return this.campaignService.campaigns().filter(c => c.status === 'Publicado' && this.isWithinSchedule(c)).length;
+    const now = Date.now();
+    return this.campaignService.campaigns().filter(c => {
+      if (c.status !== 'Publicado') return false;
+      const start = c.rules?.startDate ? new Date(c.rules.startDate).getTime() : 0;
+      const end = c.rules?.endDate ? new Date(c.rules.endDate).getTime() : Infinity;
+      if (start && !isNaN(start) && now < start) return false;
+      if (end && !isNaN(end) && now > end) return false;
+      return true;
+    }).length;
+  }
+
+  getDisplayStatus(comp: Campaign): { label: string; cssClass: string } {
+    if (comp.status !== 'Publicado') {
+      const normalized = comp.status.toLowerCase().replace(/\s+/g, '-');
+      return { label: comp.status, cssClass: normalized };
+    }
+    const now = Date.now();
+    const start = comp.rules?.startDate ? new Date(comp.rules.startDate).getTime() : 0;
+    const end = comp.rules?.endDate ? new Date(comp.rules.endDate).getTime() : Infinity;
+
+    if (start && !isNaN(start) && now < start) {
+      return { label: 'Programado', cssClass: 'programado' };
+    }
+    if (end && !isNaN(end) && now > end) {
+      return { label: 'Expirado', cssClass: 'expirado' };
+    }
+    return { label: 'Publicado', cssClass: 'publicado' };
   }
 
   latestPublishedVersion(): string {
