@@ -3,6 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 import { CampaignService } from '@core/services/campaign.service';
 import { ResourceService } from '@core/services/resource.service';
 import { TenantService } from '@core/services/tenant.service';
+import { Campaign } from '@core/models/campaign.model';
 import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
@@ -166,6 +167,11 @@ import { LucideAngularModule } from 'lucide-angular';
                 <span class="status" [class]="getStatusClass(comp.status)">
                   <i></i>{{ comp.status }}
                 </span>
+                @if (comp.status === 'Publicado') {
+                  <small class="schedule-pill" [class.in-schedule]="isWithinSchedule(comp)" [class.out-schedule]="!isWithinSchedule(comp)">
+                    {{ getScheduleLabel(comp) }}
+                  </small>
+                }
               </span>
 
               <span><code>{{ comp.version }}</code></span>
@@ -586,6 +592,22 @@ import { LucideAngularModule } from 'lucide-angular';
       border-radius: 6px;
     }
 
+    .schedule-pill {
+      display: inline-block;
+      margin-top: 3px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+
+      &.in-schedule {
+        color: #059669;
+      }
+
+      &.out-schedule {
+        color: #d97706;
+      }
+    }
+
     .row-action {
       color: var(--blue);
       background: transparent;
@@ -715,8 +737,34 @@ export class DashboardComponent {
     return this.campaignService.campaigns().filter(c => c.type === 'Modal con slider').length;
   }
 
+  isWithinSchedule(c: Campaign): boolean {
+    const now = Date.now();
+    if (c.rules?.startDate) {
+      const start = new Date(c.rules.startDate).getTime();
+      if (!isNaN(start) && now < start) return false;
+    }
+    if (c.rules?.endDate) {
+      const end = new Date(c.rules.endDate).getTime();
+      if (!isNaN(end) && now > end) return false;
+    }
+    return true;
+  }
+
+  getScheduleLabel(c: Campaign): string {
+    const now = Date.now();
+    if (c.rules?.startDate) {
+      const start = new Date(c.rules.startDate).getTime();
+      if (!isNaN(start) && now < start) return '📅 Programado';
+    }
+    if (c.rules?.endDate) {
+      const end = new Date(c.rules.endDate).getTime();
+      if (!isNaN(end) && now > end) return '⌛ Expirado';
+    }
+    return '🟢 Vigente hoy';
+  }
+
   publishedCount(): number {
-    return this.campaignService.campaigns().filter(c => c.status === 'Publicado').length;
+    return this.campaignService.campaigns().filter(c => c.status === 'Publicado' && this.isWithinSchedule(c)).length;
   }
 
   latestPublishedVersion(): string {
