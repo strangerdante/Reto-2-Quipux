@@ -211,6 +211,54 @@ A continuación se detalla cómo la plataforma cumple al **100%** cada uno de lo
 
 ---
 
+### 👥 Matriz de Permisos y Gobernanza por Rol (AP-01)
+
+El sistema implementa un modelo de **Control de Acceso Basado en Roles (RBAC)** reactivo y gobernado, diseñado para garantizar segregación de funciones, trazabilidad y prevención de publicaciones no autorizadas en el CDN de producción.
+
+#### 📊 Matriz Comparativa de Permisos
+
+| Capacidad / Acción en la Plataforma | ✏️ Editor *(Diseñadora UI)* | 🔍 Revisor *(Líder Técnico)* | 🚀 Publicador *(Frontend Lead)* | Archivos / Componentes Responsables |
+|---|:---:|:---:|:---:|---|
+| **Crear y editar campañas** | ✅ Permitido | ✅ Permitido | ✅ Permitido | [`campaign.service.ts`](file:///c:/Users/Rapture/Desktop/Reto%20quipux/Reto-2-Quipux/prototipo/src/app/core/services/campaign.service.ts) |
+| **Manipular slides (crear, duplicar, reordenar, borrar)** | ✅ Permitido | ✅ Permitido | ✅ Permitido | [`slide-list.component.ts`](file:///c:/Users/Rapture/Desktop/Reto%20quipux/Reto-2-Quipux/prototipo/src/app/features/editor/components/slide-list/slide-list.component.ts) |
+| **Carga binaria de imágenes (< 500 KB)** | ✅ Permitido | ✅ Permitido | ✅ Permitido | [`resource.service.ts`](file:///c:/Users/Rapture/Desktop/Reto%20quipux/Reto-2-Quipux/prototipo/src/app/core/services/resource.service.ts) |
+| **Configurar reglas de despliegue y vigencia** | ✅ Permitido | ✅ Permitido | ✅ Permitido | [`rules-tab.component.ts`](file:///c:/Users/Rapture/Desktop/Reto%20quipux/Reto-2-Quipux/prototipo/src/app/features/editor/components/rules-tab/rules-tab.component.ts) |
+| **Guardar borradores persistentes en disco** | ✅ Permitido | ✅ Permitido | ✅ Permitido | [`campaign.service.ts`](file:///c:/Users/Rapture/Desktop/Reto%20quipux/Reto-2-Quipux/prototipo/src/app/core/services/campaign.service.ts) |
+| **Solicitar Aprobación** (`Borrador` → `En revisión`) | ✅ **Exclusivo de Editor** | ❌ Oculto | ❌ Oculto | [`publish-tab.component.ts`](file:///c:/Users/Rapture/Desktop/Reto%20quipux/Reto-2-Quipux/prototipo/src/app/features/editor/components/publish-tab/publish-tab.component.ts) |
+| **Aprobar campaña** (`En revisión` → `Aprobado`) | ❌ Oculto | ✅ **Exclusivo de Revisor** | ❌ Oculto | [`publish-tab.component.ts`](file:///c:/Users/Rapture/Desktop/Reto%20quipux/Reto-2-Quipux/prototipo/src/app/features/editor/components/publish-tab/publish-tab.component.ts) |
+| **Rechazar y devolver a borrador** | ❌ Oculto | ✅ **Exclusivo de Revisor** | ❌ Oculto | [`publish-tab.component.ts`](file:///c:/Users/Rapture/Desktop/Reto%20quipux/Reto-2-Quipux/prototipo/src/app/features/editor/components/publish-tab/publish-tab.component.ts) |
+| **Emitir versión final a CDN en producción (AC-11)** | 🚫 **Bloqueado** | 🚫 **Bloqueado** | ✅ **Único autorizado** | [`publish-dialog.component.ts`](file:///c:/Users/Rapture/Desktop/Reto%20quipux/Reto-2-Quipux/prototipo/src/app/features/editor/components/publish-dialog/publish-dialog.component.ts) / [`publish.service.ts`](file:///c:/Users/Rapture/Desktop/Reto%20quipux/Reto-2-Quipux/prototipo/src/app/core/services/publish.service.ts) |
+| **Ejecutar Rollback / Reversión a versión previa (AC-14)** | 🚫 **Bloqueado** | 🚫 **Bloqueado** | ✅ **Permitido** | [`publish.service.ts`](file:///c:/Users/Rapture/Desktop/Reto%20quipux/Reto-2-Quipux/prototipo/src/app/core/services/publish.service.ts) |
+| **Firma en Auditoría e Historial inmutable** | Registra como `Editor` | Registra como `Revisor` | Firma en `audit.json` y `vN.json` como `Publicador` | [`audit.service.ts`](file:///c:/Users/Rapture/Desktop/Reto%20quipux/Reto-2-Quipux/prototipo/src/app/core/services/audit.service.ts) / [`tenant.service.ts`](file:///c:/Users/Rapture/Desktop/Reto%20quipux/Reto-2-Quipux/prototipo/src/app/core/services/tenant.service.ts) |
+
+#### 🔄 Ciclo de Vida y Transición de Estados
+
+```
+┌──────────────┐     Solicitar Aprobación (Editor)     ┌──────────────┐
+│   Borrador   │ ────────────────────────────────────► │  En revisión │
+└──────────────┘                                       └──────┬───────┘
+       ▲                                                      │
+       │                   Rechazar (Revisor)                 │ Aprobar (Revisor)
+       └──────────────────────────────────────────────────────┤
+                                                              ▼
+┌──────────────┐          Publicar a CDN (Publicador)  ┌──────────────┐
+│  Publicado   │ ◄──────────────────────────────────── │   Aprobado   │
+└──────────────┘
+```
+
+1. **`Borrador`:** Estado inicial de trabajo. El **Editor** construye contenido, reglas y slides. Al finalizar, presiona *"Solicitar Aprobación"* transicionando el estado a `En revisión`.
+2. **`En revisión`:** El **Revisor** (Líder Técnico) evalúa el contenido, preflights y diff visual. Dispone de dos acciones exclusivas: *"Aprobar para Publicar"* (transiciona a `Aprobado`) o *"Rechazar / Devolver a Borrador"* (regresa a `Borrador` con observaciones).
+3. **`Aprobado`:** Estado de visto bueno técnico. Solo el **Publicador** (Frontend Lead) puede abrir el diálogo de confirmación y despachar la versión definitiva a `active.json` y `vN.json`.
+4. **`Publicado`:** Manifiesto activo en CDN visible en el portal ciudadano. Si se requiere restaurar una versión anterior, únicamente el **Publicador** puede autorizar el Rollback.
+
+#### 🛡️ Mecanismos de Aplicación y Bloqueo
+
+- **En la Interfaz (UI Guard):** Si un usuario con rol *Editor* o *Revisor* abre el diálogo de publicación, el botón principal *"Confirmar y Publicar a Producción"* se desactiva físicamente con `disabled` y se muestra un banner de advertencia informando que se requiere el rol de *Publicador*.
+- **En la Lógica de Negocio (Service Guard):** En [`publish.service.ts`](file:///c:/Users/Rapture/Desktop/Reto%20quipux/Reto-2-Quipux/prototipo/src/app/core/services/publish.service.ts), el método `canPublish()` verifica que `tenantService.activeRole() === 'Publicador'`. Cualquier intento de publicación fuera de este rol es rechazado.
+- **Trazabilidad y No Repudio:** Cada acción registra el nombre y rol del usuario en la bitácora física `audit.json` y en las cabeceras del manifiesto `v{N}.json`, garantizando estricto no repudio.
+
+---
+
 ## 📦 Resumen de Características Adicionales de Valor (APs)
 
 - **AP-01:** Flujo de aprobación por roles (`Editor` → `Revisor` → `Publicador`) con estados de ciclo de vida (`Borrador`, `En revisión`, `Aprobado`, `Publicado`).
