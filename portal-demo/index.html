@@ -1050,7 +1050,9 @@
       </select>
 
       <label for="campaignPicker" style="color: #94A3B8; margin-left: 4px;">Campaña:</label>
-      <input id="campaignPicker" class="tenant-select" style="width: 130px;" placeholder="ID Campaña" onchange="changeCampaign(this.value)" />
+      <select id="campaignPicker" class="tenant-select" style="max-width: 220px;" onchange="changeCampaign(this.value)">
+        <option value="">Cargando campañas...</option>
+      </select>
 
       <button class="btn-tool" onclick="inspectActiveManifest()" title="Ver JSON del manifiesto activo">
         📄 Manifiesto
@@ -1244,6 +1246,10 @@
       if (payload.event === 'quipux_modal_impression') borderColor = '#2E13F5';
       else if (payload.event === 'quipux_modal_cta_click') borderColor = '#5DC99A';
       else if (payload.event === 'quipux_modal_close') borderColor = '#F59E0B';
+      else if (payload.event === 'quipux_modal_suppressed') {
+        borderColor = '#EF4444';
+        showToast(`ℹ️ Regla: ${payload.reason || 'Modal no mostrado en esta pantalla'}`);
+      }
 
       entry.style.borderLeftColor = borderColor;
       entry.innerHTML = `
@@ -1459,8 +1465,31 @@
 
     // Actualizar encabezados y controles
     document.getElementById('tenantPicker').value = currentTenant;
-    const campInput = document.getElementById('campaignPicker');
-    if (campInput) campInput.value = currentCampaign;
+    const campSelect = document.getElementById('campaignPicker');
+    async function populateCampaigns() {
+      if (!campSelect) return;
+      try {
+        const res = await fetch(`/api/campaigns?tenant=${encodeURIComponent(currentTenant)}`);
+        if (res.ok) {
+          const list = await res.json();
+          if (Array.isArray(list) && list.length > 0) {
+            campSelect.innerHTML = list.map(c => 
+              `<option value="${c.id}" ${c.id === currentCampaign ? 'selected' : ''}>${c.name} (${c.version || 'v1'})</option>`
+            ).join('');
+            if (!list.some(c => c.id === currentCampaign) && currentCampaign) {
+              const opt = document.createElement('option');
+              opt.value = currentCampaign;
+              opt.textContent = `ID: ${currentCampaign}`;
+              opt.selected = true;
+              campSelect.appendChild(opt);
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('Error cargando catálogo de campañas en portal:', e);
+      }
+    }
+    populateCampaigns();
 
     document.getElementById('tenantLogoImg').src = theme.logo;
     document.getElementById('tenantTitle').textContent = theme.name;

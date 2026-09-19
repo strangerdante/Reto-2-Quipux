@@ -91,9 +91,19 @@ export class QuipuxPopupStudioElement extends HTMLElement {
     this.manifest.slides = this.manifest.slides.filter(s => s.active !== false);
     if (this.manifest.slides.length === 0) return;
 
-    // Evaluar reglas de aparición (AC-09, AC-17)
-    const canShow = RuleEvaluator.shouldShow(this.manifest.rules, this.manifest.id, window.location.pathname);
-    if (!canShow) {
+    // Evaluar reglas de aparición con diagnóstico detallado (AC-09, AC-17)
+    const evalResult = RuleEvaluator.evaluate(this.manifest.rules, this.manifest.id, window.location.pathname);
+    if (!evalResult.canShow) {
+      console.info(`[Quipux Popup Studio] ℹ️ Modal de campaña "${this.manifest.id}" no desplegado: ${evalResult.reason}`);
+      if (typeof window !== 'undefined' && window.dataLayer) {
+        window.dataLayer.push({
+          event: 'quipux_modal_suppressed',
+          campaign_id: this.manifest.id,
+          reason_code: evalResult.code,
+          reason: evalResult.reason,
+          current_path: window.location.pathname
+        });
+      }
       return;
     }
 
@@ -724,11 +734,11 @@ export class QuipuxPopupStudioElement extends HTMLElement {
       this.scheduledRenderTimeout = null;
     }
     if (!this.manifest) return;
-    const canShow = RuleEvaluator.shouldShow(this.manifest.rules, this.manifest.id, newPath);
+    const evalResult = RuleEvaluator.evaluate(this.manifest.rules, this.manifest.id, newPath);
     const isRendered = !!this.shadowRoot.querySelector('.backdrop');
-    if (isRendered && !canShow) {
+    if (isRendered && !evalResult.canShow) {
       this.closeModal('route_change');
-    } else if (!isRendered && canShow) {
+    } else if (!isRendered && evalResult.canShow) {
       const rawDelay = Number(this.manifest.rules?.delay || 0);
       const delayMs = rawDelay > 30 ? rawDelay : Math.max(0, rawDelay * 1000);
       this.scheduledRenderTimeout = setTimeout(() => {
@@ -738,6 +748,17 @@ export class QuipuxPopupStudioElement extends HTMLElement {
           RuleEvaluator.recordView(this.manifest.rules, this.manifest.id);
         }
       }, delayMs);
+    } else if (!isRendered && !evalResult.canShow) {
+      console.info(`[Quipux Popup Studio] ℹ️ Modal de campaña "${this.manifest.id}" en ruta "${newPath}": ${evalResult.reason}`);
+      if (typeof window !== 'undefined' && window.dataLayer) {
+        window.dataLayer.push({
+          event: 'quipux_modal_suppressed',
+          campaign_id: this.manifest.id,
+          reason_code: evalResult.code,
+          reason: evalResult.reason,
+          current_path: newPath
+        });
+      }
     }
   }
 }

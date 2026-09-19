@@ -1,0 +1,39 @@
+{
+  "id": "camp-1789791398365",
+  "tenantId": "medellin",
+  "version": 3,
+  "versionString": "v3",
+  "publishedAt": "2026-09-19T04:18:11.006Z",
+  "publishedBy": {
+    "name": "Angie Ríos",
+    "role": "Publicador",
+    "initials": "AR"
+  },
+  "summary": "Publicación v3 - Nueva Campaña 2",
+  "layout": "side",
+  "rules": {
+    "delay": 1,
+    "frequency": "once_per_session",
+    "pathRule": "/tramites/*",
+    "startDate": "2026-09-19T04:16",
+    "endDate": "2026-10-19T04:16",
+    "escToggle": true,
+    "autoplayToggle": true,
+    "dataLayerToggle": true
+  },
+  "slides": [
+    {
+      "id": 1,
+      "order": 1,
+      "active": true,
+      "title": "Título del Comunicado Oficial",
+      "description": "Descripción detallada de la notificación para los ciudadanos.",
+      "cta": "Consultar aquí",
+      "link": "https://www.quipux.com",
+      "target": "_blank",
+      "alt": "Banner institucional",
+      "desktopImage": "banner-principal-desk.webp",
+      "mobileImage": "banner-principal-mob.webp"
+    }
+  ]
+}

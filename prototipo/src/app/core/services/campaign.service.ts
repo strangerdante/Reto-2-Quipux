@@ -351,6 +351,16 @@ export class CampaignService {
     });
   }
 
+  private formatLocalDatetime(date: Date): string {
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const y = date.getFullYear();
+    const m = pad(date.getMonth() + 1);
+    const d = pad(date.getDate());
+    const h = pad(date.getHours());
+    const min = pad(date.getMinutes());
+    return `${y}-${m}-${d}T${h}:${min}`;
+  }
+
   // Creación de nueva campaña gobernada (AP-05)
   createNewCampaign(type: CampaignType = 'Modal con slider', layout: PopupLayout = 'side'): Campaign {
     const tenant = this.tenantService.activeTenantId();
@@ -366,11 +376,11 @@ export class CampaignService {
       updated: 'Justo ahora',
       layout,
       rules: {
-        delay: 2000,
+        delay: 1,
         frequency: 'once_per_session',
-        pathRule: '/tramites/*',
-        startDate: new Date().toISOString().slice(0, 16),
-        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16),
+        pathRule: '*',
+        startDate: this.formatLocalDatetime(new Date(Date.now() - 60 * 1000)),
+        endDate: this.formatLocalDatetime(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)),
         escToggle: true,
         autoplayToggle: true,
         dataLayerToggle: true

@@ -96,3 +96,53 @@ test('Sanitización de URLs de CTA (AC-19)', () => {
   assert.equal(sanitizeCtaUrl('javascript:alert(1)'), '#');
   assert.equal(sanitizeCtaUrl('data:text/html,<script>evil()</script>'), '#');
 });
+
+test('RuleEvaluator.evaluate - diagnósticos detallados de visibilidad (AC-09, AC-17)', () => {
+  // 1. Diagnóstico de vigencia futura
+  const futureResult = RuleEvaluator.evaluate({
+    pathRule: '*',
+    startDate: '2099-01-01T00:00',
+    endDate: '2099-12-31T23:59'
+  }, 'camp-future', '/');
+  assert.equal(futureResult.canShow, false);
+  assert.equal(futureResult.code, 'FUTURE_START');
+  assert.match(futureResult.reason, /Vigencia futura/);
+
+  // 2. Diagnóstico de vigencia expirada
+  const expiredResult = RuleEvaluator.evaluate({
+    pathRule: '*',
+    startDate: '2020-01-01T00:00',
+    endDate: '2020-01-02T00:00'
+  }, 'camp-expired', '/');
+  assert.equal(expiredResult.canShow, false);
+  assert.equal(expiredResult.code, 'EXPIRED');
+  assert.match(expiredResult.reason, /Vigencia expirada/);
+
+  // 3. Diagnóstico de ruta SPA no coincidente
+  const routeMismatch = RuleEvaluator.evaluate({
+    pathRule: '/tramites/*',
+    startDate: '2020-01-01T00:00',
+    endDate: '2099-12-31T23:59'
+  }, 'camp-route', '/');
+  assert.equal(routeMismatch.canShow, false);
+  assert.equal(routeMismatch.code, 'ROUTE_MISMATCH');
+  assert.match(routeMismatch.reason, /Ruta no coincide/);
+
+  // 4. Caso exitoso: ruta coincidente y vigencia activa
+  const eligibleResult = RuleEvaluator.evaluate({
+    pathRule: '/tramites/*',
+    startDate: '2020-01-01T00:00',
+    endDate: '2099-12-31T23:59'
+  }, 'camp-ok', '/tramites/impuesto-vehicular');
+  assert.equal(eligibleResult.canShow, true);
+  assert.equal(eligibleResult.code, 'ELIGIBLE');
+
+  // 5. Caso wildcard universal exitoso
+  const wildcardResult = RuleEvaluator.evaluate({
+    pathRule: '*',
+    startDate: null,
+    endDate: null
+  }, 'camp-wildcard', '/cualquier-ruta');
+  assert.equal(wildcardResult.canShow, true);
+  assert.equal(wildcardResult.code, 'ELIGIBLE');
+});
