@@ -28,6 +28,8 @@ class PublishingService {
     return {
       id: campaign.id,
       tenantId: tenant,
+      status: 'Publicado',
+      active: true,
       version,
       versionString,
       publishedAt: new Date().toISOString(),
@@ -145,6 +147,70 @@ class PublishingService {
         }
       }
       return { newVersion: `v${newVersion}`, restoredFrom: `v${cleanVersion}`, manifest: restoredManifest };
+    });
+  }
+
+  async toggleCampaignStatus({ tenant, campaignId, targetStatus, author }) {
+    if (!['Inactivo', 'Publicado'].includes(targetStatus)) {
+      return { success: false, error: `Estado objetivo inválido: ${targetStatus}. Debe ser 'Inactivo' o 'Publicado'.` };
+    }
+
+    const resolvedTenant = this.manifestRepository.tenantId(tenant);
+    return this.manifestRepository.withCampaignLock(resolvedTenant, campaignId, async () => {
+      let campaign = null;
+      if (this.campaignRepository) {
+        campaign = await this.campaignRepository.find(resolvedTenant, campaignId);
+      }
+      if (!campaign) {
+        return { success: false, error: `Campaña no encontrada (${campaignId}) en el tenant ${resolvedTenant}.` };
+      }
+
+      // Validar transiciones permitidas
+      if (targetStatus === 'Inactivo' && campaign.status !== 'Publicado') {
+        return { success: false, error: `Solo se pueden pausar campañas que estén en estado 'Publicado' (estado actual: '${campaign.status}').` };
+      }
+      if (targetStatus === 'Publicado' && campaign.status !== 'Inactivo') {
+        return { success: false, error: `Solo se pueden reactivar campañas que estén en estado 'Inactivo' (estado actual: '${campaign.status}').` };
+      }
+
+      // 1. Actualizar active.json en CDN si existe
+      const activeManifest = await this.manifestRepository.getActive(resolvedTenant, campaignId);
+      if (activeManifest) {
+        activeManifest.status = targetStatus;
+        activeManifest.active = (targetStatus === 'Publicado');
+        activeManifest.updatedAt = new Date().toISOString();
+        if (author) {
+          activeManifest.lastModifiedBy = author;
+        }
+        await this.manifestRepository.writeActive(resolvedTenant, campaignId, activeManifest);
+      }
+
+      // 2. Actualizar estado de la campaña en repositorio
+      const updatedCampaign = {
+        ...campaign,
+        status: targetStatus,
+        updated: targetStatus === 'Inactivo' ? 'Pausada en vivo' : 'Reactivada en vivo'
+      };
+      await this.campaignRepository.save(resolvedTenant, updatedCampaign);
+
+      // 3. Registrar auditoría (AC-15)
+      const actionName = targetStatus === 'Inactivo' ? 'PAUSA_CAMPAÑA' : 'REACTIVACIÓN_CAMPAÑA';
+      await this.manifestRepository.appendAudit(resolvedTenant, {
+        action: actionName,
+        campaignId,
+        campaignName: campaign.name,
+        version: activeManifest?.versionString || campaign.version || 'v1',
+        user: author?.name || 'Administrador',
+        role: author?.role || 'Publicador'
+      });
+
+      return {
+        success: true,
+        campaignId,
+        status: targetStatus,
+        campaign: updatedCampaign,
+        activeManifest
+      };
     });
   }
 }

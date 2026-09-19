@@ -67,6 +67,42 @@ import { LucideAngularModule } from 'lucide-angular';
           </div>
 
           @if (activeTab() === 'preflight') {
+            <!-- Alerta interactiva de conflicto si existe solapamiento de rutas -->
+            @if (publishService.conflictWarning(); as conflict) {
+              @if (conflict.hasConflict && !publishService.conflictDismissed()) {
+                <div class="conflict-dialog-alert" role="alert">
+                  <div class="conflict-header">
+                    <span class="conflict-badge">
+                      <lucide-icon name="alert-triangle" [size]="13"></lucide-icon> ADVERTENCIA DE SOLAPAMIENTO
+                    </span>
+                    <code>{{ conflict.conflictingCampaign?.rules?.pathRule }}</code>
+                  </div>
+                  <p>
+                    ⚠️ <strong>Advertencia:</strong> Ya existe la campaña activa 
+                    <strong>'{{ conflict.conflictingCampaign?.name }}'</strong> programada para la ruta 
+                    <code>{{ conflict.conflictingCampaign?.rules?.pathRule }}</code> en el mismo rango de fechas. 
+                    ¿Deseas pausar la anterior o continuar?
+                  </p>
+                  <div class="conflict-actions">
+                    <button
+                      class="btn-pause"
+                      (click)="publishService.pauseConflictingCampaign(conflict.conflictingCampaign?.id!)"
+                      type="button"
+                    >
+                      <lucide-icon name="pause-circle" [size]="13"></lucide-icon> Pausar la anterior
+                    </button>
+                    <button
+                      class="btn-continue"
+                      (click)="publishService.dismissConflict()"
+                      type="button"
+                    >
+                      Continuar
+                    </button>
+                  </div>
+                </div>
+              }
+            }
+
             <div class="publish-checks">
               @for (chk of publishService.preflightChecks(); track chk.id) {
                 <div [class.failed]="!chk.passed">
@@ -287,6 +323,95 @@ import { LucideAngularModule } from 'lucide-angular';
         &.active {
           color: var(--blue);
           border-bottom-color: var(--blue);
+        }
+      }
+    }
+
+    .conflict-dialog-alert {
+      margin: 14px 24px 0;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-left: 4px solid #f59e0b;
+      border-radius: 8px;
+      padding: 12px 16px;
+
+      .conflict-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+
+        .conflict-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          color: #b45309;
+          font-size: 10px;
+          font-weight: 800;
+        }
+
+        code {
+          background: #fef3c7;
+          color: #92400e;
+          border: 1px solid #fcd34d;
+          padding: 1px 5px;
+          border-radius: 3px;
+          font-size: 10.5px;
+          font-family: ui-monospace, monospace;
+        }
+      }
+
+      p {
+        color: #78350f;
+        font-size: 11.5px;
+        line-height: 1.45;
+        margin: 0 0 10px;
+
+        strong {
+          color: #451a03;
+        }
+
+        code {
+          background: rgba(0, 0, 0, 0.05);
+          padding: 1px 4px;
+          border-radius: 3px;
+        }
+      }
+
+      .conflict-actions {
+        display: flex;
+        gap: 8px;
+
+        button {
+          padding: 5px 10px;
+          border-radius: 5px;
+          font-size: 10.5px;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.15s ease;
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+        }
+
+        .btn-pause {
+          background: #d97706;
+          color: #fff;
+          border: 1px solid #b45309;
+
+          &:hover {
+            background: #b45309;
+          }
+        }
+
+        .btn-continue {
+          background: #fff;
+          color: #92400e;
+          border: 1px solid #fcd34d;
+
+          &:hover {
+            background: #fef3c7;
+          }
         }
       }
     }

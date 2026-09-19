@@ -60,6 +60,10 @@ class ManifestRepository {
     await this.fileStore.writeJsonAtomic(this.manifestPath(tenantId, campaignId, 'active.json'), manifest);
   }
 
+  async writeActive(tenantId, campaignId, manifest) {
+    await this.fileStore.writeJsonAtomic(this.manifestPath(tenantId, campaignId, 'active.json'), manifest);
+  }
+
   async listAudit(tenantId) {
     return this.fileStore.readJson(this.auditPath(tenantId), []);
   }

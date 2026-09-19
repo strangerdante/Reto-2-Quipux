@@ -1,12 +1,50 @@
 [
   {
+    "id": "camp-1789833468706",
+    "name": "Nueva Campaña 10",
+    "type": "Modal con slider",
+    "tenant": "valle",
+    "status": "Inactivo",
+    "version": "v1",
+    "updated": "Pausada en vivo",
+    "layout": "side",
+    "rules": {
+      "delay": 1,
+      "frequency": "once_per_session",
+      "pathRule": "*",
+      "startDate": "2026-09-01T10:56",
+      "endDate": "2026-10-19T10:57",
+      "escToggle": true,
+      "autoplayToggle": true,
+      "dataLayerToggle": true
+    },
+    "slides": [
+      {
+        "id": 1,
+        "order": 1,
+        "active": true,
+        "name": "Slide Principal",
+        "title": "Título del Comunicado Oficial",
+        "description": "Descripción detallada de la notificación para los ciudadanos.",
+        "cta": "Consultar aquí",
+        "link": "https://www.quipux.com",
+        "target": "_blank",
+        "alt": "Banner institucional",
+        "desktopName": "banner-principal-desk.webp",
+        "mobileName": "banner-principal-mob.webp",
+        "desktopPreview": null,
+        "mobilePreview": null
+      }
+    ]
+  },
+  {
     "id": "camp-1789831957224",
     "name": "Banner Horizontal 9",
     "type": "Modal informativo",
     "tenant": "valle",
-    "status": "Borrador",
+    "status": "Inactivo",
     "version": "v1",
-    "updated": "19 de sept de 2026",
+    "updated": "Pausada en vivo",
     "layout": "top",
     "rules": {
       "delay": 1,
@@ -42,9 +80,9 @@
     "name": "Nueva Campaña 7",
     "type": "Modal con slider",
     "tenant": "valle",
-    "status": "Borrador",
+    "status": "Inactivo",
     "version": "v1",
-    "updated": "18 de sept de 2026",
+    "updated": "Pausada en vivo",
     "layout": "side",
     "rules": {
       "delay": 2000,
@@ -308,7 +346,7 @@
     "tenant": "valle",
     "status": "Publicado",
     "version": "v10",
-    "updated": "19 de sept de 2026",
+    "updated": "Reactivada en vivo",
     "layout": "side",
     "rules": {
       "delay": 1,

@@ -43,7 +43,14 @@ describe('PublishService', () => {
 
   it('should compute preflight checks based on campaign completeness', () => {
     const checks = service.preflightChecks();
-    expect(checks.length).toBe(4);
+    expect(checks.length).toBe(5);
     expect(checks[0].label).toContain('enlaces válidos');
+    expect(checks[4].label).toContain('solapamiento');
+  });
+
+  it('should evaluate conflict warning and allow dismissing it', () => {
+    expect(service.conflictDismissed()).toBe(false);
+    service.dismissConflict();
+    expect(service.conflictDismissed()).toBe(true);
   });
 });

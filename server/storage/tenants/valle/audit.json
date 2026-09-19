@@ -1,5 +1,104 @@
 [
   {
+    "id": "aud-1789837437605",
+    "timestamp": "2026-09-19T17:03:57.605Z",
+    "formattedTime": "19/9/2026, 12:03:57 p. m.",
+    "action": "REACTIVACIÓN_CAMPAÑA",
+    "campaignId": "camp-1",
+    "campaignName": "Cobro Coactivo 2026",
+    "version": "v10",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1789837431619",
+    "timestamp": "2026-09-19T17:03:51.619Z",
+    "formattedTime": "19/9/2026, 12:03:51 p. m.",
+    "action": "PAUSA_CAMPAÑA",
+    "campaignId": "camp-1789831957224",
+    "campaignName": "Banner Horizontal 9",
+    "version": "v1",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1789837430072",
+    "timestamp": "2026-09-19T17:03:50.072Z",
+    "formattedTime": "19/9/2026, 12:03:50 p. m.",
+    "action": "PAUSA_CAMPAÑA",
+    "campaignId": "camp-1789790255995",
+    "campaignName": "Nueva Campaña 7",
+    "version": "v2",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1789837428152",
+    "timestamp": "2026-09-19T17:03:48.152Z",
+    "formattedTime": "19/9/2026, 12:03:48 p. m.",
+    "action": "PAUSA_CAMPAÑA",
+    "campaignId": "camp-1",
+    "campaignName": "Cobro Coactivo 2026",
+    "version": "v10",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1789837422780",
+    "timestamp": "2026-09-19T17:03:42.780Z",
+    "formattedTime": "19/9/2026, 12:03:42 p. m.",
+    "action": "PAUSA_CAMPAÑA",
+    "campaignId": "camp-1789833468706",
+    "campaignName": "Nueva Campaña 10",
+    "version": "v1",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1789836576825",
+    "timestamp": "2026-09-19T16:49:36.825Z",
+    "formattedTime": "19/9/2026, 11:49:36 a. m.",
+    "action": "REACTIVACIÓN_CAMPAÑA",
+    "campaignId": "camp-1",
+    "campaignName": "Cobro Coactivo 2026",
+    "version": "v10",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1789836572929",
+    "timestamp": "2026-09-19T16:49:32.929Z",
+    "formattedTime": "19/9/2026, 11:49:32 a. m.",
+    "action": "PAUSA_CAMPAÑA",
+    "campaignId": "camp-1",
+    "campaignName": "Cobro Coactivo 2026",
+    "version": "v10",
+    "user": "Tester",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1789836564621",
+    "timestamp": "2026-09-19T16:49:24.621Z",
+    "formattedTime": "19/9/2026, 11:49:24 a. m.",
+    "action": "REACTIVACIÓN_CAMPAÑA",
+    "campaignId": "camp-1",
+    "campaignName": "Cobro Coactivo 2026",
+    "version": "v10",
+    "user": "Tester",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1789833509634",
+    "timestamp": "2026-09-19T15:58:29.634Z",
+    "formattedTime": "19/9/2026, 10:58:29 a. m.",
+    "action": "PUBLICACIÓN",
+    "campaignId": "camp-1789833468706",
+    "campaignName": "Nueva Campaña 10",
+    "version": "v1",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
     "id": "aud-1789831987864",
     "timestamp": "2026-09-19T15:33:07.864Z",
     "formattedTime": "19/9/2026, 10:33:07 a. m.",

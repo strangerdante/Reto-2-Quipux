@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { CampaignService } from './campaign.service';
 import { TenantService } from './tenant.service';
 import { ToastService } from './toast.service';
@@ -70,5 +70,41 @@ describe('CampaignService', () => {
     expect(service.activeCampaign().layout).toBe('top');
     service.setLayout('content');
     expect(service.activeCampaign().layout).toBe('content');
+  });
+
+  it('should verify canToggleStatus based on activeRole (AP-01)', () => {
+    const tenantService = TestBed.inject(TenantService);
+    tenantService.setRole('Publicador');
+    expect(service.canToggleStatus()).toBe(true);
+
+    tenantService.setRole('Revisor');
+    expect(service.canToggleStatus()).toBe(true);
+
+    tenantService.setRole('Editor');
+    expect(service.canToggleStatus()).toBe(false);
+  });
+
+  it('should pause and reactivate campaign status locally on fallback', () => {
+    const httpMock = TestBed.inject(HttpTestingController);
+    const tenantService = TestBed.inject(TenantService);
+    tenantService.setRole('Publicador');
+
+    const campId = service.activeCampaign().id;
+    service.pauseCampaign(campId);
+
+    const req1 = httpMock.expectOne(req => req.url.includes('/publish/toggle-status'));
+    expect(req1.request.method).toBe('POST');
+    req1.flush({ success: true, campaign: { ...service.activeCampaign(), status: 'Inactivo' } });
+
+    const updated = service.campaigns().find(c => c.id === campId);
+    expect(updated?.status).toBe('Inactivo');
+
+    service.reactivateCampaign(campId);
+    const req2 = httpMock.expectOne(req => req.url.includes('/publish/toggle-status'));
+    expect(req2.request.method).toBe('POST');
+    req2.flush({ success: true, campaign: { ...service.activeCampaign(), status: 'Publicado' } });
+
+    const reactivated = service.campaigns().find(c => c.id === campId);
+    expect(reactivated?.status).toBe('Publicado');
   });
 });

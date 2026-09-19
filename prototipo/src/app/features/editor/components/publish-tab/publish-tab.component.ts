@@ -1,13 +1,14 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { APP_CONFIG } from '@core/config/app-config';
 import { CampaignService } from '@core/services/campaign.service';
 import { PublishService } from '@core/services/publish.service';
 import { ResourceService } from '@core/services/resource.service';
 import { TenantService } from '@core/services/tenant.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-publish-tab',
-  imports: [],
+  imports: [LucideAngularModule],
   template: `
     <div class="panel-heading">
       <h2>Publicación y versiones</h2>
@@ -15,6 +16,42 @@ import { TenantService } from '@core/services/tenant.service';
     <p class="panel-copy">
       Cada publicación compila un nuevo manifiesto JSON inmutable en el CDN de {{ tenantService.activeTenant().name }}.
     </p>
+
+    <!-- Preflight Warning / Validación de Solapamiento de Rutas -->
+    @if (publishService.conflictWarning(); as conflict) {
+      @if (conflict.hasConflict && !publishService.conflictDismissed()) {
+        <div class="conflict-warning-card" role="alert">
+          <div class="conflict-header">
+            <span class="conflict-badge">
+              <lucide-icon name="alert-triangle" [size]="14"></lucide-icon> ADVERTENCIA DE SOLAPAMIENTO DE RUTA
+            </span>
+            <code class="conflict-route-tag">{{ conflict.conflictingCampaign?.rules?.pathRule }}</code>
+          </div>
+          <p class="conflict-message">
+            ⚠️ <strong>Advertencia:</strong> Ya existe la campaña activa 
+            <strong>'{{ conflict.conflictingCampaign?.name }}'</strong> programada para la ruta 
+            <code>{{ conflict.conflictingCampaign?.rules?.pathRule }}</code> en el mismo rango de fechas. 
+            ¿Deseas pausar la anterior o continuar?
+          </p>
+          <div class="conflict-actions">
+            <button
+              class="conflict-btn pause"
+              (click)="publishService.pauseConflictingCampaign(conflict.conflictingCampaign?.id!)"
+              type="button"
+            >
+              <lucide-icon name="pause-circle" [size]="14"></lucide-icon> Pausar la anterior
+            </button>
+            <button
+              class="conflict-btn continue"
+              (click)="publishService.dismissConflict()"
+              type="button"
+            >
+              Continuar
+            </button>
+          </div>
+        </div>
+      }
+    }
 
     <!-- Manifest card -->
     <div class="manifest-card">
@@ -57,6 +94,29 @@ import { TenantService } from '@core/services/tenant.service';
                 Devolver a Borrador
               </button>
             }
+          }
+
+          <!-- Kill Switch / Pausa y Reactivación en Vivo (AC-12) -->
+          @if (campaignService.activeCampaign().status === 'Publicado') {
+            <button
+              class="mini-button"
+              style="background: #fff; color: #b45309; border-color: #f59e0b; display: inline-flex; align-items: center; gap: 5px; font-weight: 700;"
+              [disabled]="!campaignService.canToggleStatus()"
+              [title]="campaignService.canToggleStatus() ? 'Pausar campaña en producción (Kill Switch)' : 'Solo usuarios con rol Publicador o Revisor pueden pausar la campaña'"
+              (click)="openPauseConfirm()"
+            >
+              <lucide-icon name="pause-circle" [size]="14"></lucide-icon> Pausar en vivo
+            </button>
+          } @else if (campaignService.activeCampaign().status === 'Inactivo') {
+            <button
+              class="mini-button"
+              style="background: #059669; color: #fff; border-color: #059669; display: inline-flex; align-items: center; gap: 5px; font-weight: 700;"
+              [disabled]="!campaignService.canToggleStatus()"
+              [title]="campaignService.canToggleStatus() ? 'Reactivar campaña en producción' : 'Solo usuarios con rol Publicador o Revisor pueden reactivar la campaña'"
+              (click)="onReactivateCampaign()"
+            >
+              <lucide-icon name="play-circle" [size]="14"></lucide-icon> Reactivar campaña
+            </button>
           }
         </div>
       </div>
@@ -108,6 +168,29 @@ import { TenantService } from '@core/services/tenant.service';
         </div>
       }
     </div>
+
+    <!-- Modal confirmación de pausa en vivo en PublishTab (Kill Switch) -->
+    @if (isPauseConfirmOpen()) {
+      <div class="pause-modal-backdrop" (click)="closePauseConfirm()">
+        <div class="pause-modal-card" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+          <div class="pause-modal-header">
+            <div class="pause-modal-icon">
+              <lucide-icon name="alert-triangle" [size]="20"></lucide-icon>
+            </div>
+            <div>
+              <h3>¿Pausar campaña en producción?</h3>
+              <p>El manifiesto <code>active.json</code> en el CDN se actualizará con estado <em>Inactivo</em>. El popup dejará de renderizarse en el portal en tiempo real sin requerir cambios en GTM.</p>
+            </div>
+          </div>
+          <div class="pause-modal-actions">
+            <button type="button" class="mini-button" (click)="closePauseConfirm()">Cancelar</button>
+            <button type="button" class="mini-button danger-btn" (click)="confirmPause()">
+              <lucide-icon name="pause-circle" [size]="14"></lucide-icon> Confirmar pausa inmediata
+            </button>
+          </div>
+        </div>
+      </div>
+    }
   `,
   styles: [`
     .panel-heading h2 {
@@ -131,6 +214,103 @@ import { TenantService } from '@core/services/tenant.service';
       font-size: 11px;
       font-weight: 800;
       display: block;
+    }
+
+    .conflict-warning-card {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-left: 4px solid #f59e0b;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.08);
+
+      .conflict-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .conflict-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        color: #b45309;
+        font-size: 10.5px;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+      }
+
+      .conflict-route-tag {
+        background: #fef3c7;
+        color: #92400e;
+        border: 1px solid #fcd34d;
+        padding: 2px 7px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-family: monospace;
+        font-weight: 700;
+      }
+
+      .conflict-message {
+        color: #78350f;
+        font-size: 12px;
+        line-height: 1.5;
+        margin: 0 0 12px;
+
+        strong {
+          color: #451a03;
+        }
+
+        code {
+          background: rgba(0, 0, 0, 0.05);
+          padding: 1px 4px;
+          border-radius: 3px;
+          font-size: 11.5px;
+        }
+      }
+
+      .conflict-actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+
+        .conflict-btn {
+          border-radius: 6px;
+          padding: 6px 12px;
+          font-size: 11px;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.15s ease;
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+
+          &.pause {
+            background: #d97706;
+            color: #ffffff;
+            border: 1px solid #b45309;
+
+            &:hover {
+              background: #b45309;
+            }
+          }
+
+          &.continue {
+            background: #ffffff;
+            color: #92400e;
+            border: 1px solid #fcd34d;
+
+            &:hover {
+              background: #fef3c7;
+            }
+          }
+        }
+      }
     }
 
     .manifest-card {
@@ -308,6 +488,80 @@ import { TenantService } from '@core/services/tenant.service';
         }
       }
     }
+
+    .pause-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(3px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .pause-modal-card {
+      background: #ffffff;
+      border-radius: 12px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .pause-modal-header {
+      display: flex;
+      gap: 14px;
+      padding: 20px 22px 14px;
+      align-items: flex-start;
+
+      h3 {
+        margin: 0 0 6px;
+        font-size: 15px;
+        font-weight: 800;
+        color: var(--ink);
+      }
+
+      p {
+        margin: 0;
+        font-size: 12px;
+        color: #64748b;
+        line-height: 1.45;
+      }
+    }
+
+    .pause-modal-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: #fef3c7;
+      color: #d97706;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .pause-modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 14px 22px;
+      border-top: 1px solid var(--line-soft);
+      background: #f8fafc;
+    }
+
+    .danger-btn {
+      background: #dc2626 !important;
+      color: #fff !important;
+      border-color: #dc2626 !important;
+
+      &:hover {
+        background: #b91c1c !important;
+      }
+    }
   `]
 })
 export class PublishTabComponent {
@@ -317,7 +571,29 @@ export class PublishTabComponent {
   readonly resourceService = inject(ResourceService);
   private readonly config = inject(APP_CONFIG);
 
+  readonly isPauseConfirmOpen = signal<boolean>(false);
+
   readonly manifestUrl = computed(() => `${this.config.cdnBaseUrl}/resources/tenants/${this.tenantService.activeTenantId()}/manifests/${this.campaignService.activeCampaign().id}/active.json`);
+
+  openPauseConfirm(): void {
+    this.isPauseConfirmOpen.set(true);
+  }
+
+  closePauseConfirm(): void {
+    this.isPauseConfirmOpen.set(false);
+  }
+
+  confirmPause(): void {
+    const active = this.campaignService.activeCampaign();
+    this.campaignService.pauseCampaign(active.id, () => {
+      this.closePauseConfirm();
+    });
+  }
+
+  onReactivateCampaign(): void {
+    const active = this.campaignService.activeCampaign();
+    this.campaignService.reactivateCampaign(active.id);
+  }
 
   openManifestMock(): void {
     window.open(this.manifestUrl(), '_blank');

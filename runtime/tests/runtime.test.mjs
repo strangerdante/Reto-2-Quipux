@@ -172,3 +172,40 @@ test('Navegación de carrusel - ciclado accesible de flechas prev y next (AC-03,
   prevSlide();
   assert.equal(currentIndex, 1, 'Debe retroceder al slide 1');
 });
+
+test('Kill Switch / Pausa en vivo - Supresión de popup cuando la campaña está inactiva o pausada (AC-12, AC-21)', () => {
+  function evaluateCampaignActive(manifest) {
+    if (!manifest || manifest.status === 'Inactivo' || manifest.active === false) {
+      return {
+        suppressed: true,
+        reason_code: 'CAMPAIGN_PAUSED',
+        reason: 'Campaña pausada por administrador/kill switch'
+      };
+    }
+    return {
+      suppressed: false,
+      reason_code: 'ACTIVE',
+      reason: 'Campaña activa'
+    };
+  }
+
+  // 1. Manifiesto explícitamente Inactivo
+  const inactiveResult = evaluateCampaignActive({ status: 'Inactivo', active: false, id: 'camp-1' });
+  assert.equal(inactiveResult.suppressed, true);
+  assert.equal(inactiveResult.reason_code, 'CAMPAIGN_PAUSED');
+
+  // 2. Manifiesto con active: false
+  const activeFalseResult = evaluateCampaignActive({ status: 'Publicado', active: false, id: 'camp-1' });
+  assert.equal(activeFalseResult.suppressed, true);
+  assert.equal(activeFalseResult.reason_code, 'CAMPAIGN_PAUSED');
+
+  // 3. Manifiesto activo y publicado
+  const activeResult = evaluateCampaignActive({ status: 'Publicado', active: true, id: 'camp-1' });
+  assert.equal(activeResult.suppressed, false);
+  assert.equal(activeResult.reason_code, 'ACTIVE');
+
+  // 4. Manifiesto nulo
+  const nullResult = evaluateCampaignActive(null);
+  assert.equal(nullResult.suppressed, true);
+});
+

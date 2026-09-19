@@ -7,7 +7,7 @@ import {
   Rocket, GitCompare, GripVertical, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Eye, EyeOff,
   Trash2, Monitor, Laptop, Smartphone, X, ExternalLink, History,
   Images, Megaphone, AlertTriangle, Star, FileText, Upload,
-  Bell, CircleHelp
+  Bell, CircleHelp, PauseCircle, PlayCircle
 } from 'lucide-angular';
 
 import { provideHttpClient } from '@angular/common/http';
@@ -27,7 +27,7 @@ export const appConfig: ApplicationConfig = {
         Rocket, GitCompare, GripVertical, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Eye, EyeOff,
         Trash2, Monitor, Laptop, Smartphone, X, ExternalLink, History,
         Images, Megaphone, AlertTriangle, Star, FileText, Upload,
-        Bell, CircleHelp
+        Bell, CircleHelp, PauseCircle, PlayCircle
       })
     )
   ]

@@ -87,6 +87,21 @@ export class QuipuxPopupStudioElement extends HTMLElement {
       return;
     }
 
+    // Kill Switch / Pausa en vivo (AC-12, AC-21): Si la campaña está inactiva, suprimir renderizado
+    if (this.manifest.status === 'Inactivo' || this.manifest.active === false) {
+      console.info(`[Quipux Popup Studio] ℹ️ Modal de campaña "${this.manifest.id}" suprimido: Campaña inactiva o pausada.`);
+      if (typeof window !== 'undefined' && window.dataLayer) {
+        window.dataLayer.push({
+          event: 'quipux_modal_suppressed',
+          campaign_id: this.manifest.id,
+          reason_code: 'CAMPAIGN_PAUSED',
+          reason: 'Campaña pausada por administrador/kill switch',
+          current_path: window.location.pathname
+        });
+      }
+      return;
+    }
+
     // Filtrar slides activos (AC-03)
     this.manifest.slides = this.manifest.slides.filter(s => s.active !== false);
     if (this.manifest.slides.length === 0) return;

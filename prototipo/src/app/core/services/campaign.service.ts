@@ -365,6 +365,65 @@ export class CampaignService {
     });
   }
 
+  canToggleStatus(): boolean {
+    const role = this.tenantService.activeRole();
+    return role === 'Publicador' || role === 'Revisor';
+  }
+
+  toggleCampaignStatus(campaignId: string, targetStatus: 'Inactivo' | 'Publicado', onSuccess?: () => void): void {
+    if (!this.canToggleStatus()) {
+      this.toastService.show('⚠️ Solo usuarios con rol "Publicador" o "Revisor" pueden cambiar el estado en vivo.');
+      return;
+    }
+
+    const tenant = this.tenantService.activeTenantId();
+    const author = this.tenantService.currentUser();
+    const list = this.campaigns();
+    const target = list.find(c => c.id === campaignId);
+
+    const fallbackUpdated: Campaign = {
+      ...(target || this.activeCampaign()),
+      status: targetStatus,
+      updated: targetStatus === 'Inactivo' ? 'Pausada en vivo' : 'Reactivada en vivo'
+    };
+
+    this.http.post<{ success: boolean; campaign: Campaign; status: 'Inactivo' | 'Publicado' }>(
+      `${this.config.apiBaseUrl}/publish/toggle-status`,
+      { tenantId: tenant, campaignId, targetStatus, author }
+    ).subscribe({
+      next: (res) => {
+        const saved = res.campaign || fallbackUpdated;
+        this.campaigns.update(curr => curr.map(c => c.id === saved.id ? saved : c));
+        if (this.activeCampaign().id === campaignId) {
+          this.activeCampaign.set(saved);
+        }
+        const actionLabel = targetStatus === 'Inactivo' ? 'pausada (Kill Switch activado)' : 'reactivada en producción';
+        this.toastService.show(`✅ Campaña "${target?.name || campaignId}" ${actionLabel}. Manifiesto CDN actualizado.`);
+        if (onSuccess) onSuccess();
+      },
+      error: (err) => {
+        console.warn('Fallo petición toggle-status, actualizando estado en memoria:', err);
+        this.campaigns.update(curr => curr.map(c => c.id === campaignId ? fallbackUpdated : c));
+        if (this.activeCampaign().id === campaignId) {
+          this.activeCampaign.set(fallbackUpdated);
+        }
+        const actionLabel = targetStatus === 'Inactivo' ? 'marcada como Inactiva' : 'marcada como Publicada';
+        this.toastService.show(`⚠️ Servidor no disponible: Campaña "${target?.name || campaignId}" ${actionLabel} localmente.`);
+        if (onSuccess) onSuccess();
+      }
+    });
+  }
+
+  // Pausar una campaña en vivo (Kill Switch)
+  pauseCampaign(campaignId: string, onSuccess?: () => void): void {
+    this.toggleCampaignStatus(campaignId, 'Inactivo', onSuccess);
+  }
+
+  // Reactivar una campaña pausada
+  reactivateCampaign(campaignId: string, onSuccess?: () => void): void {
+    this.toggleCampaignStatus(campaignId, 'Publicado', onSuccess);
+  }
+
   private formatLocalDatetime(date: Date): string {
     const pad = (n: number) => String(n).padStart(2, '0');
     const y = date.getFullYear();

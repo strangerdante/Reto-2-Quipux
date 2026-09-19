@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, input } from '@angular/core';
+import { Component, OnInit, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { CampaignService } from '@core/services/campaign.service';
 import { PublishService } from '@core/services/publish.service';
@@ -54,6 +54,29 @@ import { LegacyImporterComponent } from './components/legacy-importer/legacy-imp
         <div class="editor-actions">
           <app-legacy-importer></app-legacy-importer>
           <small>{{ campaignService.saveStatus() }}</small>
+
+          @if (campaignService.activeCampaign().status === 'Publicado') {
+            <button
+              class="q-button"
+              style="background: #fff; color: #b45309; border: 1px solid #f59e0b; font-size: 11px; padding: 6px 12px; display: inline-flex; align-items: center; gap: 5px; font-weight: 700;"
+              [disabled]="!campaignService.canToggleStatus()"
+              [title]="campaignService.canToggleStatus() ? 'Pausar campaña en vivo (Kill Switch)' : 'Solo usuarios con rol Publicador o Revisor pueden pausar la campaña'"
+              (click)="openPauseConfirm()"
+            >
+              <lucide-icon name="pause-circle" [size]="14"></lucide-icon> Pausar en vivo
+            </button>
+          } @else if (campaignService.activeCampaign().status === 'Inactivo') {
+            <button
+              class="q-button"
+              style="background: #059669; color: #fff; border: 1px solid #059669; font-size: 11px; padding: 6px 12px; display: inline-flex; align-items: center; gap: 5px; font-weight: 700;"
+              [disabled]="!campaignService.canToggleStatus()"
+              [title]="campaignService.canToggleStatus() ? 'Reactivar campaña en vivo' : 'Solo usuarios con rol Publicador o Revisor pueden reactivar la campaña'"
+              (click)="onReactivateCampaign()"
+            >
+              <lucide-icon name="play-circle" [size]="14"></lucide-icon> Reactivar
+            </button>
+          }
+
           <button class="q-button secondary" (click)="campaignService.saveDraft()">
             <lucide-icon name="save" [size]="14"></lucide-icon> Guardar
           </button>
@@ -94,6 +117,45 @@ import { LegacyImporterComponent } from './components/legacy-importer/legacy-imp
 
       <!-- Diálogo modal de confirmación de publicación -->
       <app-publish-dialog />
+
+      <!-- Modal de confirmación para pausar campaña en vivo (Kill Switch) -->
+      @if (isPauseConfirmOpen()) {
+        <div class="pause-modal-backdrop" (click)="closePauseConfirm()">
+          <div class="pause-modal-card" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="pause-editor-title">
+            <div class="pause-modal-header">
+              <div class="pause-modal-icon">
+                <lucide-icon name="alert-triangle" [size]="20"></lucide-icon>
+              </div>
+              <div>
+                <h3 id="pause-editor-title">¿Pausar campaña en vivo?</h3>
+                <p>La campaña <strong>"{{ campaignService.activeCampaign().name }}"</strong> dejará de mostrarse en el portal inmediatamente sin modificar el contenedor GTM.</p>
+              </div>
+            </div>
+
+            <div class="pause-modal-details">
+              <div class="pause-detail-row">
+                <span>Ruta afectada:</span>
+                <code>{{ campaignService.activeCampaign().rules.pathRule || '*' }}</code>
+              </div>
+              <div class="pause-detail-row">
+                <span>Tenant:</span>
+                <span>{{ campaignService.activeCampaign().tenant }}</span>
+              </div>
+              <div class="pause-detail-row">
+                <span>Efecto en CDN:</span>
+                <span class="warning-text"><code>active.json</code> se actualizará a Inactivo (active: false).</span>
+              </div>
+            </div>
+
+            <div class="pause-modal-actions">
+              <button type="button" class="q-button secondary" (click)="closePauseConfirm()">Cancelar</button>
+              <button type="button" class="q-button danger-btn" (click)="confirmPause()">
+                <lucide-icon name="pause-circle" [size]="14"></lucide-icon> Confirmar y pausar en vivo
+              </button>
+            </div>
+          </div>
+        </div>
+      }
     </div>
   `,
   styles: [`
@@ -273,6 +335,117 @@ import { LegacyImporterComponent } from './components/legacy-importer/legacy-imp
         display: none;
       }
     }
+
+    .pause-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(3px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .pause-modal-card {
+      background: #ffffff;
+      border-radius: 12px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .pause-modal-header {
+      display: flex;
+      gap: 14px;
+      padding: 20px 22px 14px;
+      align-items: flex-start;
+
+      h3 {
+        margin: 0 0 6px;
+        font-size: 15px;
+        font-weight: 800;
+        color: var(--ink);
+      }
+
+      p {
+        margin: 0;
+        font-size: 12px;
+        color: #64748b;
+        line-height: 1.45;
+      }
+    }
+
+    .pause-modal-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: #fef3c7;
+      color: #d97706;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .pause-modal-details {
+      background: #f8fafc;
+      margin: 0 22px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 11px;
+    }
+
+    .pause-detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      span:first-child {
+        color: #64748b;
+        font-weight: 600;
+      }
+
+      code {
+        background: #e2e8f0;
+        color: #0f172a;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 10px;
+      }
+
+      .warning-text {
+        color: #b45309;
+        font-size: 10.5px;
+      }
+    }
+
+    .pause-modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 14px 22px;
+      border-top: 1px solid var(--line-soft);
+      margin-top: 14px;
+      background: #f8fafc;
+    }
+
+    .danger-btn {
+      background: #dc2626 !important;
+      color: #fff !important;
+      border-color: #dc2626 !important;
+
+      &:hover {
+        background: #b91c1c !important;
+      }
+    }
   `]
 })
 export class EditorComponent implements OnInit {
@@ -282,6 +455,8 @@ export class EditorComponent implements OnInit {
 
   // Input binding for route param :id
   readonly id = input<string>();
+
+  readonly isPauseConfirmOpen = signal<boolean>(false);
 
   ngOnInit(): void {
     const campaignId = this.id();
@@ -302,5 +477,25 @@ export class EditorComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/components']);
+  }
+
+  openPauseConfirm(): void {
+    this.isPauseConfirmOpen.set(true);
+  }
+
+  closePauseConfirm(): void {
+    this.isPauseConfirmOpen.set(false);
+  }
+
+  confirmPause(): void {
+    const active = this.campaignService.activeCampaign();
+    this.campaignService.pauseCampaign(active.id, () => {
+      this.closePauseConfirm();
+    });
+  }
+
+  onReactivateCampaign(): void {
+    const active = this.campaignService.activeCampaign();
+    this.campaignService.reactivateCampaign(active.id);
   }
 }

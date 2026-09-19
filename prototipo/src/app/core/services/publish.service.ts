@@ -1,6 +1,7 @@
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { PreflightCheck, VersionRecord } from '../models/version.model';
+import { Campaign } from '../models/campaign.model';
 import { APP_CONFIG } from '../config/app-config';
 import { CampaignService } from './campaign.service';
 import { TenantService } from './tenant.service';
@@ -11,6 +12,39 @@ export interface VersionDiffItem {
   before: string;
   after: string;
   type: 'changed' | 'added' | 'removed' | 'unchanged';
+}
+
+export interface ConflictWarning {
+  hasConflict: boolean;
+  conflictingCampaign: Campaign | null;
+  message: string;
+}
+
+function pathsOverlap(pathA?: string, pathB?: string): boolean {
+  const a = (pathA || '*').trim();
+  const b = (pathB || '*').trim();
+  if (a === '*' || a === '/*' || b === '*' || b === '/*') return true;
+  if (a === b) return true;
+
+  const cleanA = a.replace(/\*$/, '');
+  const cleanB = b.replace(/\*$/, '');
+  if (a.endsWith('*') && b.startsWith(cleanA)) return true;
+  if (b.endsWith('*') && a.startsWith(cleanB)) return true;
+  return false;
+}
+
+function datesOverlap(startA?: string, endA?: string, startB?: string, endB?: string): boolean {
+  const sA = startA ? new Date(startA).getTime() : -Infinity;
+  const eA = endA ? new Date(endA).getTime() : Infinity;
+  const sB = startB ? new Date(startB).getTime() : -Infinity;
+  const eB = endB ? new Date(endB).getTime() : Infinity;
+
+  const validSA = isNaN(sA) ? -Infinity : sA;
+  const validEA = isNaN(eA) ? Infinity : eA;
+  const validSB = isNaN(sB) ? -Infinity : sB;
+  const validEB = isNaN(eB) ? Infinity : eB;
+
+  return validSA <= validEB && validEA >= validSB;
 }
 
 @Injectable({
@@ -26,6 +60,54 @@ export class PublishService {
   readonly isPublishOpen = signal<boolean>(false);
   readonly isPublishing = signal<boolean>(false);
   readonly versions = signal<VersionRecord[]>([]);
+  readonly conflictDismissed = signal<boolean>(false);
+
+  // Advertencia de conflicto y solapamiento de rutas y fechas (Preflight Warning)
+  readonly conflictWarning = computed<ConflictWarning>(() => {
+    const current = this.campaignService.activeCampaign();
+    const allCampaigns = this.campaignService.campaigns();
+
+    const conflicting = allCampaigns.find(other => {
+      if (other.id === current.id) return false;
+      // Solo consideramos campañas que estén activas o programadas (no borradores ni inactivas)
+      if (other.status !== 'Publicado' && other.status !== 'Programado') return false;
+
+      const pathConflict = pathsOverlap(current.rules?.pathRule, other.rules?.pathRule);
+      const dateConflict = datesOverlap(
+        current.rules?.startDate,
+        current.rules?.endDate,
+        other.rules?.startDate,
+        other.rules?.endDate
+      );
+
+      return pathConflict && dateConflict;
+    });
+
+    if (!conflicting) {
+      return {
+        hasConflict: false,
+        conflictingCampaign: null,
+        message: ''
+      };
+    }
+
+    const path = conflicting.rules?.pathRule || '*';
+    return {
+      hasConflict: true,
+      conflictingCampaign: conflicting,
+      message: `⚠️ Advertencia: Ya existe la campaña activa '${conflicting.name}' programada para la ruta ${path} en el mismo rango de fechas. ¿Deseas pausar la anterior o continuar?`
+    };
+  });
+
+  pauseConflictingCampaign(campaignId: string): void {
+    this.campaignService.pauseCampaign(campaignId);
+    this.conflictDismissed.set(true);
+  }
+
+  dismissConflict(): void {
+    this.conflictDismissed.set(true);
+    this.toastService.show('Advertencia de solapamiento omitida: continuando con la publicación');
+  }
 
   // Preflight checks calculados en tiempo real (AC-11, AC-19)
   readonly preflightChecks = computed<PreflightCheck[]>(() => {
@@ -78,6 +160,16 @@ export class PublishService {
           ? 'Imágenes desktop y mobile asignadas en cada slide.'
           : 'Existen slides sin imagen asignada.',
         passed: allHaveImages
+      },
+      {
+        id: 'c5',
+        label: 'Validación de concurrencia y solapamiento de rutas',
+        detail: !this.conflictWarning().hasConflict || this.conflictDismissed()
+          ? (this.conflictDismissed() && this.conflictWarning().hasConflict
+              ? `Solapamiento con '${this.conflictWarning().conflictingCampaign?.name}' revisado y confirmado por el usuario.`
+              : 'Sin conflictos de ruta activa detectados.')
+          : `⚠️ Advertencia: Solapamiento con '${this.conflictWarning().conflictingCampaign?.name}' en ruta ${this.conflictWarning().conflictingCampaign?.rules?.pathRule || '*'}.`,
+        passed: true
       }
     ];
   });

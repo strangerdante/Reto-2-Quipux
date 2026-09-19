@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CampaignService } from '@core/services/campaign.service';
 import { ResourceService } from '@core/services/resource.service';
@@ -171,7 +171,29 @@ import { LucideAngularModule } from 'lucide-angular';
 
               <span><code>{{ comp.version }}</code></span>
 
-              <div style="text-align: right;">
+              <div style="text-align: right; display: inline-flex; align-items: center; justify-content: flex-end; gap: 6px;">
+                @if (comp.status === 'Publicado') {
+                  <button
+                    class="row-action pause-btn"
+                    [disabled]="!canToggleStatus()"
+                    [title]="canToggleStatus() ? 'Pausar campaña en vivo (Kill Switch)' : 'Solo usuarios con rol Publicador o Revisor pueden pausar campañas'"
+                    (click)="openPauseModal(comp)"
+                    style="display: inline-flex; align-items: center; gap: 4px;"
+                  >
+                    <lucide-icon name="pause-circle" [size]="13"></lucide-icon> Pausar
+                  </button>
+                } @else if (comp.status === 'Inactivo') {
+                  <button
+                    class="row-action resume-btn"
+                    [disabled]="!canToggleStatus()"
+                    [title]="canToggleStatus() ? 'Reactivar campaña en vivo' : 'Solo usuarios con rol Publicador o Revisor pueden reactivar campañas'"
+                    (click)="onReactivateCampaign(comp.id)"
+                    style="display: inline-flex; align-items: center; gap: 4px;"
+                  >
+                    <lucide-icon name="play-circle" [size]="13"></lucide-icon> Reactivar
+                  </button>
+                }
+
                 <button class="row-action" (click)="onEditCampaign(comp.id)" style="display: inline-flex; align-items: center; gap: 4px;">
                   Editar <lucide-icon name="arrow-right" [size]="12"></lucide-icon>
                 </button>
@@ -203,6 +225,45 @@ import { LucideAngularModule } from 'lucide-angular';
 
         <button routerLink="/integration">Ver snippet ↗</button>
       </section>
+
+      <!-- Modal de confirmación para pausar campaña en vivo (Kill Switch) -->
+      @if (pendingPauseCampaign(); as target) {
+        <div class="pause-modal-backdrop" (click)="closePauseModal()">
+          <div class="pause-modal-card" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="pause-title">
+            <div class="pause-modal-header">
+              <div class="pause-modal-icon">
+                <lucide-icon name="alert-triangle" [size]="20"></lucide-icon>
+              </div>
+              <div>
+                <h3 id="pause-title">¿Pausar campaña en vivo?</h3>
+                <p>La campaña <strong>"{{ target.name }}"</strong> dejará de mostrarse en el portal inmediatamente sin modificar el contenedor GTM.</p>
+              </div>
+            </div>
+
+            <div class="pause-modal-details">
+              <div class="pause-detail-row">
+                <span>Ruta afectada:</span>
+                <code>{{ target.rules.pathRule || '*' }}</code>
+              </div>
+              <div class="pause-detail-row">
+                <span>Tenant:</span>
+                <span>{{ target.tenant }}</span>
+              </div>
+              <div class="pause-detail-row">
+                <span>Efecto en CDN:</span>
+                <span class="warning-text"><code>active.json</code> se actualizará a Inactivo (active: false).</span>
+              </div>
+            </div>
+
+            <div class="pause-modal-actions">
+              <button type="button" class="q-button secondary" (click)="closePauseModal()">Cancelar</button>
+              <button type="button" class="q-button danger-btn" (click)="confirmPause()">
+                <lucide-icon name="pause-circle" [size]="14"></lucide-icon> Confirmar y pausar en vivo
+              </button>
+            </div>
+          </div>
+        </div>
+      }
     </div>
   `,
   styles: [`
@@ -599,6 +660,139 @@ import { LucideAngularModule } from 'lucide-angular';
       &:hover {
         background: rgba(46, 19, 245, 0.08);
       }
+
+      &.pause-btn {
+        color: #d97706;
+        &:hover:not(:disabled) {
+          background: rgba(217, 119, 6, 0.1);
+        }
+      }
+
+      &.resume-btn {
+        color: #059669;
+        &:hover:not(:disabled) {
+          background: rgba(5, 150, 105, 0.1);
+        }
+      }
+
+      &:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+    }
+
+    .pause-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(3px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      animation: fadeIn 0.15s ease-out;
+    }
+
+    .pause-modal-card {
+      background: #ffffff;
+      border-radius: 12px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      border: 1px solid var(--line);
+      overflow: hidden;
+      animation: popIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .pause-modal-header {
+      display: flex;
+      gap: 14px;
+      padding: 22px 24px 16px;
+      align-items: flex-start;
+
+      h3 {
+        margin: 0 0 6px;
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--ink);
+      }
+
+      p {
+        margin: 0;
+        font-size: 12.5px;
+        color: #64748b;
+        line-height: 1.45;
+      }
+    }
+
+    .pause-modal-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #fef3c7;
+      color: #d97706;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .pause-modal-details {
+      background: #f8fafc;
+      margin: 0 24px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 11.5px;
+    }
+
+    .pause-detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      span:first-child {
+        color: #64748b;
+        font-weight: 600;
+      }
+
+      code {
+        background: #e2e8f0;
+        color: #0f172a;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 10.5px;
+      }
+
+      .warning-text {
+        color: #b45309;
+        font-size: 11px;
+        text-align: right;
+      }
+    }
+
+    .pause-modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 16px 24px;
+      border-top: 1px solid var(--line-soft);
+      margin-top: 18px;
+      background: #fff;
+    }
+
+    .danger-btn {
+      background: #dc2626 !important;
+      color: #fff !important;
+      border-color: #dc2626 !important;
+
+      &:hover {
+        background: #b91c1c !important;
+      }
     }
 
     .loader-banner {
@@ -778,5 +972,35 @@ export class DashboardComponent {
   onCreateBanner(): void {
     const newCamp = this.campaignService.createNewCampaign('Modal informativo', 'top');
     this.router.navigate(['/editor', newCamp.id]);
+  }
+
+  readonly pendingPauseCampaign = signal<Campaign | null>(null);
+
+  canToggleStatus(): boolean {
+    const role = this.tenantService.activeRole();
+    return role === 'Publicador' || role === 'Revisor';
+  }
+
+  openPauseModal(comp: Campaign): void {
+    if (!this.canToggleStatus()) return;
+    this.pendingPauseCampaign.set(comp);
+  }
+
+  closePauseModal(): void {
+    this.pendingPauseCampaign.set(null);
+  }
+
+  confirmPause(): void {
+    const target = this.pendingPauseCampaign();
+    if (target) {
+      this.campaignService.pauseCampaign(target.id, () => {
+        this.closePauseModal();
+      });
+    }
+  }
+
+  onReactivateCampaign(campaignId: string): void {
+    if (!this.canToggleStatus()) return;
+    this.campaignService.reactivateCampaign(campaignId);
   }
 }

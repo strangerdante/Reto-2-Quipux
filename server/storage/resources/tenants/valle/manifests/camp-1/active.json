@@ -48,5 +48,13 @@
       "desktopImage": "slide-3-desktop.webp",
       "mobileImage": "slide-3-mobile.webp"
     }
-  ]
+  ],
+  "status": "Publicado",
+  "active": true,
+  "updatedAt": "2026-09-19T17:03:57.597Z",
+  "lastModifiedBy": {
+    "name": "Angie Ríos",
+    "role": "Publicador",
+    "initials": "AR"
+  }
 }

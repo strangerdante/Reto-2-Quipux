@@ -38,6 +38,28 @@ module.exports = function createPublishRouter({ publishingService, manifestRepos
     }
   });
 
+  router.post('/toggle-status', async (req, res, next) => {
+    try {
+      const { campaignId, targetStatus, author } = req.body;
+      const tenant = req.body.tenantId || req.body.tenant || req.query.tenant || 'valle';
+      if (!campaignId || !targetStatus) {
+        return res.status(400).json({ error: 'Faltan parámetros requeridos (campaignId, targetStatus).' });
+      }
+      const result = await publishingService.toggleCampaignStatus({
+        tenant,
+        campaignId,
+        targetStatus,
+        author
+      });
+      if (!result.success) {
+        return res.status(400).json(result);
+      }
+      res.json(result);
+    } catch (error) {
+      next(error);
+    }
+  });
+
   router.get('/audit', async (req, res, next) => {
     try {
       res.json(await manifestRepository.listAudit(req.query.tenant || 'valle'));
