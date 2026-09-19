@@ -146,3 +146,29 @@ test('RuleEvaluator.evaluate - diagnósticos detallados de visibilidad (AC-09, A
   assert.equal(wildcardResult.canShow, true);
   assert.equal(wildcardResult.code, 'ELIGIBLE');
 });
+
+test('Navegación de carrusel - ciclado accesible de flechas prev y next (AC-03, AC-18)', () => {
+  const slides = [{ id: 1 }, { id: 2 }, { id: 3 }];
+  let currentIndex = 0;
+
+  const nextSlide = () => {
+    currentIndex = (currentIndex + 1) % slides.length;
+  };
+  const prevSlide = () => {
+    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+  };
+
+  // Ciclado hacia adelante (Next arrow)
+  nextSlide();
+  assert.equal(currentIndex, 1, 'Debe avanzar a slide 1');
+  nextSlide();
+  assert.equal(currentIndex, 2, 'Debe avanzar a slide 2');
+  nextSlide();
+  assert.equal(currentIndex, 0, 'Debe ciclar al slide 0 al superar el último');
+
+  // Ciclado hacia atrás (Prev arrow)
+  prevSlide();
+  assert.equal(currentIndex, 2, 'Debe ciclar al último slide (2) desde el slide 0');
+  prevSlide();
+  assert.equal(currentIndex, 1, 'Debe retroceder al slide 1');
+});

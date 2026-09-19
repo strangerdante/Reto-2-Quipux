@@ -97,8 +97,25 @@ import { LucideAngularModule } from 'lucide-angular';
               </a>
             </div>
 
-            <!-- Puntos de navegación del carrusel -->
+            <!-- Controles y puntos de navegación del carrusel -->
             @if (campaignService.activeCampaign().slides.length > 1) {
+              <button
+                class="modal-nav-arrow prev"
+                (click)="campaignService.prevPreviewSlide()"
+                aria-label="Slide anterior"
+                type="button"
+              >
+                <lucide-icon name="chevron-left" [size]="14"></lucide-icon>
+              </button>
+              <button
+                class="modal-nav-arrow next"
+                (click)="campaignService.nextPreviewSlide()"
+                aria-label="Slide siguiente"
+                type="button"
+              >
+                <lucide-icon name="chevron-right" [size]="14"></lucide-icon>
+              </button>
+
               <div class="preview-dots" role="tablist" aria-label="Navegación de slides">
                 @for (slide of campaignService.activeCampaign().slides; track slide.id; let idx = $index) {
                   <button
@@ -445,6 +462,56 @@ import { LucideAngularModule } from 'lucide-angular';
       }
     }
 
+    .modal-nav-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 5;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(33, 28, 51, 0.08);
+      box-shadow: 0 3px 12px rgba(16, 12, 26, 0.1);
+      color: var(--ink);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 0.88;
+
+      &:hover {
+        opacity: 1;
+        background: #ffffff;
+        color: var(--blue);
+        border-color: rgba(46, 19, 245, 0.25);
+        transform: translateY(-50%) scale(1.08);
+        box-shadow: 0 5px 16px rgba(46, 19, 245, 0.2);
+      }
+
+      &:active {
+        transform: translateY(-50%) scale(0.96);
+      }
+
+      &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px var(--blue);
+        opacity: 1;
+      }
+
+      &.prev {
+        left: 10px;
+      }
+
+      &.next {
+        right: 10px;
+      }
+    }
+
     .preview-dots {
       z-index: 3;
       gap: 5px;
@@ -529,6 +596,16 @@ import { LucideAngularModule } from 'lucide-angular';
           font-size: 17px;
         }
       }
+
+      .modal-nav-arrow {
+        top: 122px;
+        width: 26px;
+        height: 26px;
+      }
+
+      .modal-preview.layout-content .modal-nav-arrow {
+        top: 50%;
+      }
     }
 
     @media (width <= 620px) {
@@ -545,6 +622,14 @@ import { LucideAngularModule } from 'lucide-angular';
       }
       .modal-preview {
         width: 280px;
+      }
+      .modal-nav-arrow {
+        top: 122px;
+        width: 26px;
+        height: 26px;
+      }
+      .modal-preview.layout-content .modal-nav-arrow {
+        top: 50%;
       }
     }
   `]

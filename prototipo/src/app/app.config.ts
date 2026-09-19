@@ -4,7 +4,7 @@ import {
   LucideAngularModule,
   Layers, Folder, Zap, Clock, ShieldCheck, Check, CheckCircle2, FileEdit,
   Plus, Download, Search, ArrowRight, ArrowLeft, RefreshCw, Copy, Save,
-  Rocket, GitCompare, GripVertical, ChevronUp, ChevronDown, Eye, EyeOff,
+  Rocket, GitCompare, GripVertical, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Eye, EyeOff,
   Trash2, Monitor, Laptop, Smartphone, X, ExternalLink, History,
   Images, Megaphone, AlertTriangle, Star, FileText, Upload,
   Bell, CircleHelp
@@ -24,7 +24,7 @@ export const appConfig: ApplicationConfig = {
       LucideAngularModule.pick({
         Layers, Folder, Zap, Clock, ShieldCheck, Check, CheckCircle2, FileEdit,
         Plus, Download, Search, ArrowRight, ArrowLeft, RefreshCw, Copy, Save,
-        Rocket, GitCompare, GripVertical, ChevronUp, ChevronDown, Eye, EyeOff,
+        Rocket, GitCompare, GripVertical, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Eye, EyeOff,
         Trash2, Monitor, Laptop, Smartphone, X, ExternalLink, History,
         Images, Megaphone, AlertTriangle, Star, FileText, Upload,
         Bell, CircleHelp

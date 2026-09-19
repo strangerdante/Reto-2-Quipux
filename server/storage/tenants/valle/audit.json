@@ -1,5 +1,49 @@
 [
   {
+    "id": "aud-1789831987864",
+    "timestamp": "2026-09-19T15:33:07.864Z",
+    "formattedTime": "19/9/2026, 10:33:07 a. m.",
+    "action": "PUBLICACIÓN",
+    "campaignId": "camp-1",
+    "campaignName": "Cobro Coactivo 2026",
+    "version": "v10",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1789791199976",
+    "timestamp": "2026-09-19T04:13:19.976Z",
+    "formattedTime": "18/9/2026, 11:13:19 p. m.",
+    "action": "PUBLICACIÓN",
+    "campaignId": "camp-1789680810789",
+    "campaignName": "Nueva Campaña 2",
+    "version": "v9",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1789791140098",
+    "timestamp": "2026-09-19T04:12:20.098Z",
+    "formattedTime": "18/9/2026, 11:12:20 p. m.",
+    "action": "PUBLICACIÓN",
+    "campaignId": "camp-1789680810789",
+    "campaignName": "Nueva Campaña 2",
+    "version": "v8",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1789790992985",
+    "timestamp": "2026-09-19T04:09:52.985Z",
+    "formattedTime": "18/9/2026, 11:09:52 p. m.",
+    "action": "PUBLICACIÓN",
+    "campaignId": "camp-1789680810789",
+    "campaignName": "Nueva Campaña 2",
+    "version": "v7",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
     "id": "aud-1789790640791",
     "timestamp": "2026-09-19T04:04:00.791Z",
     "formattedTime": "18/9/2026, 11:04:00 p. m.",

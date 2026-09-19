@@ -193,6 +193,20 @@ export class CampaignService {
     }
   }
 
+  nextPreviewSlide(): void {
+    const count = this.activeCampaign().slides.length;
+    if (count <= 1) return;
+    const nextIdx = (this.previewIndex() + 1) % count;
+    this.setPreviewIndex(nextIdx);
+  }
+
+  prevPreviewSlide(): void {
+    const count = this.activeCampaign().slides.length;
+    if (count <= 1) return;
+    const prevIdx = (this.previewIndex() - 1 + count) % count;
+    this.setPreviewIndex(prevIdx);
+  }
+
   setPreviewMode(mode: 'desktop' | 'mobile'): void {
     this.previewMode.set(mode);
   }

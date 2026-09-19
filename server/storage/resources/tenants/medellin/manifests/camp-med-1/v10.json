@@ -1,20 +1,20 @@
 {
   "id": "camp-med-1",
   "tenantId": "medellin",
-  "version": 11,
-  "versionString": "v11",
-  "publishedAt": "2026-09-19T04:58:13.515Z",
+  "version": 10,
+  "versionString": "v10",
+  "publishedAt": "2026-09-19T04:55:49.651Z",
   "publishedBy": {
     "name": "Angie Ríos",
     "role": "Publicador",
     "initials": "AR"
   },
-  "summary": "Publicación v11 - Novedades Movilidad Medellín 2026",
+  "summary": "Publicación v10 - Novedades Movilidad Medellín 2026",
   "layout": "content",
   "rules": {
     "delay": 1,
     "frequency": "Una vez por sesión",
-    "pathRule": "/tramites/*",
+    "pathRule": "/",
     "startDate": "2026-09-01T00:00:00.000Z",
     "endDate": "2026-10-14T23:59",
     "escToggle": true,

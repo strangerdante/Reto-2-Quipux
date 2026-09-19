@@ -575,6 +575,51 @@ class QuipuxPopupStudioElement extends HTMLElement {
         align-items: center;
       }
 
+      .modal-nav-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 6;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(33, 28, 51, 0.08);
+        box-shadow: 0 3px 12px rgba(16, 12, 26, 0.1);
+        color: var(--ink);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        opacity: 0.88;
+      }
+      .modal-nav-arrow:hover {
+        opacity: 1;
+        background: #ffffff;
+        color: var(--blue);
+        border-color: rgba(46, 19, 245, 0.25);
+        transform: translateY(-50%) scale(1.08);
+        box-shadow: 0 5px 16px rgba(46, 19, 245, 0.2);
+      }
+      .modal-nav-arrow:active {
+        transform: translateY(-50%) scale(0.96);
+      }
+      .modal-nav-arrow:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px var(--blue);
+        opacity: 1;
+      }
+      .modal-nav-arrow.prev {
+        left: 10px;
+      }
+      .modal-nav-arrow.next {
+        right: 10px;
+      }
+
       .preview-dots {
         z-index: 5;
         gap: 6px;
@@ -630,6 +675,14 @@ class QuipuxPopupStudioElement extends HTMLElement {
         .modal-copy h2 {
           font-size: 17px;
         }
+        .modal-nav-arrow {
+          top: 122px;
+          width: 26px;
+          height: 26px;
+        }
+        .modal-preview.layout-content .modal-nav-arrow {
+          top: 50%;
+        }
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -659,6 +712,17 @@ class QuipuxPopupStudioElement extends HTMLElement {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <path d="M18 6 6 18"></path>
               <path d="m6 6 12 12"></path>
+            </svg>
+          </button>
+
+          <button class="modal-nav-arrow prev" id="btn-prev-slide" aria-label="Slide anterior" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m15 18-6-6 6-6"></path>
+            </svg>
+          </button>
+          <button class="modal-nav-arrow next" id="btn-next-slide" aria-label="Slide siguiente" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m9 18 6-6-6-6"></path>
             </svg>
           </button>
 
@@ -701,8 +765,22 @@ class QuipuxPopupStudioElement extends HTMLElement {
     const backdrop = this.shadowRoot.querySelector('.backdrop');
     const closeBtn = this.shadowRoot.querySelector('#btn-close');
     const ctaBtn = this.shadowRoot.querySelector('#cta-link-el');
+    const prevBtn = this.shadowRoot.querySelector('#btn-prev-slide');
+    const nextBtn = this.shadowRoot.querySelector('#btn-next-slide');
 
     closeBtn.addEventListener('click', () => this.closeModal('close_button'));
+    if (prevBtn) {
+      prevBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.prevSlide();
+      });
+    }
+    if (nextBtn) {
+      nextBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.nextSlide();
+      });
+    }
     backdrop.addEventListener('click', (e) => {
       if (e.target === backdrop) this.closeModal('backdrop_click');
     });
@@ -907,6 +985,13 @@ class QuipuxPopupStudioElement extends HTMLElement {
         }
       }
     }
+
+    // Mostrar u ocultar flechas de navegación según la cantidad de slides
+    const prevBtn = this.shadowRoot.querySelector('#btn-prev-slide');
+    const nextBtn = this.shadowRoot.querySelector('#btn-next-slide');
+    const hasMultipleSlides = this.manifest.slides && this.manifest.slides.length > 1;
+    if (prevBtn) prevBtn.style.display = hasMultipleSlides ? 'flex' : 'none';
+    if (nextBtn) nextBtn.style.display = hasMultipleSlides ? 'flex' : 'none';
 
     // Despachar visualización de slide (AC-21)
     DataLayerDispatcher.dispatch('quipux_modal_slide_view', {
