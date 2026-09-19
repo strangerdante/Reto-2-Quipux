@@ -290,12 +290,15 @@ export class PublishService {
         this.isPublishOpen.set(false);
 
         // Actualizar campaña localmente con el nuevo estado y versión
-        this.campaignService.activeCampaign.update(c => ({
-          ...c,
-          status: 'Publicado',
+        const updatedCamp = {
+          ...this.campaignService.activeCampaign(),
+          status: 'Publicado' as const,
           version: res.version,
           updated: 'Justo ahora'
-        }));
+        };
+        this.campaignService.activeCampaign.set(updatedCamp);
+        this.campaignService.updateCampaignInList(updatedCamp);
+        this.campaignService.saveStatus.set('Guardado en servidor');
 
         this.loadVersions(tenant, campaign.id);
         this.toastService.show(`🚀 ¡Versión ${res.version} publicada exitosamente en el CDN!`);
@@ -324,10 +327,11 @@ export class PublishService {
         // Restaurar estado de la campaña en memoria a partir del manifest restaurado
         if (res.manifest) {
           const m = res.manifest;
-          this.campaignService.activeCampaign.update(c => ({
+          const c = this.campaignService.activeCampaign();
+          const restoredCamp = {
             ...c,
             version: res.newVersion,
-            status: 'Publicado',
+            status: 'Publicado' as const,
             updated: 'Justo ahora',
             layout: m.layout || c.layout,
             rules: m.rules ? { ...c.rules, ...m.rules } : c.rules,
@@ -346,7 +350,10 @@ export class PublishService {
               desktopPreview: s.desktopImage,
               mobilePreview: s.mobileImage
             })) : c.slides
-          }));
+          };
+          this.campaignService.activeCampaign.set(restoredCamp);
+          this.campaignService.updateCampaignInList(restoredCamp);
+          this.campaignService.saveStatus.set('Guardado en servidor');
         }
 
         this.loadVersions(tenant, campaignId);

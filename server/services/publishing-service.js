@@ -6,8 +6,9 @@ function isSafeCtaUrl(value) {
 }
 
 class PublishingService {
-  constructor({ manifestRepository, config }) {
+  constructor({ manifestRepository, campaignRepository, config }) {
     this.manifestRepository = manifestRepository;
+    this.campaignRepository = campaignRepository;
     this.config = config;
   }
 
@@ -95,6 +96,16 @@ class PublishingService {
         action: 'PUBLICACIÓN', campaignId: campaign.id, campaignName: campaign.name,
         version: manifest.versionString, user: manifest.publishedBy.name, role: manifest.publishedBy.role
       });
+      if (this.campaignRepository) {
+        const existing = await this.campaignRepository.find(resolvedTenant, campaign.id) || campaign;
+        await this.campaignRepository.save(resolvedTenant, {
+          ...existing,
+          ...campaign,
+          status: 'Publicado',
+          version: manifest.versionString,
+          updated: new Date().toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' })
+        });
+      }
       return { success: true, version: manifest.versionString, versionNum: version, manifest, preflights, activeUrl: this.config.manifestUrl(resolvedTenant, campaign.id) };
     });
   }
@@ -120,6 +131,19 @@ class PublishingService {
         action: 'REVERSIÓN', campaignId, campaignName: restoredManifest.summary,
         version: `v${newVersion} (restaurada de v${cleanVersion})`, user: restoredManifest.publishedBy.name, role: restoredManifest.publishedBy.role
       });
+      if (this.campaignRepository) {
+        const existing = await this.campaignRepository.find(resolvedTenant, campaignId);
+        if (existing) {
+          await this.campaignRepository.save(resolvedTenant, {
+            ...existing,
+            status: 'Publicado',
+            version: `v${newVersion}`,
+            updated: new Date().toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' }),
+            layout: restoredManifest.layout || existing.layout,
+            rules: restoredManifest.rules ? { ...existing.rules, ...restoredManifest.rules } : existing.rules
+          });
+        }
+      }
       return { newVersion: `v${newVersion}`, restoredFrom: `v${cleanVersion}`, manifest: restoredManifest };
     });
   }

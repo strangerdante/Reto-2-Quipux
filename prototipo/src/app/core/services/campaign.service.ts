@@ -424,6 +424,18 @@ export class CampaignService {
     this.toastService.show(`↩️ Campaña "${campaign.name}" devuelta a estado Borrador`);
   }
 
+  updateCampaignInList(updated: Campaign): void {
+    this.campaigns.update(list => {
+      const index = list.findIndex(c => c.id === updated.id);
+      if (index >= 0) {
+        const copy = [...list];
+        copy[index] = { ...copy[index], ...updated };
+        return copy;
+      }
+      return [updated, ...list];
+    });
+  }
+
   private markDirty(): void {
     this.saveStatus.set('Cambios sin guardar');
   }

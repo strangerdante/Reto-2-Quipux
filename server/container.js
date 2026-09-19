@@ -9,11 +9,13 @@ const fileStore = new FileStore(config.storageRoot);
 
 const manifestRepository = new ManifestRepository(fileStore);
 
+const campaignRepository = new CampaignRepository(fileStore);
+
 module.exports = {
   config,
   fileStore,
-  campaignRepository: new CampaignRepository(fileStore),
+  campaignRepository,
   manifestRepository,
   storageProvider: new LocalStorageProvider({ fileStore, config }),
-  publishingService: new PublishingService({ manifestRepository, config })
+  publishingService: new PublishingService({ manifestRepository, campaignRepository, config })
 };

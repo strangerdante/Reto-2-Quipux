@@ -1,5 +1,43 @@
 [
   {
+    "id": "camp-1789791398365",
+    "name": "Nueva Campaña 2",
+    "type": "Modal con slider",
+    "tenant": "medellin",
+    "status": "Publicado",
+    "version": "v5",
+    "updated": "18 de sept de 2026",
+    "layout": "side",
+    "rules": {
+      "delay": 1,
+      "frequency": "once_per_session",
+      "pathRule": "/tramites/*",
+      "startDate": "2026-09-19T04:16",
+      "endDate": "2026-10-19T04:16",
+      "escToggle": true,
+      "autoplayToggle": true,
+      "dataLayerToggle": true
+    },
+    "slides": [
+      {
+        "id": 1,
+        "order": 1,
+        "active": true,
+        "name": "Slide Principal",
+        "title": "Título del Comunicado Oficial",
+        "description": "Descripción detallada de la notificación para los ciudadanos.",
+        "cta": "Consultar aquí",
+        "link": "https://www.quipux.com",
+        "target": "_blank",
+        "alt": "Banner institucional",
+        "desktopName": "banner-principal-desk.webp",
+        "mobileName": "banner-principal-mob.webp",
+        "desktopPreview": null,
+        "mobilePreview": null
+      }
+    ]
+  },
+  {
     "id": "camp-med-1",
     "name": "Novedades Movilidad Medellín 2026",
     "type": "Modal con slider",
