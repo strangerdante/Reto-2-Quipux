@@ -31,14 +31,6 @@ import { LucideAngularModule } from 'lucide-angular';
         </a>
       </nav>
 
-      <div class="sidebar-principle">
-        <span class="principle-icon"><lucide-icon name="shield-check" [size]="16"></lucide-icon></span>
-        <div>
-          <strong>Seguro por diseño</strong>
-          <small>Sin eval(), sanitización estricta y aislamiento CDN.</small>
-        </div>
-      </div>
-
       <div class="user-card">
         <span class="avatar">{{ tenantService.currentUser().initials }}</span>
         <div>
@@ -173,51 +165,16 @@ import { LucideAngularModule } from 'lucide-angular';
       }
     }
 
-    .sidebar-principle {
-      z-index: 1;
-      background: rgba(97, 199, 208, 0.08);
-      border: 1px solid rgba(97, 199, 208, 0.2);
-      gap: 10px;
-      margin-top: auto;
-      padding: 12px;
-      display: flex;
-      position: relative;
-
-      .principle-icon {
-        border: 1px solid var(--sky);
-        width: 26px;
-        height: 26px;
-        color: var(--sky);
-        flex: none;
-        place-items: center;
-        font-weight: 900;
-        display: grid;
-        font-size: 12px;
-      }
-
-      div {
-        gap: 3px;
-        display: grid;
-      }
-
-      strong {
-        font-size: 10px;
-      }
-
-      small {
-        color: rgba(255, 255, 255, 0.55);
-        font-size: 8.5px;
-        line-height: 1.4;
-      }
-    }
-
     .user-card {
       z-index: 1;
       border-top: 1px solid rgba(255, 255, 255, 0.1);
       grid-template-columns: 34px 1fr auto;
       align-items: center;
       gap: 9px;
-      margin: 18px -2px 0;
+      margin-top: auto;
+      margin-left: -2px;
+      margin-right: -2px;
+      margin-bottom: 0;
       padding: 14px 8px 0;
       display: grid;
       position: relative;
