@@ -8,6 +8,7 @@ const {
   fileStore,
   campaignRepository,
   manifestRepository,
+  tenantRepository,
   storageProvider,
   publishingService
 } = require('./container');
@@ -27,6 +28,7 @@ async function start() {
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+  app.use('/api/tenants', require('./routes/tenants')({ tenantRepository }));
   app.use('/api/campaigns', require('./routes/campaigns')({ campaignRepository }));
   const resourceRouter = require('./routes/resources')({ storageProvider });
   app.use('/api/resources', resourceRouter);

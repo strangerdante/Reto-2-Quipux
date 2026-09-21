@@ -1,0 +1,27 @@
+[
+  {
+    "id": "valle",
+    "name": "Gobernación del Valle (Impuestos)",
+    "portalUrl": "https://impuestos.valledelcauca.gov.co",
+    "logoUrl": "/brand/logos/valle.svg"
+  },
+  {
+    "id": "medellin",
+    "name": "Movilidad Medellín",
+    "portalUrl": "https://www.medellin.gov.co/movilidad",
+    "logoUrl": "/brand/logos/medellin.svg"
+  },
+  {
+    "id": "cali",
+    "name": "Tránsito Cali",
+    "portalUrl": "https://www.cali.gov.co/movilidad",
+    "logoUrl": "/brand/logos/cali.svg"
+  },
+  {
+    "id": "tolima",
+    "name": "Alcaldia tolima",
+    "portalUrl": "https://tolima.gov.co/",
+    "logoUrl": "https://tolima.gov.co/images/inicio/logo_gobertol.png",
+    "createdAt": "2026-09-21T19:24:30.570Z"
+  }
+]

@@ -1,10 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { TenantService } from '@core/services/tenant.service';
 import { LucideAngularModule } from 'lucide-angular';
+import { NewTenantDialogComponent } from './components/new-tenant-dialog.component';
 
 @Component({
   selector: 'app-topbar',
-  imports: [LucideAngularModule],
+  imports: [LucideAngularModule, NewTenantDialogComponent],
   template: `
     <header class="global-topbar">
       <div class="portal-context">
@@ -22,14 +23,25 @@ import { LucideAngularModule } from 'lucide-angular';
       </div>
 
       <div class="topbar-tools">
-        <label>
-          <span>TENANT / CLIENTE</span>
-          <select [value]="tenantService.activeTenantId()" (change)="onTenantChange($event)">
-            @for (t of tenantService.tenants(); track t.id) {
-              <option [value]="t.id">{{ t.name }}</option>
-            }
-          </select>
-        </label>
+        <div class="tenant-selector-group">
+          <label>
+            <span>TENANT / CLIENTE</span>
+            <select [value]="tenantService.activeTenantId()" (change)="onTenantChange($event)">
+              @for (t of tenantService.tenants(); track t.id) {
+                <option [value]="t.id">{{ t.name }}</option>
+              }
+            </select>
+          </label>
+          <button
+            type="button"
+            class="btn-new-tenant"
+            (click)="isNewTenantModalOpen.set(true)"
+            title="Registrar nuevo portal / cliente"
+          >
+            <lucide-icon name="plus" [size]="13"></lucide-icon>
+            <span>Nuevo</span>
+          </button>
+        </div>
 
         <label>
           <span>ROL (AP-01)</span>
@@ -48,6 +60,11 @@ import { LucideAngularModule } from 'lucide-angular';
         </button>
       </div>
     </header>
+
+    <app-new-tenant-dialog
+      [isOpen]="isNewTenantModalOpen()"
+      (closeDialog)="isNewTenantModalOpen.set(false)"
+    ></app-new-tenant-dialog>
   `,
   styles: [`
     .global-topbar {
@@ -117,8 +134,36 @@ import { LucideAngularModule } from 'lucide-angular';
 
     .topbar-tools {
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       display: flex;
+
+      .tenant-selector-group {
+        display: flex;
+        align-items: flex-end;
+        gap: 6px;
+
+        .btn-new-tenant {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          height: 31px;
+          padding: 0 10px;
+          border-radius: 7px;
+          background: #f1f5f9;
+          border: 1px solid var(--line);
+          color: var(--blue);
+          font-size: 11px;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.15s ease;
+
+          &:hover {
+            background: var(--blue);
+            color: #fff;
+            border-color: var(--blue);
+          }
+        }
+      }
 
       label {
         gap: 3px;
@@ -204,6 +249,7 @@ import { LucideAngularModule } from 'lucide-angular';
 })
 export class TopbarComponent {
   readonly tenantService = inject(TenantService);
+  readonly isNewTenantModalOpen = signal<boolean>(false);
 
   onTenantChange(event: Event): void {
     const val = (event.target as HTMLSelectElement).value;
