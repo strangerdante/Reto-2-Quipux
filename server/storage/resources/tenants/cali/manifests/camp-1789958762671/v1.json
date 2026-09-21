@@ -1,0 +1,41 @@
+{
+  "id": "camp-1789958762671",
+  "tenantId": "cali",
+  "status": "Publicado",
+  "active": true,
+  "version": 1,
+  "versionString": "v1",
+  "publishedAt": "2026-09-21T02:46:38.241Z",
+  "publishedBy": {
+    "name": "Angie Ríos",
+    "role": "Publicador",
+    "initials": "AR"
+  },
+  "summary": "Publicación v1 - Nueva Campaña 1",
+  "layout": "top",
+  "rules": {
+    "delay": 1,
+    "frequency": "once_per_session",
+    "pathRule": "*",
+    "startDate": "2026-09-20T21:45",
+    "endDate": "2026-10-21T21:46",
+    "escToggle": true,
+    "autoplayToggle": true,
+    "dataLayerToggle": true
+  },
+  "slides": [
+    {
+      "id": 1,
+      "order": 1,
+      "active": true,
+      "title": "Hola Mundo",
+      "description": "Descripción detallada de la notificación para los ciudadanos.",
+      "cta": "Consultar aquí",
+      "link": "https://www.quipux.com",
+      "target": "_blank",
+      "alt": "Banner institucional",
+      "desktopImage": "banner-principal-desk.webp",
+      "mobileImage": "banner-principal-mob.webp"
+    }
+  ]
+}

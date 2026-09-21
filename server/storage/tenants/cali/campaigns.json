@@ -1,0 +1,40 @@
+[
+  {
+    "id": "camp-1789958762671",
+    "name": "Nueva Campaña 1",
+    "type": "Modal con slider",
+    "tenant": "cali",
+    "status": "Publicado",
+    "version": "v3",
+    "updated": "20 de sept de 2026",
+    "layout": "top",
+    "rules": {
+      "delay": 1,
+      "frequency": "Una vez por sesión",
+      "pathRule": "/",
+      "startDate": "2026-09-20T21:45",
+      "endDate": "2026-10-21T21:46",
+      "escToggle": true,
+      "autoplayToggle": true,
+      "dataLayerToggle": true
+    },
+    "slides": [
+      {
+        "id": 1,
+        "order": 1,
+        "active": true,
+        "name": "Slide Principal",
+        "title": "Hola Mundo",
+        "description": "Descripción detallada de la notificación para los ciudadanos.",
+        "cta": "Consultar aquí",
+        "link": "https://www.quipux.com",
+        "target": "_blank",
+        "alt": "Banner institucional",
+        "desktopName": "banner-principal-desk.webp",
+        "mobileName": "banner-principal-mob.webp",
+        "desktopPreview": null,
+        "mobilePreview": null
+      }
+    ]
+  }
+]
