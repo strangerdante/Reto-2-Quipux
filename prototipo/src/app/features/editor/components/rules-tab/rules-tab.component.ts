@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CampaignService } from '@core/services/campaign.service';
 import { TenantService } from '@core/services/tenant.service';
 import { LucideAngularModule } from 'lucide-angular';
@@ -129,12 +129,12 @@ import { LucideAngularModule } from 'lucide-angular';
     <label class="field">
       <span>Frecuencia de aparición</span>
       <select
-        [value]="campaignService.activeCampaign().rules.frequency"
+        [value]="getNormalizedFrequency()"
         (change)="onFrequencyChange($event)"
       >
-        <option value="Una vez por sesión">Una vez por sesión (SessionStorage)</option>
-        <option value="Una vez por día">Una vez por día (LocalStorage 24h)</option>
-        <option value="Siempre al ingresar">Siempre al ingresar (Sin persistencia)</option>
+        <option value="Una vez por sesión" [selected]="getNormalizedFrequency() === 'Una vez por sesión'">Una vez por sesión (SessionStorage)</option>
+        <option value="Una vez por día" [selected]="getNormalizedFrequency() === 'Una vez por día'">Una vez por día (LocalStorage 24h)</option>
+        <option value="Siempre al ingresar" [selected]="getNormalizedFrequency() === 'Siempre al ingresar'">Siempre al ingresar (Sin persistencia)</option>
       </select>
     </label>
 
@@ -490,9 +490,30 @@ import { LucideAngularModule } from 'lucide-angular';
     }
   `]
 })
-export class RulesTabComponent {
+export class RulesTabComponent implements OnInit {
   readonly campaignService = inject(CampaignService);
   readonly tenantService = inject(TenantService);
+
+  ngOnInit(): void {
+    const currentFreq = this.campaignService.activeCampaign().rules?.frequency;
+    if (!currentFreq || currentFreq === 'once_per_session') {
+      this.campaignService.updateRules({ frequency: 'Una vez por sesión' });
+    }
+  }
+
+  getNormalizedFrequency(): string {
+    const freq = this.campaignService.activeCampaign().rules?.frequency;
+    if (!freq || freq === 'once_per_session' || freq === 'Una vez por sesión') {
+      return 'Una vez por sesión';
+    }
+    if (freq === 'once_per_device' || freq === 'Una vez por día') {
+      return 'Una vez por día';
+    }
+    if (freq === 'always' || freq === 'Siempre al ingresar') {
+      return 'Siempre al ingresar';
+    }
+    return 'Una vez por sesión';
+  }
 
   getNormalizedDelay(): number {
     const d = this.campaignService.activeCampaign().rules?.delay;

@@ -56,7 +56,7 @@ function seed() {
       layout: 'side',
       rules: {
         delay: 1.5,
-        frequency: 'once_per_session',
+        frequency: 'Una vez por sesión',
         pathRule: '*',
         startDate: '2026-09-01T00:00:00.000Z',
         endDate: '2026-10-31T23:59:59.000Z',

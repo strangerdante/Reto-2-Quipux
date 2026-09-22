@@ -38,7 +38,7 @@ class PublishingService {
       layout: campaign.layout || 'side',
       rules: {
         delay: campaign.rules?.delay || 0,
-        frequency: campaign.rules?.frequency || 'once_per_session',
+        frequency: campaign.rules?.frequency || 'Una vez por sesión',
         pathRule: campaign.rules?.pathRule || '*',
         startDate: campaign.rules?.startDate || null,
         endDate: campaign.rules?.endDate || null,

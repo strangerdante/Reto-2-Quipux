@@ -16,5 +16,11 @@
     "name": "Tránsito Cali",
     "portalUrl": "https://www.cali.gov.co/movilidad",
     "logoUrl": "/brand/logos/cali.svg"
+  },
+  {
+    "id": "prueba",
+    "name": "prueba",
+    "portalUrl": "prueba.com",
+    "createdAt": "2026-09-22T13:54:48.352Z"
   }
 ]

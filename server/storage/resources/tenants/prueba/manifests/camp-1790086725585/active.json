@@ -1,0 +1,41 @@
+{
+  "id": "camp-1790086725585",
+  "tenantId": "prueba",
+  "status": "Publicado",
+  "active": true,
+  "version": 2,
+  "versionString": "v2",
+  "publishedAt": "2026-09-22T14:20:00.809Z",
+  "publishedBy": {
+    "name": "Angie Ríos",
+    "role": "Publicador",
+    "initials": "AR"
+  },
+  "summary": "Publicación v2 - Nueva Campaña 1",
+  "layout": "side",
+  "rules": {
+    "delay": 1,
+    "frequency": "Una vez por sesión",
+    "pathRule": "/",
+    "startDate": "2026-09-22T09:17",
+    "endDate": "2026-10-24T09:18",
+    "escToggle": true,
+    "autoplayToggle": true,
+    "dataLayerToggle": true
+  },
+  "slides": [
+    {
+      "id": 1,
+      "order": 1,
+      "active": true,
+      "title": "Título del Comunicado Oficial",
+      "description": "Descripción detallada de la notificación para los ciudadanos.",
+      "cta": "Consultar aquí",
+      "link": "https://www.quipux.com",
+      "target": "_blank",
+      "alt": "Banner institucional",
+      "desktopImage": "banner-principal-desk.webp",
+      "mobileImage": "banner-principal-mob.webp"
+    }
+  ]
+}

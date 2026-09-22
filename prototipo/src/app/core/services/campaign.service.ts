@@ -42,7 +42,7 @@ export class CampaignService {
     ],
     rules: {
       delay: 1,
-      frequency: 'once_per_session',
+      frequency: 'Una vez por sesión',
       pathRule: '*',
       startDate: '',
       endDate: '',
@@ -121,14 +121,20 @@ export class CampaignService {
 
     this.http.get<Campaign[]>(`${this.config.apiBaseUrl}/campaigns?tenant=${tenant}`).subscribe({
       next: (list) => {
-        this.campaigns.set(list);
+        const normalized = list.map(c => {
+          if (c.rules && (!c.rules.frequency || c.rules.frequency === 'once_per_session')) {
+            return { ...c, rules: { ...c.rules, frequency: 'Una vez por sesión' } };
+          }
+          return c;
+        });
+        this.campaigns.set(normalized);
         this.isLoading.set(false);
 
         // Si la campaña activa no pertenece al nuevo tenant, cargar la primera disponible
         const currentActive = this.activeCampaign();
-        if (!list.some(c => c.id === currentActive.id)) {
-          if (list.length > 0) {
-            this.loadCampaign(list[0].id);
+        if (!normalized.some(c => c.id === currentActive.id)) {
+          if (normalized.length > 0) {
+            this.loadCampaign(normalized[0].id);
           }
         }
       },
@@ -146,8 +152,12 @@ export class CampaignService {
   loadCampaign(id: string): void {
     const found = this.campaigns().find(c => c.id === id);
     if (found) {
-      this.activeCampaign.set(JSON.parse(JSON.stringify(found)));
-      this.selectedSlideId.set(found.slides[0]?.id ?? 1);
+      const camp = JSON.parse(JSON.stringify(found));
+      if (camp.rules && (!camp.rules.frequency || camp.rules.frequency === 'once_per_session')) {
+        camp.rules.frequency = 'Una vez por sesión';
+      }
+      this.activeCampaign.set(camp);
+      this.selectedSlideId.set(camp.slides[0]?.id ?? 1);
       this.previewIndex.set(0);
       this.saveStatus.set('Borrador cargado');
     } else {
@@ -155,6 +165,9 @@ export class CampaignService {
       const tenant = this.tenantService.activeTenantId();
       this.http.get<Campaign>(`${this.config.apiBaseUrl}/campaigns/${id}?tenant=${tenant}`).subscribe({
         next: (camp) => {
+          if (camp.rules && (!camp.rules.frequency || camp.rules.frequency === 'once_per_session')) {
+            camp.rules.frequency = 'Una vez por sesión';
+          }
           this.activeCampaign.set(camp);
           this.selectedSlideId.set(camp.slides[0]?.id ?? 1);
           this.previewIndex.set(0);
@@ -450,7 +463,7 @@ export class CampaignService {
       layout,
       rules: {
         delay: 1,
-        frequency: 'once_per_session',
+        frequency: 'Una vez por sesión',
         pathRule: '*',
         startDate: this.formatLocalDatetime(new Date(Date.now() - 60 * 1000)),
         endDate: this.formatLocalDatetime(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)),

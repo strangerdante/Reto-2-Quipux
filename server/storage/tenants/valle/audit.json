@@ -1,5 +1,27 @@
 [
   {
+    "id": "aud-1790084946606",
+    "timestamp": "2026-09-22T13:49:06.606Z",
+    "formattedTime": "22/9/2026, 8:49:06 a. m.",
+    "action": "PUBLICACIÓN",
+    "campaignId": "camp-1790084898538",
+    "campaignName": "Nueva Campaña 2",
+    "version": "v1",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1790084794053",
+    "timestamp": "2026-09-22T13:46:34.053Z",
+    "formattedTime": "22/9/2026, 8:46:34 a. m.",
+    "action": "PUBLICACIÓN",
+    "campaignId": "camp-1",
+    "campaignName": "Cobro Coactivo 2026",
+    "version": "v2",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
     "id": "aud-seed-1",
     "timestamp": "2026-09-22T04:49:09.124Z",
     "formattedTime": "21/9/2026, 11:49:09 p. m.",
