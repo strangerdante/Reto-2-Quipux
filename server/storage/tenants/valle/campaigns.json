@@ -1,469 +1,15 @@
 [
   {
-    "id": "camp-1790051887999",
-    "name": "Nueva Campaña 13",
-    "type": "Modal con slider",
-    "tenant": "valle",
-    "status": "Borrador",
-    "version": "v1",
-    "updated": "21 de sept de 2026",
-    "layout": "side",
-    "rules": {
-      "delay": 1,
-      "frequency": "once_per_session",
-      "pathRule": "*",
-      "startDate": "2026-09-21T23:37",
-      "endDate": "2026-10-21T23:38",
-      "escToggle": true,
-      "autoplayToggle": true,
-      "dataLayerToggle": true
-    },
-    "slides": [
-      {
-        "id": 1,
-        "order": 1,
-        "active": true,
-        "name": "Slide Principal",
-        "title": "Título del Comunicado Oficial",
-        "description": "Descripción detallada de la notificación para los ciudadanos.",
-        "cta": "Consultar aquí",
-        "link": "https://www.quipux.com",
-        "target": "_blank",
-        "alt": "Banner institucional",
-        "desktopName": "banner-principal-desk.webp",
-        "mobileName": "banner-principal-mob.webp",
-        "desktopPreview": null,
-        "mobilePreview": null
-      }
-    ]
-  },
-  {
-    "id": "camp-1790051284131",
-    "name": "Nueva Campaña 12",
-    "type": "Modal con slider",
-    "tenant": "valle",
-    "status": "Borrador",
-    "version": "v1",
-    "updated": "21 de sept de 2026",
-    "layout": "side",
-    "rules": {
-      "delay": 1,
-      "frequency": "once_per_session",
-      "pathRule": "*",
-      "startDate": "2026-09-21T23:27",
-      "endDate": "2026-10-21T23:28",
-      "escToggle": true,
-      "autoplayToggle": true,
-      "dataLayerToggle": true
-    },
-    "slides": [
-      {
-        "id": 1,
-        "order": 1,
-        "active": true,
-        "name": "Slide Principal",
-        "title": "Título del Comunicado Oficial",
-        "description": "Descripción detallada de la notificación para los ciudadanos.",
-        "cta": "Consultar aquí",
-        "link": "https://www.quipux.com",
-        "target": "_blank",
-        "alt": "Banner institucional",
-        "desktopName": "banner-principal-desk.webp",
-        "mobileName": "banner-principal-mob.webp",
-        "desktopPreview": null,
-        "mobilePreview": null
-      }
-    ]
-  },
-  {
-    "id": "camp-1789958499145",
-    "name": "Nueva Campaña 11",
-    "type": "Modal con slider",
-    "tenant": "valle",
-    "status": "Borrador",
-    "version": "v1",
-    "updated": "20 de sept de 2026",
-    "layout": "side",
-    "rules": {
-      "delay": 1,
-      "frequency": "once_per_session",
-      "pathRule": "*",
-      "startDate": "2026-09-20T21:40",
-      "endDate": "2026-10-20T21:41",
-      "escToggle": true,
-      "autoplayToggle": true,
-      "dataLayerToggle": true
-    },
-    "slides": [
-      {
-        "id": 1,
-        "order": 1,
-        "active": true,
-        "name": "Slide Principal",
-        "title": "Título del Comunicado Oficial",
-        "description": "Descripción detallada de la notificación para los ciudadanos.",
-        "cta": "Consultar aquí",
-        "link": "https://www.quipux.com",
-        "target": "_blank",
-        "alt": "Banner institucional",
-        "desktopName": "banner-principal-desk.webp",
-        "mobileName": "banner-principal-mob.webp",
-        "desktopPreview": null,
-        "mobilePreview": null
-      }
-    ]
-  },
-  {
-    "id": "camp-1789833468706",
-    "name": "Nueva Campaña 10",
-    "type": "Modal con slider",
-    "tenant": "valle",
-    "status": "Inactivo",
-    "version": "v1",
-    "updated": "Pausada en vivo",
-    "layout": "side",
-    "rules": {
-      "delay": 1,
-      "frequency": "once_per_session",
-      "pathRule": "*",
-      "startDate": "2026-09-01T10:56",
-      "endDate": "2026-10-19T10:57",
-      "escToggle": true,
-      "autoplayToggle": true,
-      "dataLayerToggle": true
-    },
-    "slides": [
-      {
-        "id": 1,
-        "order": 1,
-        "active": true,
-        "name": "Slide Principal",
-        "title": "Título del Comunicado Oficial",
-        "description": "Descripción detallada de la notificación para los ciudadanos.",
-        "cta": "Consultar aquí",
-        "link": "https://www.quipux.com",
-        "target": "_blank",
-        "alt": "Banner institucional",
-        "desktopName": "banner-principal-desk.webp",
-        "mobileName": "banner-principal-mob.webp",
-        "desktopPreview": null,
-        "mobilePreview": null
-      }
-    ]
-  },
-  {
-    "id": "camp-1789831957224",
-    "name": "Banner Horizontal 9",
-    "type": "Modal informativo",
-    "tenant": "valle",
-    "status": "Inactivo",
-    "version": "v1",
-    "updated": "Pausada en vivo",
-    "layout": "top",
-    "rules": {
-      "delay": 1,
-      "frequency": "once_per_session",
-      "pathRule": "*",
-      "startDate": "2026-09-19T10:31",
-      "endDate": "2026-10-19T10:32",
-      "escToggle": true,
-      "autoplayToggle": true,
-      "dataLayerToggle": true
-    },
-    "slides": [
-      {
-        "id": 1,
-        "order": 1,
-        "active": true,
-        "name": "Slide Banner 1",
-        "title": "Aviso Vial Importante",
-        "description": "Alerta ciudadana sobre cierres viales programados.",
-        "cta": "Ver desvíos",
-        "link": "https://www.quipux.com",
-        "target": "_blank",
-        "alt": "Banner institucional",
-        "desktopName": "banner-principal-desk.webp",
-        "mobileName": "banner-principal-mob.webp",
-        "desktopPreview": null,
-        "mobilePreview": null
-      }
-    ]
-  },
-  {
-    "id": "camp-1789790255995",
-    "name": "Nueva Campaña 7",
-    "type": "Modal con slider",
-    "tenant": "valle",
-    "status": "Inactivo",
-    "version": "v1",
-    "updated": "Pausada en vivo",
-    "layout": "side",
-    "rules": {
-      "delay": 2000,
-      "frequency": "once_per_session",
-      "pathRule": "/tramites/*",
-      "startDate": "2026-09-19T03:57",
-      "endDate": "2026-10-19T03:57",
-      "escToggle": true,
-      "autoplayToggle": true,
-      "dataLayerToggle": true
-    },
-    "slides": [
-      {
-        "id": 1,
-        "order": 1,
-        "active": true,
-        "name": "Slide Principal",
-        "title": "Título del Comunicado Oficial",
-        "description": "Descripción detallada de la notificación para los ciudadanos.",
-        "cta": "Consultar aquí",
-        "link": "https://www.quipux.com",
-        "target": "_blank",
-        "alt": "Banner institucional",
-        "desktopName": "banner-principal-desk.webp",
-        "mobileName": "banner-principal-mob.webp",
-        "desktopPreview": null,
-        "mobilePreview": null
-      }
-    ]
-  },
-  {
-    "id": "camp-1789787556918",
-    "name": "Nueva Campaña 7",
-    "type": "Modal con slider",
-    "tenant": "valle",
-    "status": "Borrador",
-    "version": "v1",
-    "updated": "18 de sept de 2026",
-    "layout": "side",
-    "rules": {
-      "delay": 2000,
-      "frequency": "once_per_session",
-      "pathRule": "/tramites/*",
-      "startDate": "2026-09-19T03:12",
-      "endDate": "2026-10-19T03:12",
-      "escToggle": true,
-      "autoplayToggle": true,
-      "dataLayerToggle": true
-    },
-    "slides": [
-      {
-        "id": 1,
-        "order": 1,
-        "active": true,
-        "name": "Slide Principal",
-        "title": "Título del Comunicado Oficial",
-        "description": "Descripción detallada de la notificación para los ciudadanos.",
-        "cta": "Consultar aquí",
-        "link": "https://www.quipux.com",
-        "target": "_blank",
-        "alt": "Banner institucional",
-        "desktopName": "banner-principal-desk.webp",
-        "mobileName": "banner-principal-mob.webp",
-        "desktopPreview": null,
-        "mobilePreview": null
-      }
-    ]
-  },
-  {
-    "id": "camp-1789753296318",
-    "name": "Banner Horizontal 6",
-    "type": "Modal informativo",
-    "tenant": "valle",
-    "status": "Borrador",
-    "version": "v1",
-    "updated": "18 de sept de 2026",
-    "layout": "top",
-    "rules": {
-      "delay": 2000,
-      "frequency": "once_per_session",
-      "pathRule": "/tramites/*",
-      "startDate": "2026-09-18T17:41",
-      "endDate": "2026-10-18T17:41",
-      "escToggle": true,
-      "autoplayToggle": true,
-      "dataLayerToggle": true
-    },
-    "slides": [
-      {
-        "id": 1,
-        "order": 1,
-        "active": true,
-        "name": "Slide Banner 1",
-        "title": "Aviso Vial Importante",
-        "description": "Alerta ciudadana sobre cierres viales programados.",
-        "cta": "Ver desvíos",
-        "link": "https://www.quipux.com",
-        "target": "_blank",
-        "alt": "Banner institucional",
-        "desktopName": "banner-principal-desk.webp",
-        "mobileName": "banner-principal-mob.webp",
-        "desktopPreview": null,
-        "mobilePreview": null
-      }
-    ]
-  },
-  {
-    "id": "camp-1789753293718",
-    "name": "Banner Horizontal 5",
-    "type": "Modal informativo",
-    "tenant": "valle",
-    "status": "Borrador",
-    "version": "v1",
-    "updated": "18 de sept de 2026",
-    "layout": "top",
-    "rules": {
-      "delay": 2000,
-      "frequency": "once_per_session",
-      "pathRule": "/tramites/*",
-      "startDate": "2026-09-18T17:41",
-      "endDate": "2026-10-18T17:41",
-      "escToggle": true,
-      "autoplayToggle": true,
-      "dataLayerToggle": true
-    },
-    "slides": [
-      {
-        "id": 1,
-        "order": 1,
-        "active": true,
-        "name": "Slide Banner 1",
-        "title": "Aviso Vial Importante",
-        "description": "Alerta ciudadana sobre cierres viales programados.",
-        "cta": "Ver desvíos",
-        "link": "https://www.quipux.com",
-        "target": "_blank",
-        "alt": "Banner institucional",
-        "desktopName": "banner-principal-desk.webp",
-        "mobileName": "banner-principal-mob.webp",
-        "desktopPreview": null,
-        "mobilePreview": null
-      }
-    ]
-  },
-  {
-    "id": "camp-1789753291724",
-    "name": "Banner Horizontal 4",
-    "type": "Modal informativo",
-    "tenant": "valle",
-    "status": "Borrador",
-    "version": "v1",
-    "updated": "18 de sept de 2026",
-    "layout": "top",
-    "rules": {
-      "delay": 2000,
-      "frequency": "once_per_session",
-      "pathRule": "/tramites/*",
-      "startDate": "2026-09-18T17:41",
-      "endDate": "2026-10-18T17:41",
-      "escToggle": true,
-      "autoplayToggle": true,
-      "dataLayerToggle": true
-    },
-    "slides": [
-      {
-        "id": 1,
-        "order": 1,
-        "active": true,
-        "name": "Slide Banner 1",
-        "title": "Aviso Vial Importante",
-        "description": "Alerta ciudadana sobre cierres viales programados.",
-        "cta": "Ver desvíos",
-        "link": "https://www.quipux.com",
-        "target": "_blank",
-        "alt": "Banner institucional",
-        "desktopName": "banner-principal-desk.webp",
-        "mobileName": "banner-principal-mob.webp",
-        "desktopPreview": null,
-        "mobilePreview": null
-      }
-    ]
-  },
-  {
-    "id": "camp-1789693814508",
-    "name": "Nueva Campaña 3",
-    "type": "Modal con slider",
-    "tenant": "valle",
-    "status": "Borrador",
-    "version": "v1",
-    "updated": "17 de sept de 2026",
-    "layout": "side",
-    "rules": {
-      "delay": 2,
-      "frequency": "once_per_session",
-      "pathRule": "/tramites/*",
-      "startDate": "2026-09-18T01:10",
-      "endDate": "2026-10-18T01:10",
-      "escToggle": true,
-      "autoplayToggle": true,
-      "dataLayerToggle": true
-    },
-    "slides": [
-      {
-        "id": 1,
-        "order": 1,
-        "active": true,
-        "name": "Slide Principal",
-        "title": "Título del Comunicado Oficial",
-        "description": "Descripción detallada de la notificación para los ciudadanos.",
-        "cta": "Consultar aquí",
-        "link": "https://www.quipux.com",
-        "alt": "Banner institucional",
-        "desktopName": "banner-principal-desk.webp",
-        "mobileName": "banner-principal-mob.webp",
-        "desktopPreview": null,
-        "mobilePreview": null
-      }
-    ]
-  },
-  {
-    "id": "camp-1789680810789",
-    "name": "Nueva Campaña 2",
-    "type": "Modal con slider",
-    "tenant": "valle",
-    "status": "Borrador",
-    "version": "v1",
-    "updated": "18 de sept de 2026",
-    "layout": "side",
-    "rules": {
-      "delay": 2,
-      "frequency": "once_per_session",
-      "pathRule": "/tramites/*",
-      "startDate": "2026-09-17T21:33",
-      "endDate": "2026-10-17T21:33",
-      "escToggle": true,
-      "autoplayToggle": true,
-      "dataLayerToggle": true
-    },
-    "slides": [
-      {
-        "id": 1,
-        "order": 1,
-        "active": true,
-        "name": "Slide Principal",
-        "title": "Hola Mundo como estan",
-        "description": "Descripción detallada de la notificación para los ciudadanos.",
-        "cta": "Consultar aquí",
-        "link": "https://www.quipux.com",
-        "alt": "Banner institucional",
-        "desktopName": "banner-principal-desk.webp",
-        "mobileName": "banner-principal-mob.webp",
-        "desktopPreview": null,
-        "mobilePreview": null
-      }
-    ]
-  },
-  {
     "id": "camp-1",
     "name": "Cobro Coactivo 2026",
     "type": "Modal con slider",
     "tenant": "valle",
     "status": "Publicado",
-    "version": "v10",
-    "updated": "Reactivada en vivo",
+    "version": "v1",
+    "updated": "17 sep 2026",
     "layout": "side",
     "rules": {
-      "delay": 1,
+      "delay": 1.5,
       "frequency": "once_per_session",
       "pathRule": "*",
       "startDate": "2026-09-01T00:00:00.000Z",
@@ -474,34 +20,43 @@
     },
     "slides": [
       {
+        "id": 1,
+        "name": "Slide 1 - Descuento",
+        "title": "Aprovecha el 50% de Descuento",
+        "description": "Paga tu impuesto vehicular de vigencias anteriores sin intereses de mora.",
+        "cta": "Liquidar ahora",
+        "link": "https://impuestos.valledelcauca.gov.co/liquidar",
+        "alt": "Promoción descuento tributario Valle",
+        "desktopName": "cobro-coactivo-desk.png",
+        "mobileName": "cobro-coactivo-mob.png",
+        "desktopPreview": "http://localhost:3000/resources/tenants/valle/assets/desktop/cobro-coactivo-desk.png",
+        "mobilePreview": "http://localhost:3000/resources/tenants/valle/assets/mobile/cobro-coactivo-mob.png"
+      },
+      {
         "id": 2,
-        "order": 2,
-        "active": true,
-        "name": "Slide 2",
-        "title": "Estoy funcionando",
-        "description": "Ingresa la descripción y llamado a la acción para esta diapositiva.",
-        "cta": "Ver más",
-        "link": "https://www.quipux.com",
-        "alt": "Imagen informativa slide 2",
-        "desktopName": "slide-2-desktop.webp",
-        "mobileName": "slide-2-mobile.webp",
-        "desktopPreview": null,
-        "mobilePreview": null
+        "name": "Slide 2 - Acuerdos",
+        "title": "Facilidades de Pago y Financiación",
+        "description": "Difiere tu deuda tributaria hasta en 12 cuotas mensuales sin complicaciones.",
+        "cta": "Solicitar acuerdo",
+        "link": "https://impuestos.valledelcauca.gov.co/acuerdos",
+        "alt": "Financiación de obligaciones",
+        "desktopName": "acuerdos-pago-desk.png",
+        "mobileName": "acuerdos-pago-mob.png",
+        "desktopPreview": "http://localhost:3000/resources/tenants/valle/assets/desktop/acuerdos-pago-desk.png",
+        "mobilePreview": "http://localhost:3000/resources/tenants/valle/assets/mobile/acuerdos-pago-mob.png"
       },
       {
         "id": 3,
-        "order": 3,
-        "active": true,
-        "name": "Slide 3",
-        "title": "Estoy funcionando",
-        "description": "Ingresa la descripción y llamado a la acción para esta diapositiva.",
-        "cta": "Ver más",
-        "link": "https://www.quipux.com",
-        "alt": "Imagen informativa slide 3",
-        "desktopName": "slide-3-desktop.webp",
-        "mobileName": "slide-3-mobile.webp",
-        "desktopPreview": null,
-        "mobilePreview": null
+        "name": "Slide 3 - Pago Online",
+        "title": "Pago Rápido y Seguro por PSE",
+        "description": "Paga desde la comodidad de tu hogar con cualquier entidad bancaria.",
+        "cta": "Ir a PSE",
+        "link": "https://impuestos.valledelcauca.gov.co/pse",
+        "alt": "Pasarela de pagos PSE",
+        "desktopName": "pago-en-linea-desk.png",
+        "mobileName": "pago-en-linea-mob.png",
+        "desktopPreview": "http://localhost:3000/resources/tenants/valle/assets/desktop/pago-en-linea-desk.png",
+        "mobilePreview": "http://localhost:3000/resources/tenants/valle/assets/mobile/pago-en-linea-mob.png"
       }
     ]
   }

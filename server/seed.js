@@ -265,6 +265,22 @@ function seed() {
   fs.writeFileSync(path.join(medManifestDir, 'v1.json'), JSON.stringify(medManifest, null, 2), 'utf-8');
   fs.writeFileSync(path.join(medManifestDir, 'active.json'), JSON.stringify(medManifest, null, 2), 'utf-8');
 
+  // Auditoría inicial Medellín
+  const medAudit = [
+    {
+      id: 'aud-seed-med-1',
+      timestamp: new Date().toISOString(),
+      formattedTime: new Date().toLocaleString('es-CO'),
+      action: 'PUBLICACIÓN',
+      campaignId: 'camp-med-1',
+      campaignName: 'Novedades Movilidad Medellín 2026',
+      version: 'v1',
+      user: 'Ana María Gómez',
+      role: 'UI Lead'
+    }
+  ];
+  fs.writeFileSync(path.join(medDir, 'audit.json'), JSON.stringify(medAudit, null, 2), 'utf-8');
+
   console.log('✅ Datos semilla creados correctamente para Valle y Medellín.');
 }
 
@@ -273,3 +289,4 @@ module.exports = { seed };
 if (require.main === module) {
   seed();
 }
+

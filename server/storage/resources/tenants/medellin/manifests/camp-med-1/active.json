@@ -1,22 +1,22 @@
 {
   "id": "camp-med-1",
   "tenantId": "medellin",
-  "version": 11,
-  "versionString": "v11",
-  "publishedAt": "2026-09-19T04:58:13.515Z",
+  "version": 1,
+  "versionString": "v1",
+  "publishedAt": "2026-09-22T04:49:09.138Z",
   "publishedBy": {
-    "name": "Angie Ríos",
-    "role": "Publicador",
-    "initials": "AR"
+    "name": "Ana María Gómez",
+    "role": "UI Lead",
+    "id": "AG"
   },
-  "summary": "Publicación v11 - Novedades Movilidad Medellín 2026",
-  "layout": "content",
+  "summary": "Release inicial v1 - Novedades Medellín 2026",
+  "layout": "side",
   "rules": {
-    "delay": 1,
-    "frequency": "Una vez por sesión",
-    "pathRule": "/tramites/*",
+    "delay": 2,
+    "frequency": "once_per_device",
+    "pathRule": "*",
     "startDate": "2026-09-01T00:00:00.000Z",
-    "endDate": "2026-10-14T23:59",
+    "endDate": "2026-12-31T23:59:59.000Z",
     "escToggle": true,
     "autoplayToggle": false,
     "dataLayerToggle": true
@@ -26,11 +26,10 @@
       "id": 1,
       "order": 1,
       "active": true,
-      "title": "Esto es una prueba",
+      "title": "Nueva Rotación de Pico y Placa",
       "description": "Conoce los dígitos de restricción para el primer semestre de 2026 en el Valle de Aburrá.",
       "cta": "Ver rotación",
       "link": "https://www.medellin.gov.co/movilidad/pico-placa",
-      "target": "_blank",
       "alt": "Restricción vehicular Medellín",
       "desktopImage": "http://localhost:3000/resources/tenants/medellin/assets/desktop/pico-placa-desk.png",
       "mobileImage": "http://localhost:3000/resources/tenants/medellin/assets/mobile/pico-placa-mob.png"
@@ -39,14 +38,25 @@
       "id": 2,
       "order": 2,
       "active": true,
-      "title": "prueba 2",
-      "description": "Ingresa la descripción y llamado a la acción para esta diapositiva.",
-      "cta": "Ver más",
-      "link": "https://www.quipux.com",
-      "target": "_blank",
-      "alt": "Imagen informativa slide 2",
-      "desktopImage": "slide-2-desktop.webp",
-      "mobileImage": "slide-2-mobile.webp"
+      "title": "Consulte sus Infracciones en Línea",
+      "description": "Verifique el estado de su vehículo y acceda a descuentos por pronto pago.",
+      "cta": "Consultar placa",
+      "link": "https://www.medellin.gov.co/movilidad/fotodeteccion",
+      "alt": "Consulta de comparendos",
+      "desktopImage": "http://localhost:3000/resources/tenants/medellin/assets/desktop/fotodeteccion-desk.png",
+      "mobileImage": "http://localhost:3000/resources/tenants/medellin/assets/mobile/fotodeteccion-mob.png"
+    },
+    {
+      "id": 3,
+      "order": 3,
+      "active": true,
+      "title": "Agende su Curso Pedagógico Virtual",
+      "description": "Obtenga hasta el 50% de descuento en multas de tránsito realizando el curso vial.",
+      "cta": "Agendar cita",
+      "link": "https://www.medellin.gov.co/movilidad/cursos",
+      "alt": "Cursos pedagógicos",
+      "desktopImage": "http://localhost:3000/resources/tenants/medellin/assets/desktop/curso-vial-desk.png",
+      "mobileImage": "http://localhost:3000/resources/tenants/medellin/assets/mobile/curso-vial-mob.png"
     }
   ]
 }

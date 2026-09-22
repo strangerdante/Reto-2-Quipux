@@ -11,7 +11,8 @@
     "test:runtime": "node --test runtime/tests/runtime.test.mjs",
     "test:server": "node --test server/tests/tenants.test.js server/tests/resources.test.js",
     "test:studio": "cd prototipo && npm test -- --watch=false",
-    "test": "npm run test:runtime && npm run test:server && npm run test:studio"
+    "test": "npm run test:runtime && npm run test:server && npm run test:studio",
+    "reset": "node server/scripts/reset.js"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"
