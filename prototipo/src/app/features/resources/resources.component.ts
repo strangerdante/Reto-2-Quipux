@@ -18,9 +18,12 @@ import { LucideAngularModule } from 'lucide-angular';
             se publican de forma versionada bajo <code>resources/tenants/{{ tenantService.activeTenantId() }}/</code>.
           </p>
         </div>
-        <button class="q-button primary" (click)="onUploadClick()">
-          <lucide-icon name="upload" [size]="15"></lucide-icon> Cargar recurso
-        </button>
+        <div>
+          <button class="q-button primary" (click)="fileInput.click()">
+            <lucide-icon name="upload" [size]="15"></lucide-icon> Cargar recurso
+          </button>
+          <input #fileInput type="file" accept="image/webp,image/png,image/jpeg" (change)="onFileSelected($event)" style="display:none" />
+        </div>
       </div>
 
       <!-- Ruta raíz CDN -->
@@ -414,7 +417,11 @@ export class ResourcesComponent {
     this.toastService.show('Árbol de recursos sincronizado con CDN');
   }
 
-  onUploadClick(): void {
-    this.toastService.show('Usa el editor de campaña para subir imágenes específicas de slides');
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      this.resourceService.uploadImage(input.files[0], 'desktop');
+      input.value = '';
+    }
   }
 }

@@ -38,23 +38,26 @@ module.exports = function createResourceRouter({ storageProvider }) {
       const targetType = req.body.targetType === 'mobile' ? 'mobile' : 'desktop';
       const dimensions = parseImageDimensions(file.buffer);
       const recommended = targetType === 'desktop' ? { w: 800, h: 560 } : { w: 420, h: 420 };
-      const minDimensions = targetType === 'desktop' ? { w: 300, h: 200 } : { w: 150, h: 150 };
+      const minDimensions = targetType === 'desktop' ? { w: 200, h: 150 } : { w: 150, h: 150 };
+      const maxDimensions = targetType === 'desktop' ? { w: 1920, h: 1200 } : { w: 1200, h: 1920 };
       const errors = [];
 
       // Validar formato MIME real (AC-06)
-      if (!['image/webp', 'image/png', 'image/jpeg'].includes(file.mimetype)) {
+      const allowedMimes = ['image/webp', 'image/png', 'image/jpeg', 'image/jpg'];
+      if (!allowedMimes.includes(file.mimetype)) {
         errors.push(`Formato "${file.mimetype}" no permitido. Solo se autoriza WebP, PNG y JPG.`);
       }
 
-      // Validar peso físico (AC-06)
-      if (file.size > 500 * 1024) {
-        errors.push(`El archivo pesa ${(file.size / 1024).toFixed(1)} KB, superando el límite máximo permitido de 500 KB.`);
+      // Validar peso físico (AC-06, AC-20) - Límite realista de 2 MB para popups web
+      const maxBytes = 2 * 1024 * 1024;
+      if (file.size > maxBytes) {
+        errors.push(`El archivo pesa ${(file.size / (1024 * 1024)).toFixed(2)} MB, superando el límite máximo permitido de 2 MB.`);
       }
 
-      // Validar dimensiones mínimas y máximas recomendadas (AC-06)
+      // Validar dimensiones mínimas y máximas coherentes con un modal (AC-06, AC-20)
       if (dimensions) {
-        if (dimensions.width > recommended.w * 2 || dimensions.height > recommended.h * 2) {
-          errors.push(`Dimensiones excesivas (${dimensions.width}×${dimensions.height}px). El tamaño recomendado para ${targetType} es ${recommended.w}×${recommended.h}px.`);
+        if (dimensions.width > maxDimensions.w || dimensions.height > maxDimensions.h) {
+          errors.push(`Dimensiones excesivas (${dimensions.width}×${dimensions.height}px). El límite máximo para ${targetType} es ${maxDimensions.w}×${maxDimensions.h}px (recomendado: ${recommended.w}×${recommended.h}px).`);
         }
         if (dimensions.width < minDimensions.w || dimensions.height < minDimensions.h) {
           errors.push(`Dimensiones insuficientes (${dimensions.width}×${dimensions.height}px). El tamaño mínimo requerido para ${targetType} es ${minDimensions.w}×${minDimensions.h}px.`);

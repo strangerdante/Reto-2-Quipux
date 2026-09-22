@@ -87,6 +87,7 @@ import { LucideAngularModule } from 'lucide-angular';
       </label>
 
       <span class="field-label">Imágenes responsive (CDN Multitenant)</span>
+      <small class="field-hint">Formatos: WebP, PNG, JPG · Máx. 2.0 MB · Optimización automática integrada</small>
       <div class="upload-grid">
         <label class="upload-card">
           <input
@@ -96,7 +97,7 @@ import { LucideAngularModule } from 'lucide-angular';
           />
           <b><lucide-icon name="laptop" [size]="16"></lucide-icon></b>
           <span>
-            <strong>Desktop (800 × 560)</strong>
+            <strong>Desktop (800 × 560 óptima)</strong>
             <small>{{ s.desktopName }}</small>
             <em>{{ s.desktopPreview ? '✓ Personalizada' : 'Predeterminada' }}</em>
           </span>
@@ -110,7 +111,7 @@ import { LucideAngularModule } from 'lucide-angular';
           />
           <b><lucide-icon name="smartphone" [size]="16"></lucide-icon></b>
           <span>
-            <strong>Mobile (420 × 420)</strong>
+            <strong>Mobile (420 × 420 óptima)</strong>
             <small>{{ s.mobileName }}</small>
             <em>{{ s.mobilePreview ? '✓ Personalizada' : 'Predeterminada' }}</em>
           </span>
@@ -189,6 +190,14 @@ import { LucideAngularModule } from 'lucide-angular';
       margin-bottom: 7px;
       font-size: 11px;
       font-weight: 800;
+      display: block;
+    }
+
+    .field-hint {
+      color: #77727c;
+      font-size: 10px;
+      margin-top: -3px;
+      margin-bottom: 9px;
       display: block;
     }
 

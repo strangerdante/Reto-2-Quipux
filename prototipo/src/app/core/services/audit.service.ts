@@ -7,7 +7,20 @@ export interface AuditEntry {
   id: string;
   timestamp: string;
   formattedTime: string;
-  action: 'PUBLICACIÓN' | 'REVERSIÓN' | 'CREACIÓN' | 'EDICIÓN';
+  action:
+    | 'PUBLICACIÓN'
+    | 'REVERSIÓN'
+    | 'PAUSA_CAMPAÑA'
+    | 'REACTIVACIÓN_CAMPAÑA'
+    | 'CREACIÓN'
+    | 'CREACIÓN_CAMPAÑA'
+    | 'EDICIÓN'
+    | 'EDICIÓN_CAMPAÑA'
+    | 'ELIMINACIÓN'
+    | 'ELIMINACIÓN_CAMPAÑA'
+    | 'BORRADOR'
+    | 'GUARDAR_BORRADOR'
+    | string;
   campaignId: string;
   campaignName: string;
   version: string;

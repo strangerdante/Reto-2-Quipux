@@ -36,8 +36,32 @@ async function start() {
   app.use('/api/publish', require('./routes/publish')({ publishingService, manifestRepository }));
   app.use('/api/gtm', require('./routes/gtm')({ config }));
 
+  // Resolución dinámica de la campaña activa para integraciones con data-campaign="active" (GTM)
+  app.get([
+    '/resources/tenants/:tenant/manifests/active/active.json',
+    '/resources/tenants/:tenant/manifests/active.json'
+  ], async (req, res, next) => {
+    try {
+      const tenant = req.params.tenant;
+      const campaigns = await campaignRepository.list(tenant);
+      const target = campaigns.find(c => c.status === 'Publicado') || campaigns[0];
+      if (target) {
+        const manifest = await manifestRepository.getActive(tenant, target.id);
+        if (manifest) {
+          res.setHeader('Access-Control-Allow-Origin', '*');
+          res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+          return res.json(manifest);
+        }
+      }
+      return next();
+    } catch (err) {
+      next(err);
+    }
+  });
+
   app.use('/resources', express.static(path.join(config.storageRoot, 'resources'), {
     setHeaders: (res, filePath) => {
+      res.setHeader('Access-Control-Allow-Origin', '*');
       if (filePath.endsWith('active.json') || filePath.endsWith('quipux-popup-runtime.js')) {
         res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
       } else {
@@ -63,10 +87,10 @@ async function start() {
   app.use('/portal-demo', express.static(portalDemoDirectory));
   app.get('/portal-demo*', (req, res) => res.sendFile(path.join(portalDemoDirectory, 'index.html')));
 
-  const portalNuevoDirectory = path.join(__dirname, '..', 'portal-nuevo');
-  app.use('/portal-nuevo', express.static(portalNuevoDirectory));
-  app.get('/portal-nuevo*', (req, res) => res.sendFile(path.join(portalNuevoDirectory, 'index.html')));
-
+  const portalTestDirectory = path.join(__dirname, '..', 'portal-test');
+  app.use('/portal-test', express.static(portalTestDirectory));
+  app.use('/portal-nuevo', express.static(portalTestDirectory));
+  app.get(['/portal-test*', '/portal-nuevo*'], (req, res) => res.sendFile(path.join(portalTestDirectory, 'index.html')));
   app.get(['/tramites*', '/liquidaciones*'], (req, res) => res.sendFile(path.join(portalDemoDirectory, 'index.html')));
   app.get('/', (req, res) => res.redirect('/portal-demo/'));
   app.get('/api/health', (req, res) => res.json({
