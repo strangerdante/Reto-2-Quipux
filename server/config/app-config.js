@@ -8,7 +8,15 @@ const port = Number(process.env.PORT || 3000);
 const publicBaseUrl = withoutTrailingSlash(process.env.PUBLIC_BASE_URL || `http://localhost:${port}`);
 const cdnBaseUrl = withoutTrailingSlash(process.env.CDN_BASE_URL || publicBaseUrl);
 const apiBaseUrl = withoutTrailingSlash(process.env.API_BASE_URL || `${publicBaseUrl}/api`);
-const corsOrigins = (process.env.CORS_ORIGINS || `http://localhost:4200,${publicBaseUrl}`)
+const defaultCorsOrigins = [
+  'http://localhost:4200',
+  'http://127.0.0.1:4200',
+  publicBaseUrl,
+  `http://127.0.0.1:${port}`,
+  'null'
+].join(',');
+
+const corsOrigins = (process.env.CORS_ORIGINS || defaultCorsOrigins)
   .split(',')
   .map(origin => origin.trim())
   .filter(Boolean);

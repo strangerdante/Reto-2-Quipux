@@ -20,10 +20,17 @@ async function start() {
   const app = express();
   app.use(cors({
     origin(origin, callback) {
-      if (!origin || config.corsOrigins.includes(origin)) return callback(null, true);
-      return callback(new Error(`Origen no permitido por CORS: ${origin}`));
+      // 1. Solicitudes sin cabecera Origin (curl, server-to-server, Postman) o con origen 'null' (archivos locales file://, sandboxed iframes)
+      if (!origin || origin === 'null') return callback(null, true);
+      // 2. Orígenes explícitos configurados o comodín global
+      if (config.corsOrigins.includes('*') || config.corsOrigins.includes(origin)) return callback(null, true);
+      // 3. Cualquier puerto en localhost o 127.0.0.1 para desarrollo y pruebas
+      if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) return callback(null, true);
+      // 4. Rechazar orígenes no autorizados sin generar excepciones 500 en Express
+      return callback(null, false);
     },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
   }));
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));

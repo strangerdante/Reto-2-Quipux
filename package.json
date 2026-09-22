@@ -9,7 +9,7 @@
     "build:runtime": "node runtime/build.js",
     "build": "npm run build:runtime && cd prototipo && npm run build",
     "test:runtime": "node --test runtime/tests/runtime.test.mjs",
-    "test:server": "node --test server/tests/tenants.test.js server/tests/resources.test.js",
+    "test:server": "node --test server/tests/tenants.test.js server/tests/resources.test.js server/tests/cors.test.js",
     "test:studio": "cd prototipo && npm test -- --watch=false",
     "test": "npm run test:runtime && npm run test:server && npm run test:studio",
     "reset": "node server/scripts/reset.js"
