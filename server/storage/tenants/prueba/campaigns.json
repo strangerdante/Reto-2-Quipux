@@ -9,9 +9,9 @@
     "updated": "22 de sept de 2026",
     "layout": "side",
     "rules": {
-      "delay": 1,
+      "delay": 0.5,
       "frequency": "Una vez por sesión",
-      "pathRule": "/",
+      "pathRule": "*",
       "startDate": "2026-09-22T09:17",
       "endDate": "2026-10-24T09:18",
       "escToggle": true,
@@ -30,10 +30,10 @@
         "link": "https://www.quipux.com",
         "target": "_blank",
         "alt": "Banner institucional",
-        "desktopName": "banner-principal-desk.webp",
-        "mobileName": "banner-principal-mob.webp",
-        "desktopPreview": null,
-        "mobilePreview": null
+        "desktopName": "cobro-coactivo-desk.png",
+        "mobileName": "cobro-coactivo-desk.png",
+        "desktopPreview": "http://localhost:3000/resources/tenants/valle/assets/desktop/cobro-coactivo-desk.png",
+        "mobilePreview": "http://localhost:3000/resources/tenants/valle/assets/desktop/cobro-coactivo-desk.png"
       }
     ]
   }

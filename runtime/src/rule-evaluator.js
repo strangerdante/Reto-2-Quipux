@@ -62,7 +62,19 @@ export class RuleEvaluator {
         .replace(/\./g, '\\.')
         .replace(/\*/g, '.*') + '$';
       const regex = new RegExp(regexStr);
-      const normalizedPath = currentPath.replace(/^\/portal-demo/, '') || '/';
+      // Normalizar rutas de archivos locales o carpetas de prueba (ej. /portal-demo, /portal-test, index.html)
+      let normalizedPath = currentPath
+        .replace(/^\/portal-demo/, '')
+        .replace(/^\/portal-test/, '')
+        .replace(/^\/portal-nuevo/, '')
+        .replace(/\/?index\.html$/i, '')
+        .replace(/\/+$/, '') || '/';
+
+      // Si es una ruta de archivo local en Windows (file:///C:/Users/...)
+      if (/^[A-Za-z]:\//.test(normalizedPath) || normalizedPath.includes(':')) {
+        normalizedPath = '/';
+      }
+
       if (!regex.test(currentPath) && !regex.test(normalizedPath)) {
         return {
           canShow: false,

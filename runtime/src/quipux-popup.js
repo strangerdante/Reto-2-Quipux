@@ -89,15 +89,19 @@ export class QuipuxPopupStudioElement extends HTMLElement {
   }
 
   async init() {
-    const tenant = this.getAttribute('tenant') || 'valle';
-    const campaignId = this.getAttribute('campaign') || 'camp-1';
-    const loader = new ManifestLoader(this.getAttribute('cdn-base-url'));
-    const manifestUrl = this.getAttribute('manifest-url');
+    try {
+      const tenant = this.getAttribute('tenant') || 'valle';
+      const campaignId = this.getAttribute('campaign') || 'camp-1';
+      const loader = new ManifestLoader(this.getAttribute('cdn-base-url'));
+      const manifestUrl = this.getAttribute('manifest-url');
 
-    this.manifest = await loader.fetchActiveManifest(tenant, campaignId, manifestUrl);
-    if (!this.manifest || !this.manifest.slides || this.manifest.slides.length === 0) {
-      return;
-    }
+      console.info(`[Quipux Runtime] 🚀 Inicializando popup: tenant="${tenant}", campaign="${campaignId}"`);
+      this.manifest = await loader.fetchActiveManifest(tenant, campaignId, manifestUrl);
+      if (!this.manifest || !this.manifest.slides || this.manifest.slides.length === 0) {
+        console.warn(`[Quipux Runtime] ⚠️ No se encontró manifiesto o slides para tenant="${tenant}"`);
+        return;
+      }
+      console.info(`[Quipux Runtime] ✅ Manifiesto cargado: "${this.manifest.name || this.manifest.id}", slides=${this.manifest.slides.length}`);
 
     // Kill Switch / Pausa en vivo (AC-12, AC-21): Si la campaña está inactiva, suprimir renderizado
     if (this.manifest.status === 'Inactivo' || this.manifest.active === false) {
@@ -142,11 +146,19 @@ export class QuipuxPopupStudioElement extends HTMLElement {
       this.render();
       RuleEvaluator.recordView(this.manifest.rules, this.manifest.id);
     }, delayMs);
+    } catch (err) {
+      console.error('[Quipux Runtime] ❌ Error en init():', err);
+    }
   }
 
   render() {
-    const m = this.manifest;
-    this.openTime = Date.now();
+    try {
+      if (!this.manifest) {
+        console.warn('[Quipux Runtime] ⚠️ No se puede renderizar porque el manifiesto aún no ha cargado.');
+        return;
+      }
+      const m = this.manifest;
+      this.openTime = Date.now();
 
     const styles = `
       :host, :root, *, .backdrop, .modal-preview {
@@ -861,6 +873,9 @@ export class QuipuxPopupStudioElement extends HTMLElement {
       totalSlides: this.manifest.slides.length,
       timestamp: new Date().toISOString()
     });
+    } catch (err) {
+      console.error('[Quipux Runtime] ❌ Error en render():', err);
+    }
   }
 
   initDots() {
@@ -939,7 +954,19 @@ export class QuipuxPopupStudioElement extends HTMLElement {
 
     const hasImg = !!(slide.desktopImage || slide.mobileImage);
     if (hasImg) {
-      imgEl.src = slide.desktopImage || slide.mobileImage;
+      const cdnUrl = this.getAttribute('cdn-base-url') || window.__QUIPUX_RUNTIME_CONFIG__?.cdnBaseUrl || window.__QUIPUX_CDN_URL__ || 'http://localhost:3000';
+      const tenantId = this.manifest?.tenantId || this.getAttribute('tenant') || 'valle';
+      const resolveImg = (src) => {
+        if (!src) return '';
+        if (src.startsWith('http://') || src.startsWith('https://') || src.startsWith('data:')) return src;
+        if (src.startsWith('/')) return `${cdnUrl.replace(/\/+$/, '')}${src}`;
+        return `${cdnUrl.replace(/\/+$/, '')}/resources/tenants/${tenantId}/assets/${src}`;
+      };
+
+      const finalDesktop = resolveImg(slide.desktopImage || slide.mobileImage);
+      const finalMobile = resolveImg(slide.mobileImage);
+
+      imgEl.src = finalDesktop;
       imgEl.alt = slide.alt || slide.title || '';
       if (pictureEl) pictureEl.style.display = 'block';
       if (brandVisualEl) brandVisualEl.style.display = 'none';
@@ -947,8 +974,8 @@ export class QuipuxPopupStudioElement extends HTMLElement {
         if (pictureEl) pictureEl.style.display = 'none';
         if (brandVisualEl) brandVisualEl.style.display = 'flex';
       };
-      if (slide.mobileImage && imgMob) {
-        imgMob.srcset = slide.mobileImage;
+      if (finalMobile && imgMob) {
+        imgMob.srcset = finalMobile;
       }
     } else {
       if (pictureEl) pictureEl.style.display = 'none';

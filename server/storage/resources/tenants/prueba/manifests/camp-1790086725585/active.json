@@ -14,9 +14,9 @@
   "summary": "Publicación v2 - Nueva Campaña 1",
   "layout": "side",
   "rules": {
-    "delay": 1,
+    "delay": 0.5,
     "frequency": "Una vez por sesión",
-    "pathRule": "/",
+    "pathRule": "*",
     "startDate": "2026-09-22T09:17",
     "endDate": "2026-10-24T09:18",
     "escToggle": true,
@@ -34,8 +34,8 @@
       "link": "https://www.quipux.com",
       "target": "_blank",
       "alt": "Banner institucional",
-      "desktopImage": "banner-principal-desk.webp",
-      "mobileImage": "banner-principal-mob.webp"
+      "desktopImage": "http://localhost:3000/resources/tenants/valle/assets/desktop/cobro-coactivo-desk.png",
+      "mobileImage": "http://localhost:3000/resources/tenants/valle/assets/desktop/cobro-coactivo-desk.png"
     }
   ]
 }
