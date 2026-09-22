@@ -26,6 +26,7 @@ export class QuipuxPopupStudioElement extends HTMLElement {
   }
 
   isolateBackground() {
+    if (this.manifest?.type === 'Banner horizontal') return;
     this.hiddenBackgroundElements = [];
     if (typeof document === 'undefined') return;
     const bodyChildren = document.body ? Array.from(document.body.children) : [];
@@ -60,8 +61,19 @@ export class QuipuxPopupStudioElement extends HTMLElement {
     this.cleanup();
   }
 
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue && oldValue !== newValue) {
+      this.cleanup();
+      this.init();
+    }
+  }
+
   cleanup() {
     this.restoreBackground();
+    if (this.globalKeydownHandler && typeof window !== 'undefined') {
+      window.removeEventListener('keydown', this.globalKeydownHandler);
+      this.globalKeydownHandler = null;
+    }
     if (this.autoplayInterval) {
       clearInterval(this.autoplayInterval);
       this.autoplayInterval = null;
@@ -156,6 +168,11 @@ export class QuipuxPopupStudioElement extends HTMLElement {
         z-index: 2147483647;
         font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       }
+      :host(.is-banner) {
+        inset: 0 0 auto 0 !important;
+        height: auto !important;
+        pointer-events: none;
+      }
 
       .backdrop {
         position: fixed;
@@ -168,6 +185,156 @@ export class QuipuxPopupStudioElement extends HTMLElement {
         padding: 20px;
         box-sizing: border-box;
         animation: qFadeIn 0.25s ease-out;
+      }
+      .backdrop.is-banner {
+        position: static !important;
+        background: transparent !important;
+        backdrop-filter: none !important;
+        padding: 0 !important;
+        pointer-events: none;
+        display: block;
+      }
+
+      .banner-bar {
+        pointer-events: auto;
+        width: 100%;
+        background: #211C33;
+        border-bottom: 3px solid #61C7D0;
+        color: #fff;
+        padding: 12px 24px;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+        animation: qSlideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        font-family: inherit;
+      }
+
+      .banner-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-shrink: 0;
+      }
+
+      .banner-pill {
+        background: #2E13F5;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        padding: 4px 8px;
+        border-radius: 4px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        text-transform: uppercase;
+      }
+
+      .banner-tenant {
+        color: #61C7D0;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .banner-center {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+        overflow: hidden;
+      }
+
+      .banner-title {
+        font-size: 13px;
+        font-weight: 800;
+        color: #fff;
+        white-space: nowrap;
+      }
+
+      .banner-desc {
+        font-size: 12px;
+        color: #D1CED7;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .banner-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-shrink: 0;
+      }
+
+      .banner-cta-btn {
+        background: #fff;
+        color: #211C33;
+        font-size: 11px;
+        font-weight: 800;
+        padding: 6px 14px;
+        border-radius: 6px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.15s ease;
+      }
+
+      .banner-cta-btn:hover {
+        background: #61C7D0;
+        color: #211C33;
+      }
+
+      .banner-close-btn {
+        background: rgba(255, 255, 255, 0.12);
+        border: 0;
+        color: #fff;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        transition: background 0.15s ease;
+      }
+
+      .banner-close-btn:hover {
+        background: rgba(255, 255, 255, 0.25);
+      }
+
+      @keyframes qSlideDown {
+        from { transform: translateY(-100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+
+      @media (max-width: 768px) {
+        .banner-bar {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+          padding: 12px 16px;
+        }
+
+        .banner-center {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 3px;
+          width: 100%;
+        }
+
+        .banner-title, .banner-desc {
+          white-space: normal;
+        }
+
+        .banner-right {
+          width: 100%;
+          justify-content: space-between;
+        }
       }
 
       .modal-preview {
@@ -469,63 +636,100 @@ export class QuipuxPopupStudioElement extends HTMLElement {
     `;
 
     const layout = m.layout || 'side';
+    const isBanner = m.type === 'Banner horizontal' || m.layout === 'top' || (m.name && m.name.toLowerCase().includes('banner'));
 
-    this.shadowRoot.innerHTML = `
-      <style>${styles}</style>
-      <div class="backdrop" role="dialog" aria-modal="true" aria-labelledby="slide-title-el" tabindex="-1">
-        <div class="modal-preview layout-${layout}">
-          <button class="modal-close" aria-label="Cerrar ventana emergente" id="btn-close">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 6 6 18"></path>
-              <path d="m6 6 12 12"></path>
-            </svg>
-          </button>
+    if (isBanner) {
+      this.classList.add('is-banner');
+    }
 
-          <button class="modal-nav-arrow prev" id="btn-prev-slide" aria-label="Slide anterior" type="button">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="m15 18-6-6 6-6"></path>
-            </svg>
-          </button>
-          <button class="modal-nav-arrow next" id="btn-next-slide" aria-label="Slide siguiente" type="button">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="m9 18 6-6-6-6"></path>
-            </svg>
-          </button>
+    const templateContent = isBanner
+      ? `
+        <div class="backdrop is-banner" role="region" aria-label="Aviso institucional superior" tabindex="-1">
+          <div class="banner-bar">
+            <div class="banner-left">
+              <span class="banner-pill">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"></path><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path></svg>
+                Aviso Vial
+              </span>
+              <span class="banner-tenant">${m.tenant || m.tenantId || ''}</span>
+            </div>
 
-          <div class="modal-image">
-            <picture id="picture-el">
-              <source media="(max-width: 620px)" id="img-source-mob">
-              <img id="img-el" alt="">
-            </picture>
-            <div class="brand-visual" id="brand-visual-el" style="display: none;">
-              <img src="/resources/brand/isologo.png" alt="Quipux" />
-              <span>CANALES DIGITALES</span>
-              <small>Soluciones de movilidad inteligente y gobierno digital.</small>
+            <div class="banner-center">
+              <strong class="banner-title" id="slide-title-el"></strong>
+              <span class="banner-desc" id="slide-desc-el"></span>
+            </div>
+
+            <div class="banner-right">
+              <a href="#" id="cta-link-el" target="_blank" rel="noopener noreferrer" class="banner-cta-btn">
+                <span id="cta-text-el">Ver más</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+              </a>
+              <button class="banner-close-btn" aria-label="Cerrar aviso" id="btn-close">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
             </div>
           </div>
-
-          <div class="modal-copy">
-            <span>QUIPUX · SERVICIOS DIGITALES</span>
-            <h2 id="slide-title-el"></h2>
-            <p id="slide-desc-el"></p>
-            <a href="#" id="cta-link-el" target="_blank" rel="noopener noreferrer">
-              <span id="cta-text-el">Ver más</span>
-              <b>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M5 12h14"></path>
-                  <path d="m12 5 7 7-7 7"></path>
-                </svg>
-              </b>
-            </a>
-          </div>
-
-          <div class="preview-dots" id="dots-container" role="tablist" aria-label="Navegación de slides"></div>
         </div>
-      </div>
-    `;
+      `
+      : `
+        <div class="backdrop" role="dialog" aria-modal="true" aria-labelledby="slide-title-el" tabindex="-1">
+          <div class="modal-preview layout-${layout}">
+            <button class="modal-close" aria-label="Cerrar ventana emergente" id="btn-close">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6 6 18"></path>
+                <path d="m6 6 12 12"></path>
+              </svg>
+            </button>
 
-    // Aislar accesiblemente elementos de fondo (AC-18)
-    this.isolateBackground();
+            <button class="modal-nav-arrow prev" id="btn-prev-slide" aria-label="Slide anterior" type="button">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m15 18-6-6 6-6"></path>
+              </svg>
+            </button>
+            <button class="modal-nav-arrow next" id="btn-next-slide" aria-label="Slide siguiente" type="button">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m9 18 6-6-6-6"></path>
+              </svg>
+            </button>
+
+            <div class="modal-image">
+              <picture id="picture-el">
+                <source media="(max-width: 620px)" id="img-source-mob">
+                <img id="img-el" alt="">
+              </picture>
+              <div class="brand-visual" id="brand-visual-el" style="display: none;">
+                <img src="/resources/brand/isologo.png" alt="Quipux" />
+                <span>CANALES DIGITALES</span>
+                <small>Soluciones de movilidad inteligente y gobierno digital.</small>
+              </div>
+            </div>
+
+            <div class="modal-copy">
+              <span>QUIPUX · SERVICIOS DIGITALES</span>
+              <h2 id="slide-title-el"></h2>
+              <p id="slide-desc-el"></p>
+              <a href="#" id="cta-link-el" target="_blank" rel="noopener noreferrer">
+                <span id="cta-text-el">Ver más</span>
+                <b>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14"></path>
+                    <path d="m12 5 7 7-7 7"></path>
+                  </svg>
+                </b>
+              </a>
+            </div>
+
+            <div class="preview-dots" id="dots-container" role="tablist" aria-label="Navegación de slides"></div>
+          </div>
+        </div>
+      `;
+
+    this.shadowRoot.innerHTML = `<style>${styles}</style>${templateContent}`;
+
+    // Aislar accesiblemente elementos de fondo (AC-18, solo para modales emergentes)
+    if (!isBanner) {
+      this.isolateBackground();
+    }
 
     // Configurar listeners de interacción
     const backdrop = this.shadowRoot.querySelector('.backdrop');
@@ -534,7 +738,9 @@ export class QuipuxPopupStudioElement extends HTMLElement {
     const prevBtn = this.shadowRoot.querySelector('#btn-prev-slide');
     const nextBtn = this.shadowRoot.querySelector('#btn-next-slide');
 
-    closeBtn.addEventListener('click', () => this.closeModal('close_button'));
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => this.closeModal('close_button'));
+    }
     if (prevBtn) {
       prevBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -547,70 +753,89 @@ export class QuipuxPopupStudioElement extends HTMLElement {
         this.nextSlide();
       });
     }
-    backdrop.addEventListener('click', (e) => {
-      if (e.target === backdrop) this.closeModal('backdrop_click');
-    });
-
-    ctaBtn.addEventListener('click', () => {
-      const currentSlide = this.manifest.slides[this.currentSlideIndex];
-      DataLayerDispatcher.dispatch('quipux_modal_cta_click', {
-        campaignId: this.manifest.id,
-        tenantId: this.manifest.tenantId,
-        slideIndex: this.currentSlideIndex + 1,
-        ctaText: currentSlide.cta,
-        targetUrl: currentSlide.link
+    if (backdrop && !isBanner) {
+      backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop) this.closeModal('backdrop_click');
       });
-    });
+    }
+
+    if (ctaBtn) {
+      ctaBtn.addEventListener('click', () => {
+        const currentSlide = this.manifest.slides[this.currentSlideIndex];
+        DataLayerDispatcher.dispatch('quipux_modal_cta_click', {
+          campaignId: this.manifest.id,
+          tenantId: this.manifest.tenantId,
+          slideIndex: this.currentSlideIndex + 1,
+          ctaText: currentSlide.cta,
+          targetUrl: currentSlide.link
+        });
+      });
+    }
 
     // Soporte para swipe táctil en móvil (AC-18)
-    const card = this.shadowRoot.querySelector('.modal-preview');
+    const card = this.shadowRoot.querySelector('.modal-preview') || this.shadowRoot.querySelector('.banner-bar');
     let touchStartX = 0;
     let touchStartY = 0;
-    card.addEventListener('touchstart', (e) => {
-      if (e.touches.length === 1) {
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-      }
-    }, { passive: true });
+    if (card) {
+      card.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+        }
+      }, { passive: true });
 
-    card.addEventListener('touchend', (e) => {
-      if (this.manifest.slides.length > 1 && e.changedTouches.length === 1) {
-        const deltaX = e.changedTouches[0].clientX - touchStartX;
-        const deltaY = e.changedTouches[0].clientY - touchStartY;
-        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 40) {
-          if (deltaX < 0) {
-            this.nextSlide();
-          } else {
-            this.prevSlide();
+      card.addEventListener('touchend', (e) => {
+        if (this.manifest.slides.length > 1 && e.changedTouches.length === 1) {
+          const deltaX = e.changedTouches[0].clientX - touchStartX;
+          const deltaY = e.changedTouches[0].clientY - touchStartY;
+          if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 40) {
+            if (deltaX < 0) {
+              this.nextSlide();
+            } else {
+              this.prevSlide();
+            }
           }
         }
-      }
-    }, { passive: true });
+      }, { passive: true });
+    }
 
     // Navegación accesible con flechas de teclado y respeto a escToggle (AC-18)
-    backdrop.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' || e.key === 'Esc') {
+    if (backdrop) {
+      backdrop.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' || e.key === 'Esc') {
+          if (this.manifest?.rules?.escToggle !== false) {
+            e.preventDefault();
+            this.closeModal('esc_key');
+          }
+          return;
+        }
+        if (this.manifest.slides.length <= 1) return;
+        if (e.key === 'ArrowRight') {
+          this.nextSlide();
+        } else if (e.key === 'ArrowLeft') {
+          this.prevSlide();
+        }
+      });
+    }
+
+    // Activar trampa de foco accesible para modales o listener global para banner (AC-18)
+    if (!isBanner) {
+      this.focusTrap = new FocusTrap(backdrop, () => {
         if (this.manifest?.rules?.escToggle !== false) {
-          e.preventDefault();
           this.closeModal('esc_key');
         }
-        return;
+      });
+      this.focusTrap.activate();
+    } else {
+      this.globalKeydownHandler = (e) => {
+        if ((e.key === 'Escape' || e.key === 'Esc') && this.manifest?.rules?.escToggle !== false) {
+          this.closeModal('esc_key');
+        }
+      };
+      if (typeof window !== 'undefined') {
+        window.addEventListener('keydown', this.globalKeydownHandler);
       }
-      if (this.manifest.slides.length <= 1) return;
-      if (e.key === 'ArrowRight') {
-        this.nextSlide();
-      } else if (e.key === 'ArrowLeft') {
-        this.prevSlide();
-      }
-    });
-
-    // Activar trampa de foco accesible respetando escToggle (AC-18)
-    this.focusTrap = new FocusTrap(backdrop, () => {
-      if (this.manifest?.rules?.escToggle !== false) {
-        this.closeModal('esc_key');
-      }
-    });
-    this.focusTrap.activate();
+    }
 
     // Inicializar los dots una sola vez en el DOM
     this.initDots();

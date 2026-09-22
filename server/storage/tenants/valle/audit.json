@@ -1,5 +1,71 @@
 [
   {
+    "id": "aud-1790093898033",
+    "timestamp": "2026-09-22T16:18:18.033Z",
+    "formattedTime": "22/9/2026, 11:18:18 a. m.",
+    "action": "REACTIVACIÓN_CAMPAÑA",
+    "campaignId": "camp-1",
+    "campaignName": "Cobro Coactivo 2026",
+    "version": "v2",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1790093826496",
+    "timestamp": "2026-09-22T16:17:06.496Z",
+    "formattedTime": "22/9/2026, 11:17:06 a. m.",
+    "action": "PAUSA_CAMPAÑA",
+    "campaignId": "camp-1790092665320",
+    "campaignName": "Banner Horizontal 4",
+    "version": "v2",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1790092951662",
+    "timestamp": "2026-09-22T16:02:31.662Z",
+    "formattedTime": "22/9/2026, 11:02:31 a. m.",
+    "action": "PUBLICACIÓN",
+    "campaignId": "camp-1790092665320",
+    "campaignName": "Banner Horizontal 4",
+    "version": "v2",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1790092775137",
+    "timestamp": "2026-09-22T15:59:35.137Z",
+    "formattedTime": "22/9/2026, 10:59:35 a. m.",
+    "action": "PAUSA_CAMPAÑA",
+    "campaignId": "camp-1",
+    "campaignName": "Cobro Coactivo 2026",
+    "version": "v2",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1790092735474",
+    "timestamp": "2026-09-22T15:58:55.474Z",
+    "formattedTime": "22/9/2026, 10:58:55 a. m.",
+    "action": "PUBLICACIÓN",
+    "campaignId": "camp-1790092665320",
+    "campaignName": "Banner Horizontal 4",
+    "version": "v1",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
+    "id": "aud-1790092734220",
+    "timestamp": "2026-09-22T15:58:54.220Z",
+    "formattedTime": "22/9/2026, 10:58:54 a. m.",
+    "action": "PAUSA_CAMPAÑA",
+    "campaignId": "camp-1790084898538",
+    "campaignName": "Nueva Campaña 2",
+    "version": "v1",
+    "user": "Angie Ríos",
+    "role": "Publicador"
+  },
+  {
     "id": "aud-1790084946606",
     "timestamp": "2026-09-22T13:49:06.606Z",
     "formattedTime": "22/9/2026, 8:49:06 a. m.",

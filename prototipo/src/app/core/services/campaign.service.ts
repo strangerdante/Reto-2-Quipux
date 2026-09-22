@@ -451,16 +451,16 @@ export class CampaignService {
   createNewCampaign(type: CampaignType = 'Modal con slider', layout: PopupLayout = 'side'): Campaign {
     const tenant = this.tenantService.activeTenantId();
     const newId = 'camp-' + Date.now();
-    const isBanner = layout === 'top';
+    const isBanner = type === 'Banner horizontal' || layout === 'top';
     const newCamp: Campaign = {
       id: newId,
       name: isBanner ? ('Banner Horizontal ' + (this.campaigns().length + 1)) : ('Nueva Campaña ' + (this.campaigns().length + 1)),
-      type,
+      type: isBanner && type !== 'Banner horizontal' ? 'Banner horizontal' : type,
       tenant,
       status: 'Borrador',
       version: 'v1',
       updated: 'Justo ahora',
-      layout,
+      layout: isBanner ? 'top' : layout,
       rules: {
         delay: 1,
         frequency: 'Una vez por sesión',

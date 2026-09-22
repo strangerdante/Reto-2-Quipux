@@ -127,8 +127,9 @@ export class PublishService {
       });
     }
 
-    // Validar presencia de imágenes responsive
-    const allHaveImages = hasSlides && campaign.slides.every(s => s.desktopPreview || s.desktopName);
+    // Validar presencia de imágenes responsive (no requerido para Banner horizontal)
+    const isBanner = campaign.type === 'Banner horizontal';
+    const allHaveImages = isBanner || (hasSlides && campaign.slides.every(s => s.desktopPreview || s.desktopName));
 
     const hasValidRules = campaign.rules && campaign.rules.delay >= 0 && !!campaign.rules.pathRule;
 
@@ -155,11 +156,13 @@ export class PublishService {
       },
       {
         id: 'c4',
-        label: 'Recursos multimedia responsive asignados',
-        detail: allHaveImages
-          ? 'Imágenes desktop y mobile asignadas en cada slide.'
-          : 'Existen slides sin imagen asignada.',
-        passed: allHaveImages
+        label: isBanner ? 'Recursos multimedia (No aplica para Banner horizontal)' : 'Recursos multimedia responsive asignados',
+        detail: isBanner
+          ? 'Formato de banner horizontal institucional sin requerimiento de imágenes.'
+          : (allHaveImages
+            ? 'Imágenes desktop y mobile asignadas en cada slide.'
+            : 'Existen slides sin imagen asignada.'),
+        passed: isBanner ? true : allHaveImages
       },
       {
         id: 'c5',

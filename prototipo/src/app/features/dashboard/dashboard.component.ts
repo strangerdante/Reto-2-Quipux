@@ -74,7 +74,7 @@ import { LucideAngularModule } from 'lucide-angular';
         </div>
 
         <div class="template-grid">
-          <button class="template-card featured" (click)="onCreateNew()">
+          <button class="template-card" (click)="onCreateNew()">
             <div class="template-visual modal-icon">
               <lucide-icon name="images" [size]="22"></lucide-icon>
             </div>
@@ -82,7 +82,6 @@ import { LucideAngularModule } from 'lucide-angular';
               <strong>Modal con slider</strong>
               <small>De 2 a 5 slides, responsive desktop/mobile y reglas de aparición.</small>
             </span>
-            <em>Recomendado</em>
           </button>
 
           <button class="template-card" (click)="onCreateBanner()">
@@ -93,7 +92,6 @@ import { LucideAngularModule } from 'lucide-angular';
               <strong>Banner horizontal (AP-05)</strong>
               <small>Fila superior gobernada para avisos institucionales y alertas viales.</small>
             </span>
-            <em style="background: var(--blue); color: #fff;">Disponible</em>
           </button>
 
           <button class="template-card upcoming" disabled>
@@ -153,7 +151,13 @@ import { LucideAngularModule } from 'lucide-angular';
           @for (comp of campaignService.filteredCampaigns(); track comp.id) {
             <div class="table-row">
               <div class="component-cell">
-                <span class="mini-component" aria-hidden="true"><lucide-icon name="layers" [size]="16"></lucide-icon></span>
+                <span class="mini-component" aria-hidden="true">
+                  @if (comp.type === 'Banner horizontal') {
+                    <lucide-icon name="megaphone" [size]="16"></lucide-icon>
+                  } @else {
+                    <lucide-icon name="layers" [size]="16"></lucide-icon>
+                  }
+                </span>
                 <span>
                   <strong>{{ comp.name }}</strong>
                   <small>Actualizado: {{ comp.updated }}</small>
@@ -970,7 +974,7 @@ export class DashboardComponent {
   }
 
   onCreateBanner(): void {
-    const newCamp = this.campaignService.createNewCampaign('Modal informativo', 'top');
+    const newCamp = this.campaignService.createNewCampaign('Banner horizontal', 'top');
     this.router.navigate(['/editor', newCamp.id]);
   }
 

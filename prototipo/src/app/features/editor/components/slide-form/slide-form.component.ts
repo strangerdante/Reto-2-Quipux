@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { CampaignService } from '@core/services/campaign.service';
 import { ResourceService } from '@core/services/resource.service';
 import { LucideAngularModule } from 'lucide-angular';
@@ -9,7 +9,7 @@ import { LucideAngularModule } from 'lucide-angular';
   template: `
     @if (campaignService.selectedSlide(); as s) {
       <div class="form-divider">
-        <span>EDITANDO SLIDE: {{ s.name }}</span>
+        <span>{{ isBanner() ? 'CONTENIDO DEL BANNER: ' + s.name : 'EDITANDO SLIDE: ' + s.name }}</span>
       </div>
 
       <label class="field">
@@ -76,60 +76,62 @@ import { LucideAngularModule } from 'lucide-angular';
         </label>
       </div>
 
-      <label class="field">
-        <span>Texto alternativo para accesibilidad (alt)</span>
-        <input
-          type="text"
-          [value]="s.alt"
-          (input)="onFieldChange('alt', $event)"
-          placeholder="Descripción concisa de la imagen para lectores de pantalla"
-        />
-      </label>
-
-      <span class="field-label">Imágenes responsive (CDN Multitenant)</span>
-      <small class="field-hint">Formatos: WebP, PNG, JPG · Máx. 2.0 MB · Optimización automática integrada</small>
-      <div class="upload-grid">
-        <label class="upload-card">
+      @if (!isBanner()) {
+        <label class="field">
+          <span>Texto alternativo para accesibilidad (alt)</span>
           <input
-            type="file"
-            accept="image/webp,image/png,image/jpeg"
-            (change)="onFileUpload($event, 'desktop')"
+            type="text"
+            [value]="s.alt"
+            (input)="onFieldChange('alt', $event)"
+            placeholder="Descripción concisa de la imagen para lectores de pantalla"
           />
-          <b><lucide-icon name="laptop" [size]="16"></lucide-icon></b>
-          <span>
-            <strong>Desktop (800 × 560 óptima)</strong>
-            <small>{{ s.desktopName }}</small>
-            <em>{{ s.desktopPreview ? '✓ Personalizada' : 'Predeterminada' }}</em>
-          </span>
         </label>
 
-        <label class="upload-card">
-          <input
-            type="file"
-            accept="image/webp,image/png,image/jpeg"
-            (change)="onFileUpload($event, 'mobile')"
-          />
-          <b><lucide-icon name="smartphone" [size]="16"></lucide-icon></b>
-          <span>
-            <strong>Mobile (420 × 420 óptima)</strong>
-            <small>{{ s.mobileName }}</small>
-            <em>{{ s.mobilePreview ? '✓ Personalizada' : 'Predeterminada' }}</em>
-          </span>
-        </label>
-      </div>
+        <span class="field-label">Imágenes responsive (CDN Multitenant)</span>
+        <small class="field-hint">Formatos: WebP, PNG, JPG · Máx. 2.0 MB · Optimización automática integrada</small>
+        <div class="upload-grid">
+          <label class="upload-card">
+            <input
+              type="file"
+              accept="image/webp,image/png,image/jpeg"
+              (change)="onFileUpload($event, 'desktop')"
+            />
+            <b><lucide-icon name="laptop" [size]="16"></lucide-icon></b>
+            <span>
+              <strong>Desktop (800 × 560 óptima)</strong>
+              <small>{{ s.desktopName }}</small>
+              <em>{{ s.desktopPreview ? '✓ Personalizada' : 'Predeterminada' }}</em>
+            </span>
+          </label>
 
-      @if (resourceService.uploadError(); as errorMsg) {
-        <div class="upload-error-banner" role="alert">
-          <lucide-icon name="alert-triangle" [size]="14"></lucide-icon>
-          <span>{{ errorMsg }}</span>
+          <label class="upload-card">
+            <input
+              type="file"
+              accept="image/webp,image/png,image/jpeg"
+              (change)="onFileUpload($event, 'mobile')"
+            />
+            <b><lucide-icon name="smartphone" [size]="16"></lucide-icon></b>
+            <span>
+              <strong>Mobile (420 × 420 óptima)</strong>
+              <small>{{ s.mobileName }}</small>
+              <em>{{ s.mobilePreview ? '✓ Personalizada' : 'Predeterminada' }}</em>
+            </span>
+          </label>
         </div>
-      }
 
-      @if (resourceService.isUploading()) {
-        <div class="upload-loading-banner">
-          <lucide-icon name="refresh-cw" [size]="14"></lucide-icon>
-          <span>Validando y cargando recurso al CDN...</span>
-        </div>
+        @if (resourceService.uploadError(); as errorMsg) {
+          <div class="upload-error-banner" role="alert">
+            <lucide-icon name="alert-triangle" [size]="14"></lucide-icon>
+            <span>{{ errorMsg }}</span>
+          </div>
+        }
+
+        @if (resourceService.isUploading()) {
+          <div class="upload-loading-banner">
+            <lucide-icon name="refresh-cw" [size]="14"></lucide-icon>
+            <span>Validando y cargando recurso al CDN...</span>
+          </div>
+        }
       }
     }
   `,
@@ -320,6 +322,7 @@ import { LucideAngularModule } from 'lucide-angular';
 export class SlideFormComponent {
   readonly campaignService = inject(CampaignService);
   readonly resourceService = inject(ResourceService);
+  readonly isBanner = computed(() => this.campaignService.activeCampaign().type === 'Banner horizontal');
 
   onFieldChange(field: string, event: Event): void {
     const val = (event.target as HTMLInputElement | HTMLTextAreaElement).value;

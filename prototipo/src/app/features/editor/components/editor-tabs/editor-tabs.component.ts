@@ -14,7 +14,6 @@ import { CampaignService } from '@core/services/campaign.service';
       >
         <span>01</span>
         Contenido
-        <i>●</i>
       </button>
 
       <button
@@ -44,7 +43,7 @@ import { CampaignService } from '@core/services/campaign.service';
       <div class="component-identity">
         <span>ID DE COMPONENTE</span>
         <code>{{ campaignService.componentSlug() }}</code>
-        <small>Modal con slider · {{ campaignService.activeCampaign().slides.length }} slides</small>
+        <small>{{ campaignService.activeCampaign().type }} · {{ campaignService.activeCampaign().slides.length }} {{ campaignService.activeCampaign().slides.length === 1 ? 'slide' : 'slides' }}</small>
       </div>
     </aside>
   `,
@@ -69,7 +68,7 @@ import { CampaignService } from '@core/services/campaign.service';
         text-align: left;
         background: transparent;
         border: 0;
-        grid-template-columns: 25px 1fr auto;
+        grid-template-columns: 25px 1fr;
         align-items: center;
         gap: 8px;
         width: 100%;
@@ -91,12 +90,6 @@ import { CampaignService } from '@core/services/campaign.service';
           font: 700 8px/1 ui-monospace, monospace;
           display: grid;
           border-radius: 4px;
-        }
-
-        i {
-          color: var(--blue);
-          font-style: normal;
-          font-size: 8px;
         }
 
         &:hover {

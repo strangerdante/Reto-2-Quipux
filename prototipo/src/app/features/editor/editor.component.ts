@@ -97,7 +97,9 @@ import { LegacyImporterComponent } from './components/legacy-importer/legacy-imp
             @case ('content') {
               <app-slide-list />
               <app-slide-form />
-              <app-layout-picker />
+              @if (campaignService.activeCampaign().type !== 'Banner horizontal') {
+                <app-layout-picker />
+              }
             }
             @case ('style') {
               <app-style-tab />

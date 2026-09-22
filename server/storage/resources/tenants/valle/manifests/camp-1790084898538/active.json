@@ -1,8 +1,8 @@
 {
   "id": "camp-1790084898538",
   "tenantId": "valle",
-  "status": "Publicado",
-  "active": true,
+  "status": "Inactivo",
+  "active": false,
   "version": 1,
   "versionString": "v1",
   "publishedAt": "2026-09-22T13:49:06.600Z",
@@ -37,5 +37,11 @@
       "desktopImage": "banner-principal-desk.webp",
       "mobileImage": "banner-principal-mob.webp"
     }
-  ]
+  ],
+  "updatedAt": "2026-09-22T15:58:54.209Z",
+  "lastModifiedBy": {
+    "name": "Angie Ríos",
+    "role": "Publicador",
+    "initials": "AR"
+  }
 }

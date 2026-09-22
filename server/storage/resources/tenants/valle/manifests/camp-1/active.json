@@ -63,5 +63,11 @@
       "desktopImage": "http://localhost:3000/resources/tenants/valle/assets/desktop/pago-en-linea-desk.png",
       "mobileImage": "http://localhost:3000/resources/tenants/valle/assets/mobile/pago-en-linea-mob.png"
     }
-  ]
+  ],
+  "updatedAt": "2026-09-22T16:18:18.027Z",
+  "lastModifiedBy": {
+    "name": "Angie Ríos",
+    "role": "Publicador",
+    "initials": "AR"
+  }
 }

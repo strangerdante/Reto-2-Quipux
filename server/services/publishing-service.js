@@ -13,21 +13,25 @@ class PublishingService {
   }
 
   preflight(campaign) {
+    const isBanner = campaign.type === 'Banner horizontal' || campaign.layout === 'top';
     const slides = Array.isArray(campaign.slides) ? campaign.slides : [];
     const insecureLinks = slides.filter(slide => !isSafeCtaUrl(slide.link)).length;
-    const missingImages = slides.filter(slide => !slide.desktopPreview && !slide.desktopName).length;
+    const missingImages = isBanner ? 0 : slides.filter(slide => !slide.desktopPreview && !slide.desktopName).length;
     return [
       { id: 'slides-count', label: 'Slides de contenido', detail: slides.length ? `${slides.length} slide(s) configurado(s)` : 'Debe tener al menos 1 slide', passed: slides.length > 0 },
       { id: 'https-security', label: 'Protocolo de enlaces CTA seguro (HTTPS)', detail: insecureLinks === 0 ? 'Todos los enlaces cumplen HTTPS o ruta relativa' : `${insecureLinks} enlace(s) no usan HTTPS`, passed: insecureLinks === 0 },
-      { id: 'images-loaded', label: 'Recursos multimedia asignados', detail: missingImages === 0 ? 'Todas las diapositivas cuentan con imagen' : `${missingImages} slide(s) sin imagen desktop`, passed: missingImages === 0 }
+      { id: 'images-loaded', label: isBanner ? 'Recursos multimedia (No aplica para Banner horizontal)' : 'Recursos multimedia asignados', detail: isBanner ? 'Formato de banner horizontal institucional sin requerimiento de imágenes' : (missingImages === 0 ? 'Todas las diapositivas cuentan con imagen' : `${missingImages} slide(s) sin imagen desktop`), passed: isBanner ? true : missingImages === 0 }
     ];
   }
 
   buildManifest({ campaign, tenant, version, author, summary }) {
     const versionString = `v${version}`;
+    const resolvedType = campaign.type || (campaign.layout === 'top' ? 'Banner horizontal' : 'Modal con slider');
     return {
       id: campaign.id,
       tenantId: tenant,
+      name: campaign.name,
+      type: resolvedType,
       status: 'Publicado',
       active: true,
       version,
@@ -35,7 +39,7 @@ class PublishingService {
       publishedAt: new Date().toISOString(),
       publishedBy: author || { name: 'Angie Ríos', role: 'Frontend Lead', id: 'AR' },
       summary: summary || `Publicación ${versionString} - ${campaign.name}`,
-      layout: campaign.layout || 'side',
+      layout: campaign.layout || (resolvedType === 'Banner horizontal' ? 'top' : 'side'),
       rules: {
         delay: campaign.rules?.delay || 0,
         frequency: campaign.rules?.frequency || 'Una vez por sesión',

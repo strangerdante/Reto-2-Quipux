@@ -237,8 +237,22 @@
     // 3. Obtención y aplicación de parámetros de URL
     const params = new URLSearchParams(window.location.search);
     const rawTenant = params.get('tenant') || 'valle';
-    const currentTenant = TENANT_THEMES[rawTenant] ? rawTenant : 'valle';
-    const theme = TENANT_THEMES[currentTenant];
+    const currentTenant = rawTenant;
+    const theme = TENANT_THEMES[currentTenant] || {
+      cssClass: 'tenant-valle',
+      name: `Portal Oficial · ${rawTenant.toUpperCase()}`,
+      subtitle: 'Alcaldía / Gobernación · Trámites y Servicios Digitales',
+      region: `🇨🇴 ${rawTenant.toUpperCase()}`,
+      badge: rawTenant.charAt(0).toUpperCase(),
+      logo: '/brand/isologo.png',
+      phone: 'Línea de Atención Ciudadana 195',
+      hours: 'Lunes a Viernes 8:00 a.m. - 5:00 p.m.',
+      address: 'Sede Administrativa Principal',
+      defaultCamp: 'camp-1',
+      heroHeading: `Servicios y Trámites Digitales ${rawTenant.toUpperCase()}`,
+      heroDesc: 'Portal oficial de atención, alertas viales e información ciudadana en línea.',
+      departmentName: rawTenant
+    };
     let currentCampaign = params.get('campaign') || theme.defaultCamp;
 
     // Aplicar clase CSS temática
@@ -246,7 +260,15 @@
 
     // Actualizar encabezados y controles
     const tenantPickerEl = document.getElementById('tenantPicker');
-    if (tenantPickerEl) tenantPickerEl.value = currentTenant;
+    if (tenantPickerEl) {
+      if (!tenantPickerEl.querySelector(`option[value="${currentTenant}"]`)) {
+        const opt = document.createElement('option');
+        opt.value = currentTenant;
+        opt.textContent = `${theme.name} (${currentTenant})`;
+        tenantPickerEl.appendChild(opt);
+      }
+      tenantPickerEl.value = currentTenant;
+    }
 
     // Sincronizar automáticamente la campaña activa en vivo del CDN (AC-12)
     async function syncActiveCampaign() {
@@ -261,9 +283,24 @@
             const published = list.find(c => c.status === 'Publicado') || list[0];
 
             // Si la URL no forzó una campaña específica, sincronizar la publicada
-            if (!params.has('campaign')) {
+            if (!params.has('campaign') && published) {
               currentCampaign = published.id;
               window.currentCampaign = published.id;
+            }
+
+            // Sincronizar el Web Component con la campaña activa en vivo
+            const targetCampId = params.has('campaign') ? currentCampaign : (published?.id || currentCampaign);
+            const popupEl = document.querySelector('quipux-popup-studio');
+            if (popupEl) {
+              if (popupEl.getAttribute('campaign') !== targetCampId || popupEl.getAttribute('tenant') !== currentTenant) {
+                popupEl.setAttribute('tenant', currentTenant);
+                popupEl.setAttribute('campaign', targetCampId);
+              }
+            } else if (targetCampId) {
+              const newPopup = document.createElement('quipux-popup-studio');
+              newPopup.setAttribute('tenant', currentTenant);
+              newPopup.setAttribute('campaign', targetCampId);
+              document.body.appendChild(newPopup);
             }
 
             const activeObj = list.find(c => c.id === currentCampaign) || published;

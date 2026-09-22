@@ -1,5 +1,5 @@
 export type CampaignStatus = 'Publicado' | 'Programado' | 'Borrador' | 'Inactivo' | 'En revisión' | 'Aprobado';
-export type CampaignType = 'Modal con slider' | 'Modal informativo';
+export type CampaignType = 'Modal con slider' | 'Banner horizontal' | 'Modal informativo';
 export type PopupLayout = 'side' | 'top' | 'content';
 
 export interface Slide {

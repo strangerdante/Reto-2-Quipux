@@ -49,27 +49,79 @@ import { LucideAngularModule } from 'lucide-angular';
           </div>
         </div>
 
-        <div class="portal-overlay" aria-hidden="true"></div>
+        @if (!isBanner()) {
+          <div class="portal-overlay" aria-hidden="true"></div>
+        }
 
-        <!-- Componente Modal Interactivo -->
+        <!-- Componente Interactivo Gobernado -->
         @if (campaignService.visibleSlide(); as s) {
-          <div
-            class="modal-preview"
-            [class]="'layout-' + campaignService.activeCampaign().layout"
-            role="dialog"
-            aria-modal="true"
-            [attr.aria-label]="s.title"
-          >
-            <button class="modal-close" (click)="onSimulateClose()" aria-label="Cerrar modal">
-              <lucide-icon name="x" [size]="14"></lucide-icon>
-            </button>
+          @if (isBanner()) {
+            <!-- Banner Horizontal Superior Gobernado (AP-05) -->
+            <div
+              class="banner-preview"
+              role="region"
+              aria-label="Aviso institucional superior"
+            >
+              <div class="banner-badge-wrapper">
+                <span class="banner-badge">
+                  <lucide-icon name="megaphone" [size]="12"></lucide-icon>
+                  AVISO VIAL
+                </span>
+                <span class="banner-tenant-tag">{{ campaignService.activeCampaign().tenant }}</span>
+                @if (campaignService.activeCampaign().slides.length > 1) {
+                  <div class="banner-nav">
+                    <button type="button" (click)="campaignService.prevPreviewSlide()" aria-label="Aviso anterior">
+                      <lucide-icon name="chevron-left" [size]="11"></lucide-icon>
+                    </button>
+                    <span>{{ campaignService.previewIndex() + 1 }}/{{ campaignService.activeCampaign().slides.length }}</span>
+                    <button type="button" (click)="campaignService.nextPreviewSlide()" aria-label="Aviso siguiente">
+                      <lucide-icon name="chevron-right" [size]="11"></lucide-icon>
+                    </button>
+                  </div>
+                }
+              </div>
 
-            <!-- Sección visual / imagen (si layout no es 'content') -->
-            @if (campaignService.activeCampaign().layout !== 'content') {
-              <div class="modal-image">
-                @if (currentPreviewImage(); as imgUrl) {
-                  @if (!failedImageUrls()[imgUrl]) {
-                    <img [src]="imgUrl" [alt]="s.alt || s.title" (error)="onImageError(imgUrl)" />
+              <div class="banner-content">
+                <strong class="banner-title">{{ s.title }}</strong>
+                <span class="banner-desc">{{ s.description }}</span>
+              </div>
+
+              <div class="banner-actions">
+                <a [href]="s.link" target="_blank" rel="noopener noreferrer" class="banner-cta">
+                  <span>{{ s.cta }}</span>
+                  <lucide-icon name="arrow-right" [size]="12"></lucide-icon>
+                </a>
+                <button class="banner-close" (click)="onSimulateClose()" aria-label="Cerrar banner">
+                  <lucide-icon name="x" [size]="13"></lucide-icon>
+                </button>
+              </div>
+            </div>
+          } @else {
+            <!-- Componente Modal Interactivo -->
+            <div
+              class="modal-preview"
+              [class]="'layout-' + campaignService.activeCampaign().layout"
+              role="dialog"
+              aria-modal="true"
+              [attr.aria-label]="s.title"
+            >
+              <button class="modal-close" (click)="onSimulateClose()" aria-label="Cerrar modal">
+                <lucide-icon name="x" [size]="14"></lucide-icon>
+              </button>
+
+              <!-- Sección visual / imagen (si layout no es 'content') -->
+              @if (campaignService.activeCampaign().layout !== 'content') {
+                <div class="modal-image">
+                  @if (currentPreviewImage(); as imgUrl) {
+                    @if (!failedImageUrls()[imgUrl]) {
+                      <img [src]="imgUrl" [alt]="s.alt || s.title" (error)="onImageError(imgUrl)" />
+                    } @else {
+                      <div class="brand-visual">
+                        <img src="brand/isologo.png" alt="Quipux" />
+                        <span>CANALES DIGITALES</span>
+                        <small>Soluciones de movilidad inteligente y gobierno digital.</small>
+                      </div>
+                    }
                   } @else {
                     <div class="brand-visual">
                       <img src="brand/isologo.png" alt="Quipux" />
@@ -77,57 +129,51 @@ import { LucideAngularModule } from 'lucide-angular';
                       <small>Soluciones de movilidad inteligente y gobierno digital.</small>
                     </div>
                   }
-                } @else {
-                  <div class="brand-visual">
-                    <img src="brand/isologo.png" alt="Quipux" />
-                    <span>CANALES DIGITALES</span>
-                    <small>Soluciones de movilidad inteligente y gobierno digital.</small>
-                  </div>
-                }
-              </div>
-            }
+                </div>
+              }
 
-            <!-- Contenido textual del modal -->
-            <div class="modal-copy">
-              <span>QUIPUX · SERVICIOS DIGITALES</span>
-              <h2>{{ s.title }}</h2>
-              <p>{{ s.description }}</p>
-              <a [href]="s.link" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 6px;">
-                {{ s.cta }} <b><lucide-icon name="arrow-right" [size]="12"></lucide-icon></b>
-              </a>
+              <!-- Contenido textual del modal -->
+              <div class="modal-copy">
+                <span>QUIPUX · SERVICIOS DIGITALES</span>
+                <h2>{{ s.title }}</h2>
+                <p>{{ s.description }}</p>
+                <a [href]="s.link" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 6px;">
+                  {{ s.cta }} <b><lucide-icon name="arrow-right" [size]="12"></lucide-icon></b>
+                </a>
+              </div>
+
+              <!-- Controles y puntos de navegación del carrusel -->
+              @if (campaignService.activeCampaign().slides.length > 1) {
+                <button
+                  class="modal-nav-arrow prev"
+                  (click)="campaignService.prevPreviewSlide()"
+                  aria-label="Slide anterior"
+                  type="button"
+                >
+                  <lucide-icon name="chevron-left" [size]="14"></lucide-icon>
+                </button>
+                <button
+                  class="modal-nav-arrow next"
+                  (click)="campaignService.nextPreviewSlide()"
+                  aria-label="Slide siguiente"
+                  type="button"
+                >
+                  <lucide-icon name="chevron-right" [size]="14"></lucide-icon>
+                </button>
+
+                <div class="preview-dots" role="tablist" aria-label="Navegación de slides">
+                  @for (slide of campaignService.activeCampaign().slides; track slide.id; let idx = $index) {
+                    <button
+                      [class.active]="idx === campaignService.previewIndex()"
+                      (click)="campaignService.setPreviewIndex(idx)"
+                      [attr.aria-label]="'Ir a slide ' + (idx + 1)"
+                      type="button"
+                    ></button>
+                  }
+                </div>
+              }
             </div>
-
-            <!-- Controles y puntos de navegación del carrusel -->
-            @if (campaignService.activeCampaign().slides.length > 1) {
-              <button
-                class="modal-nav-arrow prev"
-                (click)="campaignService.prevPreviewSlide()"
-                aria-label="Slide anterior"
-                type="button"
-              >
-                <lucide-icon name="chevron-left" [size]="14"></lucide-icon>
-              </button>
-              <button
-                class="modal-nav-arrow next"
-                (click)="campaignService.nextPreviewSlide()"
-                aria-label="Slide siguiente"
-                type="button"
-              >
-                <lucide-icon name="chevron-right" [size]="14"></lucide-icon>
-              </button>
-
-              <div class="preview-dots" role="tablist" aria-label="Navegación de slides">
-                @for (slide of campaignService.activeCampaign().slides; track slide.id; let idx = $index) {
-                  <button
-                    [class.active]="idx === campaignService.previewIndex()"
-                    (click)="campaignService.setPreviewIndex(idx)"
-                    [attr.aria-label]="'Ir a slide ' + (idx + 1)"
-                    type="button"
-                  ></button>
-                }
-              </div>
-            }
-          </div>
+          }
         }
       </div>
 
@@ -292,6 +338,152 @@ import { LucideAngularModule } from 'lucide-angular';
       position: absolute;
       inset: 20px;
       border-radius: 8px;
+    }
+
+    .banner-preview {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      right: 20px;
+      z-index: 10;
+      background: #211c33;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      border-bottom: 2px solid var(--sky);
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: 0 6px 20px rgba(33, 28, 51, 0.25);
+      animation: qSlideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .banner-badge-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .banner-badge {
+      background: var(--blue);
+      color: #fff;
+      font: 800 9px/1.2 ui-monospace, monospace;
+      letter-spacing: 0.05em;
+      padding: 4px 7px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .banner-tenant-tag {
+      color: var(--sky);
+      font-size: 9.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .banner-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+
+      button {
+        background: transparent;
+        border: 0;
+        color: #fff;
+        cursor: pointer;
+        padding: 0;
+        display: grid;
+        place-items: center;
+        opacity: 0.8;
+        &:hover { opacity: 1; }
+      }
+
+      span {
+        font-size: 8.5px;
+        color: #ddd;
+        font-family: ui-monospace, monospace;
+      }
+    }
+
+    .banner-content {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      overflow: hidden;
+    }
+
+    .banner-title {
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .banner-desc {
+      color: #d1ced7;
+      font-size: 11px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .banner-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .banner-cta {
+      background: #fff;
+      color: var(--ink);
+      font-size: 10.5px;
+      font-weight: 800;
+      padding: 5px 12px;
+      border-radius: 5px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+
+      &:hover {
+        background: var(--sky);
+        color: var(--ink);
+      }
+    }
+
+    .banner-close {
+      background: rgba(255, 255, 255, 0.08);
+      border: 0;
+      color: #b5b0be;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+      }
+    }
+
+    @keyframes qSlideDown {
+      from { transform: translateY(-100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
 
     .modal-preview {
@@ -579,6 +771,33 @@ import { LucideAngularModule } from 'lucide-angular';
         transform: translateX(-50%);
       }
 
+      .banner-preview {
+        width: 310px;
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 10px 12px;
+      }
+
+      .banner-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+        width: 100%;
+
+        .banner-title, .banner-desc {
+          white-space: normal;
+        }
+      }
+
+      .banner-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+
       .modal-preview {
         grid-template-rows: 245px auto;
         grid-template-columns: 1fr;
@@ -648,11 +867,19 @@ export class PreviewCanvasComponent {
     return mode === 'desktop' ? slide.desktopPreview : slide.mobilePreview;
   });
 
+  readonly isBanner = computed(() => {
+    const c = this.campaignService.activeCampaign();
+    return c.type === 'Banner horizontal';
+  });
+
   onImageError(url: string): void {
     this.failedImageUrls.update(map => ({ ...map, [url]: true }));
   }
 
   onSimulateClose(): void {
-    this.toastService.show('Simulación: Cierre de modal disparado (evento dataLayer: quipux_popup_close)');
+    const msg = this.isBanner()
+      ? 'Simulación: Cierre de banner superior disparado (evento dataLayer: quipux_modal_close)'
+      : 'Simulación: Cierre de modal disparado (evento dataLayer: quipux_modal_close)';
+    this.toastService.show(msg);
   }
 }
