@@ -26,10 +26,11 @@
         <option value="cali">Cali (Alcaldía)</option>
       </select>
 
-      <label for="campaignPicker" style="color: #94A3B8; margin-left: 4px;">Campaña:</label>
-      <select id="campaignPicker" class="tenant-select" style="max-width: 220px;" onchange="changeCampaign(this.value)">
-        <option value="">Cargando campañas...</option>
-      </select>
+      <div class="active-campaign-pill" id="activeCampaignBadge" title="Campaña activa sincronizada en vivo con el CDN (AC-12)">
+        <span class="live-indicator-dot"></span>
+        <span class="live-label">En vivo:</span>
+        <strong id="activeCampaignName">Cargando activa...</strong>
+      </div>
 
       <button class="btn-tool" onclick="inspectActiveManifest()" title="Ver JSON del manifiesto activo">
         📄 Manifiesto

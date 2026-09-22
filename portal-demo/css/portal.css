@@ -149,6 +149,48 @@
       cursor: pointer;
     }
 
+    /* PÍLDORA INFORMATIVA CAMPAÑA ACTIVA (AC-12 AUTÓNOMO) */
+    .active-campaign-pill {
+      background: rgba(93, 201, 154, 0.12);
+      border: 1px solid rgba(93, 201, 154, 0.35);
+      color: #5DC99A;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      user-select: none;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .live-indicator-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #5DC99A;
+      box-shadow: 0 0 6px #5DC99A;
+      animation: pulseLiveDot 2s infinite ease-in-out;
+      flex-shrink: 0;
+    }
+
+    @keyframes pulseLiveDot {
+      0% { transform: scale(0.9); opacity: 0.8; }
+      50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 10px #5DC99A; }
+      100% { transform: scale(0.9); opacity: 0.8; }
+    }
+
+    .active-campaign-pill .live-label {
+      color: #94A3B8;
+      font-weight: 500;
+    }
+
+    .active-campaign-pill strong {
+      color: #F8FAFC;
+      font-weight: 700;
+    }
+
     /* BARRA INSTITUCIONAL OFICIAL GOV.CO */
     .gov-bar {
       background: #004884;

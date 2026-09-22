@@ -239,38 +239,63 @@
     const rawTenant = params.get('tenant') || 'valle';
     const currentTenant = TENANT_THEMES[rawTenant] ? rawTenant : 'valle';
     const theme = TENANT_THEMES[currentTenant];
-    const currentCampaign = params.get('campaign') || theme.defaultCamp;
+    let currentCampaign = params.get('campaign') || theme.defaultCamp;
 
     // Aplicar clase CSS temática
     document.body.className = theme.cssClass;
 
     // Actualizar encabezados y controles
-    document.getElementById('tenantPicker').value = currentTenant;
-    const campSelect = document.getElementById('campaignPicker');
-    async function populateCampaigns() {
-      if (!campSelect) return;
+    const tenantPickerEl = document.getElementById('tenantPicker');
+    if (tenantPickerEl) tenantPickerEl.value = currentTenant;
+
+    // Sincronizar automáticamente la campaña activa en vivo del CDN (AC-12)
+    async function syncActiveCampaign() {
+      const badgeName = document.getElementById('activeCampaignName');
+      const badgeContainer = document.getElementById('activeCampaignBadge');
       try {
         const res = await fetch(`/api/campaigns?tenant=${encodeURIComponent(currentTenant)}`);
         if (res.ok) {
           const list = await res.json();
           if (Array.isArray(list) && list.length > 0) {
-            campSelect.innerHTML = list.map(c => 
-              `<option value="${c.id}" ${c.id === currentCampaign ? 'selected' : ''}>${c.name} (${c.version || 'v1'})</option>`
-            ).join('');
-            if (!list.some(c => c.id === currentCampaign) && currentCampaign) {
-              const opt = document.createElement('option');
-              opt.value = currentCampaign;
-              opt.textContent = `ID: ${currentCampaign}`;
-              opt.selected = true;
-              campSelect.appendChild(opt);
+            // Priorizar la campaña publicada/activa
+            const published = list.find(c => c.status === 'Publicado') || list[0];
+
+            // Si la URL no forzó una campaña específica, sincronizar la publicada
+            if (!params.has('campaign')) {
+              currentCampaign = published.id;
+              window.currentCampaign = published.id;
             }
+
+            const activeObj = list.find(c => c.id === currentCampaign) || published;
+            if (badgeName) {
+              badgeName.textContent = `${activeObj.name} (${activeObj.version || 'v1'})`;
+            }
+
+            if (badgeContainer) {
+              const isInactive = activeObj.status === 'Inactivo';
+              if (isInactive) {
+                badgeContainer.style.borderColor = 'rgba(245, 158, 11, 0.4)';
+                badgeContainer.style.background = 'rgba(245, 158, 11, 0.12)';
+                badgeContainer.style.color = '#F59E0B';
+                const dot = badgeContainer.querySelector('.live-indicator-dot');
+                if (dot) {
+                  dot.style.background = '#F59E0B';
+                  dot.style.boxShadow = '0 0 6px #F59E0B';
+                }
+                badgeName.textContent = `${activeObj.name} (Pausada)`;
+              }
+              badgeContainer.title = `Campaña en vivo: ${activeObj.name} | Versión: ${activeObj.version || 'v1'} | Estado: ${activeObj.status}`;
+            }
+          } else {
+            if (badgeName) badgeName.textContent = 'Sin campañas en catálogo';
           }
         }
       } catch (e) {
-        console.warn('Error cargando catálogo de campañas en portal:', e);
+        console.warn('Error sincronizando campaña activa en portal:', e);
+        if (badgeName) badgeName.textContent = `${theme.defaultCamp} (v1)`;
       }
     }
-    populateCampaigns();
+    syncActiveCampaign();
 
     document.getElementById('tenantLogoImg').src = theme.logo;
     document.getElementById('tenantTitle').textContent = theme.name;
@@ -539,22 +564,21 @@
       }
     }
 
-    // Navegación SPA reactiva
+    // Navegación SPA reactiva (AC-17)
     function navigate(route) {
-      const campParam = currentCampaign ? `&campaign=${encodeURIComponent(currentCampaign)}` : '';
+      const campParam = params.has('campaign') ? `&campaign=${encodeURIComponent(currentCampaign)}` : '';
       const fullPath = route === '/' ? `/portal-demo/?tenant=${encodeURIComponent(currentTenant)}${campParam}` : `/portal-demo${route}?tenant=${encodeURIComponent(currentTenant)}${campParam}`;
       history.pushState({}, '', fullPath);
       renderRoute(route);
       showToast(`Navegación SPA a: ${route}`);
     }
 
-    // Selector de Tenant
+    // Selector de Tenant (AC-02: Aislamiento Multitenant)
     function changeTenant(tenant) {
-      const tTheme = TENANT_THEMES[tenant] || TENANT_THEMES['valle'];
-      window.location.href = `/portal-demo/?tenant=${encodeURIComponent(tenant)}&campaign=${encodeURIComponent(tTheme.defaultCamp)}`;
+      window.location.href = `/portal-demo/?tenant=${encodeURIComponent(tenant)}`;
     }
 
-    // Selector de Campaña (AC-12)
+    // Selector de Campaña (compatibilidad con scripts de prueba)
     function changeCampaign(campaignId) {
       const cleanCamp = campaignId ? encodeURIComponent(campaignId.trim()) : '';
       window.location.href = `/portal-demo/?tenant=${encodeURIComponent(currentTenant)}${cleanCamp ? '&campaign=' + cleanCamp : ''}`;
@@ -593,7 +617,8 @@
 
       showToast('🧹 Frecuencia reseteada. Recargando portal...');
       setTimeout(() => {
-        window.location.href = `/portal-demo/?tenant=${encodeURIComponent(currentTenant)}&campaign=${encodeURIComponent(currentCampaign)}`;
+        const campParam = params.has('campaign') ? `&campaign=${encodeURIComponent(currentCampaign)}` : '';
+        window.location.href = `/portal-demo/?tenant=${encodeURIComponent(currentTenant)}${campParam}`;
       }, 500);
     }
 
