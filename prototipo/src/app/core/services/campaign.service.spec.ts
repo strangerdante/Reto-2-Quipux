@@ -107,4 +107,31 @@ describe('CampaignService', () => {
     const reactivated = service.campaigns().find(c => c.id === campId);
     expect(reactivated?.status).toBe('Publicado');
   });
+
+  it('should create new campaign in memory without persisting until saveDraft is called (AC-10)', () => {
+    const httpMock = TestBed.inject(HttpTestingController);
+    const initialCampaignsCount = service.campaigns().length;
+
+    // Crear nueva campaña desde plantilla
+    const newCamp = service.createNewCampaign('Modal con slider', 'side');
+    expect(service.activeCampaign().id).toBe(newCamp.id);
+    expect(service.saveStatus()).toBe('Borrador sin guardar');
+    // No debe haberse agregado a la lista general de campañas guardadas
+    expect(service.campaigns().length).toBe(initialCampaignsCount);
+    expect(service.campaigns().some(c => c.id === newCamp.id)).toBe(false);
+
+    // No debe haber disparado ninguna petición HTTP POST al crearse
+    httpMock.expectNone(req => req.method === 'POST' && req.url.includes('/campaigns'));
+
+    // Al guardar explícitamente el borrador
+    service.saveDraft();
+    const saveReq = httpMock.expectOne(req => req.method === 'POST' && req.url.includes('/campaigns'));
+    expect(saveReq.request.body.id).toBe(newCamp.id);
+    saveReq.flush({ success: true, campaign: { ...newCamp, status: 'Borrador', updated: 'Hoy' } });
+
+    // Ahora sí debe haberse agregado a la lista persistente
+    expect(service.campaigns().length).toBe(initialCampaignsCount + 1);
+    expect(service.campaigns().some(c => c.id === newCamp.id)).toBe(true);
+    expect(service.saveStatus()).toBe('Guardado en servidor');
+  });
 });

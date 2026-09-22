@@ -150,6 +150,11 @@ export class CampaignService {
   }
 
   loadCampaign(id: string): void {
+    // Si la campaña ya está activa en memoria como un nuevo borrador no persistido, mantenerla
+    if (this.activeCampaign()?.id === id && !this.campaigns().some(c => c.id === id)) {
+      return;
+    }
+
     const found = this.campaigns().find(c => c.id === id);
     if (found) {
       const camp = JSON.parse(JSON.stringify(found));
@@ -358,6 +363,7 @@ export class CampaignService {
     this.http.post<{ success: boolean; campaign: Campaign }>(`${this.config.apiBaseUrl}/campaigns?tenant=${tenant}`, current).subscribe({
       next: (res) => {
         const saved = res.campaign || current;
+        this.activeCampaign.set(saved);
         this.campaigns.update(list => {
           const index = list.findIndex(c => c.id === saved.id);
           if (index >= 0) {
@@ -459,7 +465,7 @@ export class CampaignService {
       tenant,
       status: 'Borrador',
       version: 'v1',
-      updated: 'Justo ahora',
+      updated: 'Sin guardar',
       layout: isBanner ? 'top' : layout,
       rules: {
         delay: 1,
@@ -494,7 +500,7 @@ export class CampaignService {
     this.activeCampaign.set(newCamp);
     this.selectedSlideId.set(1);
     this.previewIndex.set(0);
-    this.saveDraft();
+    this.saveStatus.set('Borrador sin guardar');
     return newCamp;
   }
 
