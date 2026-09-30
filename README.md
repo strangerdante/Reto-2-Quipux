@@ -108,9 +108,54 @@ Este comando inicia de forma concurrente los dos planos de la arquitectura:
 | `npm run studio` | Inicia la aplicación Angular 21 en `http://localhost:4200`. |
 | `npm run build:runtime` | Compila y empaqueta el Web Component autónomo (`quipux-popup-runtime.js`, ~33.4 KB). |
 | `npm run build` | Compila el runtime y genera el bundle de producción de Angular. |
-| `npm test` | Ejecuta la suite completa de pruebas automatizadas (Runtime con Node.js + Angular con Vitest). |
+| `npm test` | Ejecuta la suite completa de pruebas automatizadas (Runtime con Node.js + Servidor + Angular con Vitest). |
 | `npm run test:runtime` | Ejecuta las pruebas unitarias del runtime (FocusTrap, anti-PII, rutas SPA, escToggle). |
-| `npm run test:studio` | Ejecuta las pruebas unitarias de servicios Angular. |
+| `npm run test:server` | Ejecuta las pruebas de integración del servidor (tenants, subida de recursos, CORS). |
+| `npm run test:studio` | Ejecuta las pruebas unitarias de servicios Angular con Vitest. |
+
+---
+
+## 🛡️ Cobertura y Alcance de las Pruebas Automatizadas
+
+La suite de pruebas automatizadas se divide en **3 niveles principales**, garantizando la robustez funcional, la seguridad, la accesibilidad y la gobernanza:
+
+### 1. ⚙️ Runtime Web Component (`npm run test:runtime`)
+Ejecutadas con el test runner nativo de Node.js (`node:test`) sobre `runtime/tests/runtime.test.mjs`:
+- **Escudo Anti-PII (AC-21)**: Verifica que `DataLayerDispatcher` limpie y elimine información personal identificable (cédulas, placas, correos, nombres) antes de enviar eventos a `dataLayer`.
+- **Evaluación de Reglas y Rutas SPA (AC-09, AC-17)**: Comprueba la activación o supresión de popups mediante comodines (`*`, `/tramites/*`), rutas exactas y vigencia temporal (fechas inicio/fin).
+- **Diagnósticos de Visibilidad**: Valida que el motor clasifique y reporte el estado de la campaña (`ELIGIBLE`, `FUTURE_START`, `EXPIRED`, `ROUTE_MISMATCH`).
+- **Accesibilidad y Focus Trap (AC-18)**: Comprueba que la tecla `Escape` respete la regla configurable `escToggle` y que el foco de teclado quede confinado dentro del modal.
+- **Sanitización de URLs (AC-19)**: Bloquea URLs inseguras o maliciosas (`javascript:`, `data:`, protocolo relativo `//malicioso.com`, `http://`), permitiendo solo rutas relativas seguras o `https://`.
+- **Ciclado del Carrusel (AC-03)**: Evalúa la rotación cíclica infinita entre slides (hacia adelante y hacia atrás con controles de navegación).
+- **Kill Switch / Pausa en Vivo (AC-12)**: Valida que si una campaña se marca como `Inactivo` o `active: false`, el runtime suprima el modal inmediatamente.
+
+### 2. 📡 Servidor Express y CDN (`npm run test:server`)
+Ubicadas en `server/tests/`:
+- **Aislamiento Multitenant (`server/tests/tenants.test.js` - AC-02)**:
+  - Inicialización automática de tenants por defecto (Valle, Medellín, etc.).
+  - Creación física de la estructura de almacenamiento CDN en disco (`assets/desktop`, `assets/mobile`, `manifests`) al dar de alta una nueva entidad.
+  - Prevención de entidades duplicadas.
+- **Validación de Multimedia (`server/tests/resources.test.js` - AC-06, AC-20)**:
+  - Rechazo de formatos no permitidos (ej. `.txt`, `.pdf`).
+  - Rechazo físico de archivos que superen el límite de tamaño (ej. buffers > 2 MB).
+  - Validación de encabezados binarios PNG (IHDR) y rechazo de dimensiones excesivas.
+  - Aceptación y procesamiento exitoso de imágenes válidas (ej. 800×560).
+- **Políticas CORS (`server/tests/cors.test.js`)**:
+  - Soporte para `Origin: null` (pruebas locales directas mediante `file://` o iframes sandboxed).
+  - Aceptación de peticiones internas / Postman (sin cabecera Origin) y orígenes de desarrollo local (`localhost:4200`, `localhost:3000`).
+
+### 3. 🎨 Estudio Angular (`npm run test:studio`)
+Ejecutadas con **Vitest** en el cliente Angular (`prototipo/src/app`):
+- **Gestión de Campañas (`campaign.service.spec.ts`)**:
+  - Manejo reactivo de estado con Signals.
+  - Filtrado de campañas por texto/búsqueda.
+  - Creación, edición reactiva de títulos/CTAs, duplicación de slides (`AC-03`) y eliminación segura preservando al menos un slide.
+- **Preflight Checks y Publicación (`publish.service.spec.ts`)**:
+  - Verificación previa obligatoria (validación de enlaces, solapamiento de fechas, recursos multimedia).
+  - Apertura/cierre del diálogo modal de publicación y gestión de advertencias de conflicto.
+- **Multitenancy y Gobernanza (`tenant.service.spec.ts`)**:
+  - Conmutación reactiva de tenant activo (`AC-02`).
+  - Flujo de gobernanza por roles (`AP-01`): cambio y validación de permisos entre **Editor**, **Revisor** y **Publicador**.
 
 ---
 
