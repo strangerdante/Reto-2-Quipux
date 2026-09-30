@@ -62,10 +62,23 @@ El proyecto implementa una arquitectura estrictamente desacoplada regida por la 
 
 ### Instalación de Dependencias
 ```bash
-# Instalar dependencias raíz y dependencias de Angular
+# 1. Instalar dependencias base de la raíz
 npm install
+
+# 2. Instalar los módulos faltantes del servidor Express (versión 4 obligatoria)
+npm install express@4 multer cors dotenv
+
+# 3. Instalar dependencias del estudio Angular
 cd prototipo && npm install && cd ..
+
+# 4. Instalar dependencias del runtime Web Component
 cd runtime && npm install && cd ..
+
+# 5. Compilar el archivo del runtime para que el backend lo pueda servir
+npm run build:runtime
+
+# 6. Iniciar ambos entornos en paralelo
+npm run dev
 ```
 
 ### Ejecutar Todo el Entorno (Un Solo Comando)
