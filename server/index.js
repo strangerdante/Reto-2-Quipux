@@ -93,11 +93,6 @@ async function start() {
   const portalDemoDirectory = path.join(__dirname, '..', 'portal-demo');
   app.use('/portal-demo', express.static(portalDemoDirectory));
   app.get('/portal-demo*', (req, res) => res.sendFile(path.join(portalDemoDirectory, 'index.html')));
-
-  const portalTestDirectory = path.join(__dirname, '..', 'portal-test');
-  app.use('/portal-test', express.static(portalTestDirectory));
-  app.use('/portal-nuevo', express.static(portalTestDirectory));
-  app.get(['/portal-test*', '/portal-nuevo*'], (req, res) => res.sendFile(path.join(portalTestDirectory, 'index.html')));
   app.get(['/tramites*', '/liquidaciones*'], (req, res) => res.sendFile(path.join(portalDemoDirectory, 'index.html')));
   app.get('/', (req, res) => res.redirect('/portal-demo/'));
   app.get('/api/health', (req, res) => res.json({

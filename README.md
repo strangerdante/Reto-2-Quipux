@@ -54,6 +54,21 @@ El proyecto implementa una arquitectura estrictamente desacoplada regida por la 
 
 ---
 
+## 📁 Estructura y Propósito de las Carpetas Principales
+
+El repositorio está organizado de forma modular, reflejando la separación estricta entre el **Plano de Control**, el **Plano de Datos (Runtime)**, la **Infraestructura de Almacenamiento/CDN** y los **Entornos de Validación**:
+
+| Carpeta | Rol Arquitectónico | Propósito y Contenido |
+|---|---|---|
+| `prototipo/` | **Plano de Control (Studio)** | Aplicación cliente construida en **Angular 21** con diseño reactivo basado en *Signals*. Contiene el editor visual de tres columnas, administración multitenant, flujo de aprobación y gobernanza por roles (`AP-01`), preflight checks dinámicos de publicación (`AC-11`), visor de diferencias visuales entre versiones (`AP-03`) y conversor de modales legacy AngularJS (`AP-04`). |
+| `runtime/` | **Plano de Datos (Web Component)** | Núcleo del **Web Component autónomo** (`<quipux-popup>`) desarrollado en **JavaScript Vanilla** (sin dependencias de frameworks). Diseñado para inyectarse una sola vez vía GTM. Implementa aislamiento con Shadow DOM, idempotencia (`window.__QUIPUX_POPUP_LOADED__`), evaluación reactiva de rutas SPA y vigencias (`RuleEvaluator`), Focus Trap accesible WCAG 2.1 AA (`FocusTrap`), escudo anti-PII para eventos a `dataLayer` (`DataLayerDispatcher`), y scripts de empaquetado (`build.js`) y pruebas unitarias (`node:test`). |
+| `server/` | **CDN Local y API REST** | Backend en **Node.js con Express 4**. Provee los endpoints de la API (`/api/campaigns`, `/api/tenants`, `/api/audit`, `/api/gtm/export`, `/api/health`) y sirve como CDN estático para recursos (`/resources/tenants/...`). Aloja la lógica de almacenamiento físico en disco (`server/storage/`), validación binaria estricta de imágenes multipart (`server/routes/resources.js`) y políticas CORS para pruebas locales y remotas. |
+| `portal-demo/` | **Portal Ciudadano Simulador** | Aplicación web externa interactiva que simula un portal gubernamental de trámites e impuestos. Consume el script del runtime y permite validar en vivo el comportamiento del popup ante navegación por rutas SPA (`/tramites`, `/liquidaciones`), incluyendo una consola HUD inferior que intercepta y audita eventos del `dataLayer` sin datos personales y un botón de prueba de idempotencia (`AC-16`). |
+| `test-assets/` | **Recursos para Pruebas** | Banco de archivos multimedia utilizado para verificar los mecanismos de validación física: incluye banners válidos (100 KB, dimensiones 800×560), archivos pesados (> 500 KB / > 2 MB) para comprobar el rechazo automático en cliente y servidor (`AC-06`), y archivos de formatos no permitidos (.txt, .pdf). |
+| `docs/` | **Documentación Técnica** | Especificaciones complementarias, diagramas de arquitectura, contratos de datos de los manifiestos JSON (`active.json`, snapshots `v{N}.json`) y guías técnicas del sistema. |
+
+---
+
 ## 🚀 Inicio Rápido
 
 ### Requisitos Previos
